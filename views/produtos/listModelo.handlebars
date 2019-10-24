@@ -1,0 +1,129 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <div class="box-body">
+          <div class="form-row">
+            <div class="col-xs-1">
+              <h1 class="box-title">Modelos</h1>
+            </div>
+            <div class="col-xs-10">
+            </div>
+            <div class="col-xs-1">
+              <button type="button" class="add btn btn-primary"
+              data-ativo="Ativo"
+              data-toggle="modal" data-target="#modalModelo">
+              Adicionar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+      <table id="tabelaModelos" class="tbl table table-striped">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Ativo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each modelos}}
+          <tr>
+            <td>{{descricao}}</td>
+            <td>{{categoria.nome}}</td>
+            <td>{{ativo}}</td>
+            <td class="acao">
+              <div class="toolbar-actions">
+                <div class="btn-group">
+                  <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalModelo"
+                  data-id="{{id}}"
+                  data-descricao="{{descricao}}"
+                  data-categoria="{{categoria.nome}}"
+                  data-ativo="{{ativo}}">
+                  <i class="fa fa-edit"></i></button>
+                </div>
+                <div class="btn-group">
+                  <form action="/produtos/listModelo/deletar" method="post">
+                    <input type="hidden" name="id" value="{{id}}">
+                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Ativo</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ------------------------        MODAL         ------------------------ -->
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalModelo">
+  <form name="formModelo" id="formModelo" method="post">
+    <input type="hidden" name="id" id="id" value="{{id}}">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Adicionar Modelo</h4>
+        </div>
+
+        <div class="modal-body">
+          <div class="box-body">
+            <div class="row">
+              <div class="col-xs-8">
+                <span>Descrição</span>
+                <input type="text" class="form-control" name="descricao" id="descricao">
+              </div>
+            </div>
+            <div style="margin-top: 2%;" class="row">
+              <div class="col-xs-2">
+                <span>Ativo</span>
+                <select id="ativo" name="ativo" class="form-control">
+                  <option value='Ativo'> SIM </option>
+                  <option value='Inativo'> NÃO </option>
+                </select>
+              </div>
+              <div style="margin-top: 1%;" class="col-xs-6">
+                <div  class="input-group margin">
+                  <input class="form-control" type="search" id="categoria" name="categoria" list="listaModelos" placeholder="Selecione uma Categoria"/>
+                  <span class="input-group-btn">
+                    <a href="/produtos/listCategoria"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                  </span>
+                  <datalist id="listaModelos">
+                    {{#each categorias}}
+                    <option data-value="{{id}}" value="{{nome}}"></option>
+                    {{else}}
+                    <option value="0">Nenhuma categoria registrada</option>
+                    {{/each}}
+                  </datalist>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="position: relative;" class="modal-footer">
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+          <button style="position: absolute;" type="button" onclick="return validarFormModelo('adicionar')" class="salvar btn btn-primary">Salvar</button>
+          <button type="button" onclick="return validarFormModelo('editar')" class="editar btn btn-primary">Editar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

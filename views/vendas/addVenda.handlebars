@@ -1,0 +1,169 @@
+<div style="background: white;">
+  <form name="formVenda" id="formVenda" method="post">
+    <div class="">
+      <div class="modal-header">
+        <h4 class="modal-title">Adicionar Venda</h4>
+      </div>
+      <div class="modal-body">
+        <div class="box-body">
+          <div class="row">
+            <div class="col-xs-5">
+              <div class="input-group">
+                <input class="form-control" type="search" id="cliente" name="pessoaId" list="listaCliente" placeholder="Selecione um Cliente"/>
+                <span class="input-group-btn">
+                  <a href="/pessoas/listPessoa"><button title="Adicionar Cliente" type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                </span>
+                <datalist id="listaCliente">
+                  {{#each clientes}}
+                  <option data-value="{{id}}" value="{{nome}}"></option>
+                  {{else}}
+                  <option data-value="0" value="Nenhum cliente registrado"></option>
+                  {{/each}}
+                </datalist>
+              </div>
+            </div>
+            <div class="col-xs-3">
+              <div class="input-group">
+                <span class="input-group-addon">Data</span>
+                <input class="inputData form-control" type="date" name="dataVenda" id="dataVenda" value="">
+              </div>
+            </div>
+            <div class="col-xs-3">
+              <div class="input-group">
+                <input type="hidden" name="usuarioId" value="{{user.id}}">
+                <span class="input-group-addon">Usuário: </span>
+                <input class="form-control" type="text" name="usuario" id="usuario" value="{{user.nome}}" disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                  <li class="active"><a href="#tab_itens" data-toggle="tab">Itens</a></li>
+                  <li><a href="#tab_pagamento" data-toggle="tab">Pagamento</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="tab_itens">
+
+                    <table id="tabelaItens" class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Produto</th>
+                          <th>Quantidade</th>
+                          <th>Valor</th>
+                          <th>SubTotal</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="linha">
+                          <td id="tdItens">
+                            <div class="input-group">
+                              <input class="item form-control" type="search" name="produtos[]" list="listaProdutos" placeholder="Selecione um Produto"/>
+                              <span class="input-group-btn">
+                                <a href="/produtos/listProduto"><button title="Adicionar Produto" type="button" class="btn btn-primary btn-flat">Novo Produto</button></a>
+                              </span>
+                              <datalist id="listaProdutos">
+                                {{#each produtos}}
+                                <option data-valor="{{valorUnitario}}" data-id="{{id}}" value="{{descricao}}"></option>
+                                {{else}}
+                                <option data-value="0" value="Nenhum produto registrado"></option>
+                                {{/each}}
+                              </datalist>
+                            </div>
+                          </td>
+                          <td id="tdQuant">
+                            <div class="input-group">
+                              <input type="number" class="quantidade form-control" name="quantidade[]" min="1" value="1">
+                            </div>
+                          </td>
+                          <td id="tdValor">
+                            <div class="input-group">
+                              <span class="input-group-addon">R$</span>
+                              <input class="money valorUnitario form-control" id="valorUnitario[]" type="text" name="valorUnitario" value="0.00">
+                            </div>
+                          </td>
+                          <td id="tdTotal">
+                            <div class="input-group">
+                              <span class="input-group-addon">R$</span>
+                              <input class="money form-control" type="text" name="subTotal[]" value="0.00">
+                            </div>
+                          </td>
+                          <td id="tdAcao"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="row">
+                      <div class="col-xs-3">
+                        <div class="input-group">
+                          <span style="background: #367FA9; color: white;" class="input-group-addon">Desconto: R$</span>
+                          <input class="money form-control" type="text" name="desconto" id="desconto" value="0.00" size="5">
+                        </div>
+                        <div class="input-group">
+                          <span style="background: #367FA9; color: white;" class="input-group-addon">Total: R$</span>
+                          <input class="money form-control" type="text" name="valorTotal" id="total" value="0.00" size="5">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="tab_pagamento">
+                    <div class="box-body">
+                      <div class="row">
+                        <div class="col-xs-3">
+                          <span>Condição de Pagamento</span>
+                          <select id="formaPagamento" name="formaPagamento" class="form-control">
+                            <option value='Vista'> À Vista </option>
+                            <option value='Prazo'> A Prazo </option>
+                          </select>
+                        </div>
+                        <div class="col-xs-3">
+                          <span>Quantidade de Parcelas</span>
+                          <input type="number" class="form-control" id="parcelas" name="parcelas" min="1" value="1">
+                        </div>
+                        <div style="margin-top: 2%;" class="col-xs-3">
+                          <button type="button" id="addParcelas" class="btn btn-primary">Adicionar</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- tabela de parcelas -->
+
+                    <table id="tabelaParcelas" class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Parcelas</th>
+                          <th>Vencimento</th>
+                          <th>Valor</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="position: relative;" class="modal-footer">
+        <a href="/vendas/listVenda">
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+        </a>
+        <button type="button" id="salvarVenda" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+
+
+
+

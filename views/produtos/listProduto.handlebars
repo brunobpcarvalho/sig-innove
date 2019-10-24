@@ -1,0 +1,184 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <div class="box-body">
+          <div  class="form-row">
+            <div class="col-xs-1">
+              <h1 class="box-title">Produtos</h1>
+            </div>
+            <div class="col-xs-10">
+            </div>
+            <div class="col-xs-1">
+              <button type="button" class="add btn btn-primary"
+              data-ativo="Ativo"
+              data-unidade="unitario"
+              data-toggle="modal" data-target="#modalProduto">
+              Adicionar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+      <table id="tabelaProdutos" class="tbl table table-striped">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Unidade de Medida</th>
+            <th>Fabricante</th>
+            <th>Modelo</th>
+            <th>Valor Unitário</th>
+            <th>Data de Inclusão</th>
+            <th>Ativo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each produtos}}
+          <tr>
+            <td>{{id}}</td>
+            <td>{{descricao}}</td>
+            <td>{{unidadeMedida}}</td>
+            <td>{{fabricante.nome}}</td>
+            <td>{{modelo.descricao}}</td>
+            <td>{{valorUnitario}}</td>
+            <td>{{#formatDate createdAt}}{{/formatDate}}</td>
+            <td>{{ativo}}</td>
+            <td class="acao">
+              <div class="toolbar-actions">
+                <div class="btn-group">
+                  <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalProduto"
+                  data-id="{{id}}"
+                  data-descricao="{{descricao}}"
+                  data-unidade="{{unidadeMedida}}"
+                  data-fabricante="{{fabricante.nome}}"
+                  data-modelo="{{modelo.descricao}}"
+                  data-valor="{{valorUnitario}}"
+                  data-ativo="{{ativo}}">
+                  <i class="fa fa-edit"></i></button>
+                </div>
+                <div class="btn-group">
+                  <form action="/produtos/listProduto/deletar" method="post">
+                    <input type="hidden" name="id" value="{{id}}">
+                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Unidade de Medida</th>
+            <th>Fabricante</th>
+            <th>Modelo</th>
+            <th>Valor Unitário</th>
+            <th>Data de Inclusão</th>
+            <th>Ativo</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ------------------------        MODAL         ------------------------ -->
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalProduto">
+  <form name="formProduto" id="formProduto" method="post">
+    <input type="hidden" name="id" id="id" value="{{id}}">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Adicionar Produto</h4>
+        </div>
+
+        <div class="modal-body">
+          <div class="box-body">
+            <div class="row">
+              <div class="col-xs-8">
+                <span>Descrição</span>
+                <input type="text" class="form-control" name="descricao" id="descricao">
+              </div>
+              <div class="col-xs-4">
+                <span>Unidade de Medida</span>
+                <select id="unidadeMedida" name="unidadeMedida" class="form-control">
+                  <option value='unitario'> Unitário </option>
+                  <option value='frasco'> Frasco </option>
+                  <option value='kg'> Quilograma </option>
+                  <option value='g'> Grama </option>
+                  <option value='mL'> Mililitro </option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div style="margin-top: 2%;" class="col-xs-6">
+                <span>Fabricante</span>
+                <div class="input-group">
+                  <input class="form-control" type="search" id="fabricante" name="fabricante" list="listaFabricantes" placeholder="Selecione um Fabricante"/>
+                  <span class="input-group-btn">
+                    <a href="/produtos/listFabricante"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                  </span>
+                  <datalist id="listaFabricantes">
+                    {{#each fabricantes}}
+                    <option data-value="{{id}}" value="{{nome}}"></option>
+                    {{else}}
+                    <option data-value="0" value="Nenhum fabricante registrado"></option>
+                    {{/each}}
+                  </datalist>
+                </div>
+              </div>
+              <div style="margin-top: 2%;" class="col-xs-6">
+                <span>Modelo</span>
+                <div class="input-group">
+                  <input class="form-control" type="search" id="modelo" name="modelo" list="listaModelos" placeholder="Selecione um Modelo"/>
+                  <span class="input-group-btn">
+                    <a href="/produtos/listModelo"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                  </span>
+                  <datalist id="listaModelos">
+                    {{#each modelos}}
+                    <option data-value="{{id}}" value="{{descricao}}"></option>
+                    {{else}}
+                    <option data-value="0" value="Nenhum modelo registrado"></option>
+                    {{/each}}
+                  </datalist>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 2%;" class="row">
+              <div class="col-xs-4">
+                <span>Valor Unitário</span>
+                <input class="money form-control" type="text" name="valorUnitario" id="valorUnitario" value="">
+              </div>
+              <div class="col-xs-6">
+
+              </div>
+              <div class="col-xs-2">
+                <span>Ativo</span>
+                <select id="ativo" name="ativo" class="form-control">
+                  <option value='Ativo'> SIM </option>
+                  <option value='Inativo'> NÃO </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="position: relative;" class="modal-footer">
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+          <button style="position: absolute;" type="button" onclick="return validarFormProduto('adicionar')" class="salvar btn btn-primary">Salvar</button>
+          <button type="button" onclick="return validarFormProduto('editar')" class="editar btn btn-primary">Editar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

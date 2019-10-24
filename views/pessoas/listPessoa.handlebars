@@ -1,0 +1,299 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <div class="box-body">
+          <div class="form-row">
+
+            <div class="col-xs-1">
+              <h1 class="box-title">Pessoas</h1>
+            </div>
+
+            <div class="col-xs-10">
+
+            </div>
+
+            <div class="col-xs-1">
+              <button type="button" class="add btn btn-primary"
+              data-tipo="Fisica"
+              data-funcao="Cliente"
+              data-ativo="Ativo"
+              data-toggle="modal" data-target="#modalPessoa">
+              Adicionar
+             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+      <table id="tabelaPessoas" class="tbl table table-striped">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF/CNPJ</th>
+            <th>Tipo</th>
+            <th>Funcao</th>
+            <th>Telefone</th>
+            <th>Data de Inclusão</th>
+            <th>Ativo</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each pessoas}}
+          <tr>
+            <td>{{nome}}</td>
+            <td>{{cpf_cnpj}}</td>
+            <td>{{tipo}}</td>
+            <td>{{funcao}}</td>
+            <td>{{tel1}}</td>
+            <td>{{#formatDate createdAt}}{{/formatDate}}</td>
+            <td>{{ativo}}</td>
+            <td>
+              <div class="toolbar-actions">
+                <div class="btn-group">
+                  <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalPessoa"
+                  data-id="{{id}}"
+                  data-nome="{{nome}}"
+                  data-tipo="{{tipo}}"
+                  data-funcao="{{funcao}}"
+                  data-cpf_cnpj="{{cpf_cnpj}}"
+                  data-ie="{{ie}}"
+                  data-razao_social="{{razao_social}}"
+                  data-nome_mae="{{nome_mae}}"
+                  data-cep="{{endereco.cep}}"
+                  data-rua="{{endereco.rua}}"
+                  data-numero="{{endereco.numero}}"
+                  data-bairro="{{endereco.bairro}}"
+                  data-cidade="{{endereco.cidade}}"
+                  data-uf="{{endereco.uf}}"
+                  data-tel1="{{tel1}}"
+                  data-tel2="{{tel2}}"
+                  data-email="{{email}}"
+                  data-ativo="{{ativo}}">
+                  <i class="fa fa-edit"></i></button>
+                </div>
+                <div class="btn-group">
+                  <form action="/pessoas/listPessoa/deletar" method="post">
+                    <input type="hidden" name="id" value="{{id}}">
+                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Nome</th>
+            <th>CPF/CNPJ</th>
+            <th>Tipo</th>
+            <th>Funcao</th>
+            <th>Telefone</th>
+            <th>Data de Inclusão</th>
+            <th>Ativo</th>
+            <th>Ação</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ------------------------         MODAL         ------------------------ -->
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalPessoa">
+  <form name="formPessoa" id="formPessoa" method="post">
+    <input type="hidden" name="id" id="id" value="{{id}}">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Adicionar Pessoa</h4>
+        </div>
+        <div class="modal-body">
+          <div class="box-body">
+            <div class="row">
+              <div class="col-xs-3">
+                <span>Física/Jurídica</span>
+                <select id="tipo" name="tipo" class="form-control">
+                  <option value='Fisica'> Física </option>
+                  <option value='Juridica'> Jurídica </option>
+                </select>
+              </div>
+              <div class="col-xs-9">
+                <span>Nome</span>
+                <input type="text" class="form-control" name="nome" id="nome">
+              </div>
+            </div>
+            <div style="margin-top: 2%;" class="row">
+              <div class="col-xs-3">
+                <span>CPF/CNPJ</span>
+                <input type="text" class="form-control" name="cpf_cnpj" id="cpf_cnpj">
+              </div>
+              <div class="col-xs-2">
+                <span>Ativo</span>
+                <select id="ativo" name="ativo" class="form-control">
+                  <option value='Ativo'> SIM </option>
+                  <option value='Inativo'> NÃO </option>
+                </select>
+              </div>
+              <div class="col-xs-2">
+                <span>Função</span>
+                <select id="funcao" name="funcao" class="form-control">
+                  <option value='Cliente'> Cliente </option>
+                  <option value='Fornecedor'> Fornecedor </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-12">
+                <!-- Custom Tabs -->
+                <div class="nav-tabs-custom">
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab_endereco" data-toggle="tab">Endereço</a></li>
+                    <li><a href="#tab_contato" data-toggle="tab">Contato</a></li>
+                    <li><a href="#tab_fiscal" data-toggle="tab">Fiscal</a></li>
+                  </ul>
+                  <div style="border-color: black;" class="tab-content">
+                    <div class="tab-pane active" id="tab_endereco">
+                      <div class="box-body">
+                        <div class="row">
+                          <div class="form-group col-md-2">
+                            <span>CEP</span>
+                            <input class="form-control" name="cep" type="text" id="cep" value="" size="10" maxlength="9" onblur="pesquisacep(this.value);" />
+                          </div>
+                          <div class="form-group col-md-8">
+                            <span>Rua</span>
+                            <input class="form-control" name="rua" type="text" id="rua" size="60" />
+                          </div>
+                          <div class="form-group col-md-2">
+                            <span>N°</span>
+                            <input class="form-control" name="numero" type="text" id="numero" size="4" />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group col-md-6">
+                            <span>Bairro</span>
+                            <input class="form-control" name="bairro" type="text" id="bairro" size="30" />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <span>Cidade</span>
+                            <input class="form-control" name="cidade" type="text" id="cidade" size="40" />
+                          </div>
+                          <div class="form-group col-md-2">
+                            <span>Estado</span>
+                            <select id="uf" name="uf" class="form-control">
+                              <option value='selecione'>Selecione</option>
+                              <option value='AC'> AC </option>
+                              <option value='AL'> AL </option>
+                              <option value='AP'> AP </option>
+                              <option value='AM'> AM </option>
+                              <option value='BA'> BA </option>
+                              <option value='CE'> CE </option>
+                              <option value='DF'> DF </option>
+                              <option value='ES'> ES </option>
+                              <option value='GO'> GO </option>
+                              <option value='MA'> MA </option>
+                              <option value='MT'> MT </option>
+                              <option value='MS'> MS </option>
+                              <option value='MG'> MG </option>
+                              <option value='PA'> PA </option>
+                              <option value='PB'> PB </option>
+                              <option value='PR'> PR </option>
+                              <option value='PE'> PE </option>
+                              <option value='PI'> PI </option>
+                              <option value='RJ'> RJ </option>
+                              <option value='RN'> RN </option>
+                              <option value='RS'> RS </option>
+                              <option value='RO'> RO </option>
+                              <option value='RO'> RR </option>
+                              <option value='RO'> SC </option>
+                              <option value='RO'> SP </option>
+                              <option value='RO'> SE </option>
+                              <option value='RO'> TO </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Contato -->
+                    <div class="tab-pane" id="tab_contato">
+                      <div class="box-body">
+                        <div class="row">
+                          <div class="col-xs-10">
+                            <span>Email</span>
+                            <input type="email" class="form-control" id="email" name="email">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="box-body">
+                        <div class="row">
+                          <div class="col-xs-4">
+                            <span>Telefone</span>
+                            <input type="text" class="form-control" id="tel1" name="tel1">
+                          </div>
+                          <div class="col-xs-4">
+                            <span>Celular</span>
+                            <input type="text" class="form-control" id="tel2" name="tel2">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Fiscal -->
+                    <div style="position: relative;" class="tab-pane fade" id="tab_fiscal">
+
+                      <div class="position-relative" id="Fisica">
+                        <div class="box-body">
+                          <div class="form-row">
+                            <div class="col-xs-8">
+                              <span>Nome da Mãe</span>
+                              <input type="text" class="form-control" id="nome_mae" name="nome_mae">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style="position: absolute; top: 0;" id="Juridica">
+                        <div class="box-body">
+                          <div class="form-row">
+                            <div class="col-xs-4">
+                              <span>IE</span>
+                              <input type="text" class="form-control" size="12" id="ie" name="ie">
+                            </div>
+                            <div class="col-xs-8">
+                              <span>Razão Social</span>
+                              <input type="text" class="form-control" size="60" id="razao_social" name="razao_social">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.tab-pane -->
+                  </div>
+                  <!-- /.tab-content -->
+                </div>
+                <!-- nav-tabs-custom -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="position: relative;" class="modal-footer">
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+          <button style="position: absolute;" type="button" onclick="return validarFormPessoa('adicionar')" class="salvar btn btn-primary">Salvar</button>
+          <button type="button" onclick="return validarFormPessoa('editar')" class="editar btn btn-primary">Editar</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+  </form>
+</div>

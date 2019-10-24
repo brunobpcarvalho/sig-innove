@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <div class="box-body">
+          <div class="form-row">
+            <div class="col-xs-1">
+              <h1 class="box-title">Vendas</h1>
+            </div>
+            <div class="col-xs-9">
+            </div>
+            <div class="col-xs-2">
+              <a href="/vendas/addVenda"><button type="button" class="btn btn-primary"> Nova Venda </button></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body">
+        <table id="tabelaVenda" class="tbl table table-striped">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cliente</th>
+              <th>Usuario</th>
+              <th>Data</th>
+              <th>Valor</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each vendas}}
+            <tr>
+              <td>{{id}}</td>
+              <td>{{pessoa.nome}}</td>
+              <td>{{usuario.nome}}</td>
+              <td>{{#formatDate dataVenda}}{{/formatDate}}</td>
+              <td>{{valorTotal}}</td>
+              <td class="acao">
+                <div class="toolbar-actions">
+                  <div class="btn-group">
+                    <a href="/vendas/listVenda/edit/{{id}}">
+                      <button title="Gerar Finaceiro" type="submit" name="button" class="btn btn-primary"><i class="fa fa-dollar"></i></button>
+                    </a>
+                  </div>
+                  <div class="btn-group">
+                    <a href="/vendas/listVenda/edit/{{id}}">
+                      <button title="Editar" type="button" class="edit btn btn-primary"><i class="fa fa-edit"></i></button>
+                    </a>
+                  </div>
+
+                  <div class="btn-group">
+                    <form action="/vendas/listVenda/deletar" method="post">
+                      <input type="hidden" name="id" value="{{id}}">
+                      <button title="Excluir" type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                    </form>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Código</th>
+              <th>Cliente</th>
+              <th>Usuario</th>
+              <th>Data</th>
+              <th>Valor</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
