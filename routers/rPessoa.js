@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 var db = require("../config/conexao");
-const Pessoa = require("../models/pessoa");
-const Endereco = require("../models/endereco");
+const Pessoa = require("../models/Pessoa");
+const Endereco = require("../models/Endereco");
 const {Admin} = require("../helpers/Admin")
 /*----------------------------------------------------------------------------*/
 
