@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const ContasPagar = require("../models/ContasPagar")
 //const Venda = require("../models/Venda")
-const Pessoa = require("../models/pessoa")
+const Pessoa = require("../models/Pessoa")
 
 exports.index = (req, res) => {
 	ContasPagar.findAll({include: [{ model: Pessoa, as: 'pessoa' }]}).then((dadosContaPagar) => {
