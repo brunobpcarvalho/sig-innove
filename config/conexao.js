@@ -1,9 +1,6 @@
 const Sequelize = require('sequelize');
-const conexao = new Sequelize('dbinnove', 'postgres', '123456', {
-  host: 'localhost',
-  dialect: 'postgres',
-  logging: false
-});
+const config = require("./database.js")
+const conexao = new Sequelize(config);
 
 conexao.authenticate().then(() => {
   console.log("Conectado ao Postgres");
