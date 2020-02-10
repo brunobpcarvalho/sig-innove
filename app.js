@@ -4,10 +4,17 @@ const router = express.Router();
 const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
-const rPessoa = require("./routers/rPessoa");
-const rUsuario = require("./routers/rUsuario");
-const rProduto = require("./routers/rProduto");
-const rVenda = require("./routers/rVenda");
+const Index = require("./routes/Index")
+const Categoria = require("./routes/Categoria");
+const Fabricante = require("./routes/Fabricante");
+const Modelo = require("./routes/Modelo");
+const Pessoa = require("./routes/Pessoa");
+const Usuario = require("./routes/Usuario");
+const Produto = require("./routes/Produto");
+const Venda = require("./routes/Venda");
+const ContasReceber = require("./routes/ContasReceber");
+const ContasPagar = require("./routes/ContasPagar");
+const Empresa = require("./routes/Empresa");
 const path = require("path");
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -15,7 +22,6 @@ const moment = require('moment');
 const passport = require("passport");
 require("./config/auth")(passport);
 
-const {User} = require("./helpers/User")
 /*----------------------------------------------------------------------------*/
 
 //Configurações
@@ -45,34 +51,55 @@ const {User} = require("./helpers/User")
 
 	//handlebars
 	app.engine('handlebars', handlebars({
-    defaultLayout: 'main',
-    helpers: {
-      formatDate: (date) => {
-      return moment(date).format('DD/MM/YYYY')
-      }
-    }
-  }));
-  app.set('view engine', 'handlebars');
+		defaultLayout: 'main',
+		helpers: {
+			formatDate: (date) => {
+				return moment(date).format('DD/MM/YYYY')
+			},
+			ifCond: (v1, v2, options) => {
+				if(v1 === v2) {
+					return options.fn(this);
+				}
+				return options.inverse(this);
+			}
+		}
+	}));
+	app.set('view engine', 'handlebars');
 
 	var conexao = require("./config/conexao");
 
 	//Public
 	app.use(express.static(path.join(__dirname, "public")));
 
-/*----------------------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------*/
 
 //Rotas
-	app.get('/', (req, res) => {
-		res.render("usuarios/login");
-	})
-	app.get('/index', User, (req, res) => {
-		res.render("index");
-	})
+app.get('/', (req, res) => {
+	res.render("usuarios/login");
+})
 
-	app.use('/pessoas', rPessoa);
-	app.use('/usuarios', rUsuario);
-	app.use('/produtos', rProduto);
-	app.use('/vendas', rVenda);
+app.use(Index)
+app.use('/pessoas', Pessoa);
+app.use('/usuarios', Usuario);
+app.use('/produtos', Produto);
+app.use('/vendas', Venda);
+app.use('/produtos', Categoria);
+app.use('/produtos', Fabricante);
+app.use('/produtos', Modelo);
+app.use('/contas-receber', ContasReceber);
+app.use('/contas-pagar', ContasPagar);
+app.use('/empresa', Empresa);
+
+app.use((req, res, next) => {
+	const erro = new Error('Not found')
+	erro.status = 404
+	next(erro)
+})
+
+app.use((error, req, res, next) => {
+	res.status(error.status || 500)
+	res.render('error', { error: error });
+})
 
 /*----------------------------------------------------------------------------*/
 

@@ -10,4 +10,5 @@ const Categoria = db.define('categorias', {
   }
 })
 
+//Categoria.sync({force: true})
 module.exports = Categoria;

@@ -1,8 +1,10 @@
 <ul class="sidebar-menu" data-widget="tree">
-  <li class="header">MENU</li>
+  <li>
+    <a href="/vendas/list-vendas"><ion-icon src="/icons/ios-cart.svg"></ion-icon> <span> Vendas </span> </a>
+  </li>
 
   <li>
-    <a href="/vendas/listVenda"><i class="fa fa-shopping-cart"></i> <span> Vendas </span> </a>
+    <a href="#"><i class="fa fa-cart-arrow-down"></i> <span> Compras </span> </a>
   </li>
 
   <li class="treeview">
@@ -13,7 +15,7 @@
       </span>
     </a>
     <ul class="treeview-menu">
-      <li><a href="/pessoas/listPessoa"><i class="fa fa-user"></i> Pessoas </a></li>
+      <li><a href="/pessoas/list-pessoas"><ion-icon src="/icons/ios-people.svg"></ion-icon> Pessoas </a></li>
       <li class="treeview">
         <a href="#">
           <i class="fa fa-archive"></i> <span> Produtos</span>
@@ -22,10 +24,10 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="/produtos/listCategoria"><i class="fa fa-circle-o text-blue"></i> Categorias </a></li>
-          <li><a href="/produtos/listFabricante"><i class="fa fa-circle-o text-blue"></i> Fabricantes </a></li>
-          <li><a href="/produtos/listModelo"><i class="fa fa-circle-o text-blue"></i> Modelos </a></li>
-          <li><a href="/produtos/listProduto"><i class="fa fa-circle-o text-blue"></i> Produtos </a></li>
+          <li><a href="/produtos/list-categorias"><i class="fa fa-circle-o text-blue"></i> Categorias </a></li>
+          <li><a href="/produtos/list-fabricantes"><i class="fa fa-circle-o text-blue"></i> Fabricantes </a></li>
+          <li><a href="/produtos/list-modelos"><i class="fa fa-circle-o text-blue"></i> Modelos </a></li>
+          <li><a href="/produtos/list-produtos"><i class="fa fa-circle-o text-blue"></i> Produtos </a></li>
         </ul>
       </li>
     </ul>
@@ -39,7 +41,21 @@
       </span>
     </a>
     <ul class="treeview-menu">
-      <li><a href="#"><i class="fa  fa-line-chart"></i> Contas a Receber </a></li>
+      <li><a href="/contas-receber/index"><ion-icon src="/icons/ios-trending-up.svg"></ion-icon> Contas a Receber </a></li>
+      <li><a href="/contas-pagar/index"><ion-icon src="/icons/ios-trending-down.svg"></ion-icon> Contas a Pagar </a></li>
+    </ul>
+  </li>
+  
+  <li class="treeview">
+    <a href="#">
+      <i class="fa fa-file-text"></i> <span> Relatorios </span>
+      <span class="pull-right-container">
+        <i class="fa fa-angle-left pull-right"></i>
+      </span>
+    </a>
+    <ul class="treeview-menu">
+      <li><a href="/pessoas/list-pessoas/relatorio" target="_blank"><ion-icon src="/icons/ios-people.svg"></ion-icon> Pessoas </a></li>
+      <li><a href="/contas-pagar/index"><ion-icon src="/icons/ios-trending-down.svg"></ion-icon> Contas a Pagar </a></li>
     </ul>
   </li>
 
@@ -51,7 +67,8 @@
       </span>
     </a>
     <ul class="treeview-menu">
-      <li><a href="/usuarios/listUsuario"><i class="fa fa-users"></i> Usuários </a></li>
+      <li><a href="/usuarios/index"><ion-icon src="/icons/ios-people.svg"></ion-icon> Usuários </a></li>
+      <li><a href="/empresa/index"><ion-icon src="/icons/ios-business.svg"></ion-icon> Dados da Empresa </a></li>
     </ul>
   </li>
 </ul>

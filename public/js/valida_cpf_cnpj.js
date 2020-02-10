@@ -256,7 +256,7 @@ function formata_cpf_cnpj( valor ) {
 $(function(){
     // ## EXEMPLO 3
     // Aciona a validação e formatação ao sair do input
-    $('#cpf_cnpj').blur(function(){
+    /*$('#cpf_cnpj').blur(function(){
         // O CPF ou CNPJ
         var cpf_cnpj = $(this).val();
         // Testa a validação e formata se estiver OK
@@ -264,11 +264,11 @@ $(function(){
             $(this).val( formata_cpf_cnpj( cpf_cnpj ) );
         } else {
           Swal.fire({
-            type: 'error',
+            icon: 'error',
             title: 'Erro ...',
             text: "CPF ou CNPJ Inválido",
           })
           $("#cpf_cnpj").val('');
         }
-    });
+    });*/
 });

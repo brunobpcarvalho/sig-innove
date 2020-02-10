@@ -1,7 +1,7 @@
 <div id="divLogin">
 <div class="divLoginBox login-box">
   {{#if error}}
-  <div style="color: white; text-align: center;" class="alert alert-danger-disabled alert-dismissible">
+  <div class="alert alert-danger-disabled alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
     {{error}}
   </div>
@@ -13,7 +13,7 @@
     <a style="color: white" href=""><b>Sig</b>Innove</a>
   </div>
   <div class="divLoginBody login-box-body">
-    <p style="color: white;" class="login-box-msg">Faça login para iniciar sua sessão!</p>
+    <p class="login-box-msg">Faça login para iniciar sua sessão!</p>
 
     <form action="/usuarios/login" method="post">
       <div class="form-group has-feedback">

@@ -1,7 +1,7 @@
 module.exports = {
   User: function(req, res, next){
     if(req.isAuthenticated()){
-      if(req.user.nivelAcesso == 'Usuario' || req.user.nivelAcesso == 'Estoquista' || req.user.nivelAcesso == 'Gerente' || req.user.nivelAcesso == 'Administrador'){
+      if(req.user.nivelAcesso == 'Usuario' || req.user.nivelAcesso == 'Administrador'){
         return next();
       }else{
         req.flash("msg_erro", "Voce deve não tem permissão para acessar essa Página");

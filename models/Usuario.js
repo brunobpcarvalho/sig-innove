@@ -2,9 +2,6 @@ const Sequelize = require('sequelize');
 var db = require("../config/conexao");
 
 const Usuario = db.define('usuarios', {
-  nome: {
-    type: Sequelize.STRING
-  },
   usuario:{
     type: Sequelize.STRING
   },

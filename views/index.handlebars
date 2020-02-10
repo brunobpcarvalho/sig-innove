@@ -1,61 +1,165 @@
-<div class="box box-danger">
-  <div class="box-header with-border">
-    <h3 class="box-title">Acesso Rápido</h3>
-    <div class="box-tools pull-right">
-      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-      </button>
-    </div>
-  </div>
-  <div class="box-body">
-    <div class="row">
-      <div class="col-md-3 col-sm-6 col-xs-12">
-        <a href="/pessoas/listPessoa">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-user"></i></span>
-            <div class="info-box-content">
-              <span style="color:black;" class="info-box-number">Pessoas</span>
-            </div>
-          </div>
-        </a>
-      </div>
+<!-- 
+	totalClientesCadastrados
+	totalFornecedoresCadastrados
+	totalProdutosCadastrados
+	vendasRealizadas
+	recebimentosRealizados
+	pagamentosRealizados
+	valorTotalEmEstoque
+	valorRecebimentosAnual
+	valorPagamentosAnual
+	valorRecebidoNoMes
+	valorAReceberNoMes
+	valorTotalVendas
+	porcentagemRecebido
+	diferencaRecebimento
+	valorPagoNoMes
+	valorAPagarNoMes
+	porcentagemPago
+	diferencaPagamento 
+-->
+<div class="row">
+	<div class="col-md-8">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title">Financeiro</h3>
 
-      <div class="col-md-3 col-sm-6 col-xs-12">
-        <a href="/produtos/listProduto">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-archive"></i></span>
-            <div class="info-box-content">
-              <span style="color:black;" class="info-box-number">Produtos</span>
-            </div>
-          </div>
-        </a>
-      </div>
+				<div class="box-tools pull-right">
+					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+					</button>
+				</div>
+			</div>
+			<div class="box-body no-padding">
+				<div class="box-body">
 
-      <div class="col-md-3 col-sm-6 col-xs-12">
-        <a href="#">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-line-chart"></i></span>
-            <div class="info-box-content">
-              <span style="color:black;" class="info-box-number">Contas a Receber</span>
-            </div>
-          </div>
-        </a>
-      </div>
+					{{#each valorRecebimentosAnual}}
+					<input class="totalMesRecebimento" data-mes="{{date_part}}"type="hidden" value="{{vlrRecebAnual}}">
+					{{/each}}
+					{{#each valorPagamentosAnual}}
+					<input class="totalMesPagamento" data-mes="{{date_part}}" type="hidden" value="{{vlrPagaAnual}}">
+					{{/each}}
+					<canvas id="myChart"></canvas>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-8 col-sm-6">
+				<div class="box box-solid">
+					<div class="box-header with-border text-center">
+						<h3 class="box-title">Recebimentos do Mês</h3>
+					</div>
+					<div class="box-body">
+						<div class="text-center">
+							<input type="text" class="knob" value="{{porcentagemRecebido}}" data-thickness="0.2" data-width="150" data-height="150"
+							data-fgColor="#3E9C31" data-readonly="true" disabled>
+							<div>
+								<h2 class="knob-span-rec">R${{valorRecebidoNoMes}}</h2>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<span class="pull-left">Valor a Receber: R${{valorAReceberNoMes}}</span><br>
+						<span class="pull-left">Diferença: R${{diferencaRecebimento}}</span>
+					</div>
+				</div>
+			</div>
+			<div class="col-4 col-sm-6">
+				<div class="box box-solid">
+					<div class="box-header with-border text-center">
+						<h3 class="box-title">Pagamentos do Mês</h3>
+					</div>
+					<div class="box-body">
+						<div class="text-center">
+							<input type="text" class="knob" value="{{porcentagemPago}}" data-thickness="0.2" data-width="150" data-height="150"
+							data-fgColor="#ED4800" data-readonly="true" disabled>
+							<div>
+								<h2 class="knob-span-pag">R${{valorPagoNoMes}}</h2>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<span class="pull-left">Valor a Pagar: R${{valorAPagarNoMes}} </span><br>
+						<span class="pull-left">Diferença: R${{diferencaPagamento}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-      <div class="col-md-3 col-sm-6 col-xs-12">
-        <a href="/vendas/listVenda">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-shopping-cart"></i></span>
-            <div class="info-box-content">
-              <span style="color:black;" class="info-box-number">Vendas</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
+	<div class="col-md-4">
+		<div class="small-box bg-yellow">
+			<div class="icon">
+				<ion-icon src="/icons/ios-cart.svg"></ion-icon>
+			</div>
+			<div class="inner">
+				<span class="info-box-text">Vendas</span>
+				<span class="info-box-number">{{vendasRealizadas}}</span>
+				<span class="info-box-text">Total: R${{valorTotalVendas}}</span>
+			</div>
+			<a class="small-box-footer" href="/vendas/list-vendas">
+				Acessar Vendas
+				<i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+
+		<div class="small-box bg-green">
+			<div class="icon">
+				<ion-icon src="/icons/ios-people.svg"></ion-icon>
+			</div>
+			<div class="inner">
+				<span class="info-box-text">Pessoas</span>
+				<span class="info-box-text">Clientes: {{totalClientesCadastrados}}</span>
+				<span class="info-box-text">Fornecedores: {{totalFornecedoresCadastrados}}</span>
+			</div>
+			<a class="small-box-footer" href="/pessoas/list-pessoas">
+				Acessar Pessoas
+				<i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+
+		<div class="small-box bg-red">
+			<div class="icon">
+				<ion-icon src="/icons/ios-archive.svg"></ion-icon>
+			</div>
+			<div class="inner">
+				<span class="info-box-text">Produtos</span>
+				<span class="info-box-text">Total Cadastrado: {{totalProdutosCadastrados}}</span>
+				<span class="info-box-text">Valor Total em Estoque: R${{#each valorTotalEmEstoque}} {{valorTotalEmEstoque}} {{/each}}</span>
+			</div>
+			<a class="small-box-footer" href="/produtos/list-produtos">
+				Acessar Produtos
+				<i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+
+		<div class="small-box bg-aqua">
+			<div class="icon">
+				<ion-icon src="/icons/ios-trending-up.svg"></ion-icon>
+			</div>
+			<div class="inner">
+				<span class="info-box-text">Contas a Receber</span>
+				<span class="info-box-number">{{recebimentosRealizados}}</span>
+				<span class="info-box-text">Total: R${{somaVenda}}</span>
+			</div>
+			<a class="small-box-footer" href="/contas-receber/index">
+				Acessar Contas a Receber
+				<i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+
+		<div class="small-box bg-yellow">
+			<div class="icon">
+				<ion-icon src="/icons/ios-trending-down.svg"></ion-icon>
+			</div>
+			<div class="inner">
+				<span class="info-box-text">Contas a Pagar</span>
+				<span class="info-box-number">{{pagamentosRealizados}}</span>
+				<span class="info-box-text">Total: R${{somaVenda}}</span>
+			</div>
+			<a class="small-box-footer" href="/produtos/list-produtos">
+				Acessar Contas a Pagar
+				<i class="fa fa-arrow-circle-right"></i>
+			</a>
+		</div>
+	</div>
 </div>
-
-
-
-
-

@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 var db = require("../config/conexao");
-const Categoria = require("./Categoria");
 
 const Modelo = db.define('modelos', {
   descricao: {
@@ -10,7 +9,5 @@ const Modelo = db.define('modelos', {
     type: Sequelize.STRING
   }
 })
-
-Modelo.belongsTo(Categoria);
-
+//Modelo.sync({force: true})
 module.exports = Modelo;

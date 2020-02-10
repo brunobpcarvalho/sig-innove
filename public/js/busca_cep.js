@@ -1,5 +1,6 @@
 function limpa_formulário_cep() {
   //Limpa valores do formulário de cep.
+  document.getElementById('cep').value=("");
   document.getElementById('rua').value=("");
   document.getElementById('bairro').value=("");
   document.getElementById('cidade').value=("");

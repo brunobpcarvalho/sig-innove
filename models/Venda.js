@@ -13,9 +13,16 @@ const Venda = db.define('vendas', {
   desconto: {
     type: Sequelize.DECIMAL(10, 2)
   },
-  formaPagamento: {
+  condicaoPagamento: {
     type: Sequelize.STRING
-  }
+  },
+  status: {
+    type: Sequelize.STRING
+  },
+  financeiro: {
+    type: Sequelize.STRING,
+    defaultValue: 'nao'
+  } 
 })
 
 Venda.belongsTo(Pessoa);

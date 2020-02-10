@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 var db = require("../config/conexao");
-const Endereco = require("./Endereco");
 
 const Pessoa = db.define('pessoas', {
   nome: {
@@ -24,20 +23,42 @@ const Pessoa = db.define('pessoas', {
   nome_mae: {
     type: Sequelize.STRING
   },
-  tel1: {
+  dataNascimento: {
+    type: Sequelize.DATEONLY
+  },
+  telefone: {
     type: Sequelize.STRING
   },
-  tel2: {
+  celular: {
     type: Sequelize.STRING
   },
   email: {
+    type: Sequelize.STRING
+  },
+  cep: {
+    type: Sequelize.STRING
+  },
+  rua: {
+    type: Sequelize.STRING
+  },
+  numero: {
+    type: Sequelize.STRING
+  },
+  bairro: {
+    type: Sequelize.STRING
+  },
+  cidade: {
+    type: Sequelize.STRING
+  },
+  uf: {
+    type: Sequelize.STRING
+  },
+  complemento: {
     type: Sequelize.STRING
   },
   ativo: {
     type: Sequelize.STRING
   }
 })
-
-Pessoa.belongsTo(Endereco);
 
 module.exports = Pessoa;
