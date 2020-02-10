@@ -1,4 +1,5 @@
 //carregando módulos
+require("dotenv").config();
 const express = require('express');
 const router = express.Router();
 const handlebars = require('express-handlebars');
