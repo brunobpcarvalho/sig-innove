@@ -9,4 +9,5 @@ const Modelo = db.define('modelos', {
     type: Sequelize.STRING
   }
 })
+Modelo.sync({force: true})
 module.exports = Modelo;
