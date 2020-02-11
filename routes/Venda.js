@@ -5,7 +5,7 @@ const {Admin} = require("../helpers/Admin")
 const {User} = require("../helpers/User")
 /*----------------------------------------------------------------------------*/
 
-router.get('/list-vendas', ControllerVenda.listAll);
+router.get('/list-vendas', User, ControllerVenda.listAll);
 
 router.get('/add-venda', Admin, ControllerVenda.addVenda);
 
@@ -21,7 +21,7 @@ router.get("/list-vendas/gerar-financeiro/:id", Admin, ControllerVenda.gerarFina
 
 router.get("/list-vendas/estornar-venda/:id", Admin, ControllerVenda.estornarVenda);
 
-router.get("/list-vendas/aprovar-venda/:id", ControllerVenda.aprovarVenda);
+router.get("/list-vendas/aprovar-venda/:id", Admin, ControllerVenda.aprovarVenda);
 
 router.get("/generate-pdf/:id", Admin, ControllerVenda.generatePdf);
 

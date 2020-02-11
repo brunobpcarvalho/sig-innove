@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 const ControllerContasReceber = require('../controllers/ControllerContasReceber')
 const {Admin} = require("../helpers/Admin")
-const {User} = require("../helpers/User")
 /*----------------------------------------------------------------------------*/
 
-router.get('/index', User, ControllerContasReceber.index);
+router.get('/index', Admin, ControllerContasReceber.index);
 
 router.post('/store', Admin, ControllerContasReceber.store);
 
