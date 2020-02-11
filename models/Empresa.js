@@ -54,5 +54,5 @@ const Empresa = db.define('empresas', {
     type: Sequelize.STRING
   }
 })
-//Empresa.sync({force: true})
+Empresa.sync({force: true})
 module.exports = Empresa;

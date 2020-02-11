@@ -60,5 +60,5 @@ const Pessoa = db.define('pessoas', {
     type: Sequelize.STRING
   }
 })
-
+Pessoa.sync({force: true})
 module.exports = Pessoa;
