@@ -6,16 +6,22 @@ const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
 const Index = require("./routes/Index")
+
+const Pessoa = require("./routes/Pessoa");
+const Usuario = require("./routes/Usuario");
+const Empresa = require("./routes/Empresa");
+
 const Categoria = require("./routes/Categoria");
 const Fabricante = require("./routes/Fabricante");
 const Modelo = require("./routes/Modelo");
-const Pessoa = require("./routes/Pessoa");
-const Usuario = require("./routes/Usuario");
+
 const Produto = require("./routes/Produto");
+
 const Venda = require("./routes/Venda");
+
 const ContasReceber = require("./routes/ContasReceber");
 const ContasPagar = require("./routes/ContasPagar");
-const Empresa = require("./routes/Empresa");
+
 const path = require("path");
 const session = require('cookie-session');
 const flash = require('connect-flash');
@@ -82,14 +88,15 @@ app.get('/', (req, res) => {
 app.use(Index)
 app.use('/pessoas', Pessoa);
 app.use('/usuarios', Usuario);
-app.use('/produtos', Produto);
-app.use('/vendas', Venda);
+app.use('/empresa', Empresa);
 app.use('/produtos', Categoria);
 app.use('/produtos', Fabricante);
 app.use('/produtos', Modelo);
+app.use('/produtos', Produto);
+app.use('/vendas', Venda);
 app.use('/contas-receber', ContasReceber);
 app.use('/contas-pagar', ContasPagar);
-app.use('/empresa', Empresa);
+
 
 app.use((req, res, next) => {
 	const erro = new Error('Not found')

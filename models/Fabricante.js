@@ -9,6 +9,4 @@ const Fabricante = db.define('fabricantes', {
     type: Sequelize.STRING
   }
 })
-Fabricante.sync({force: true})
-
 module.exports = Fabricante;
