@@ -6,9 +6,7 @@ if (process.env.DATABASE_URL) {
 	conexao = new Sequelize(process.env.DATABASE_URL, {
 		dialect:  'postgres',
 		protocol: 'postgres',
-		port:     match[4],
-		host:     match[3],
-      logging:  false //false
+        logging: false 
   })
 } else {
 	conexao = new Sequelize('dbinnove', 'postgres', '123456', {
