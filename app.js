@@ -6,10 +6,10 @@ const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
 const Index = require("./routes/Index")
-
+const ItensVenda = require("./models/ItensVenda.js")
+const Empresa = require("./routes/Empresa");
 const Pessoa = require("./routes/Pessoa");
 const Usuario = require("./routes/Usuario");
-const Empresa = require("./routes/Empresa");
 
 const Categoria = require("./routes/Categoria");
 const Fabricante = require("./routes/Fabricante");
