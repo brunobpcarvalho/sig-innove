@@ -9,6 +9,5 @@ const Categoria = db.define('categorias', {
     type: Sequelize.STRING
   }
 })
-
-Categoria.sync({force: true})
+Categoria.sync()
 module.exports = Categoria;

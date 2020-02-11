@@ -14,5 +14,5 @@ const Parcela = db.define('parcelas', {
   }
 })
 Parcela.belongsTo(Venda);
-Parcela.sync({force: true})
+Parcela.sync()
 module.exports = Parcela;

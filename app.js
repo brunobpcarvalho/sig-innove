@@ -14,10 +14,8 @@ const Empresa = require("./routes/Empresa");
 const Categoria = require("./routes/Categoria");
 const Fabricante = require("./routes/Fabricante");
 const Modelo = require("./routes/Modelo");
-
-const Produto = require("./routes/Produto");
-
 const Venda = require("./routes/Venda");
+const Produto = require("./routes/Produto");
 
 const ContasReceber = require("./routes/ContasReceber");
 const ContasPagar = require("./routes/ContasPagar");

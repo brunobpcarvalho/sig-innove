@@ -17,4 +17,5 @@ const ItensVenda = db.define('itens_venda', {
 
 ItensVenda.belongsTo(Venda);
 ItensVenda.belongsTo(Produto);
+ItensVenda.sync()
 module.exports = ItensVenda;

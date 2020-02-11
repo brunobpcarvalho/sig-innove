@@ -34,4 +34,5 @@ const ContasPagar = db.define('pagamento', {
 })
 
 ContasPagar.belongsTo(Pessoa);
+ContasPagar.sync()
 module.exports = ContasPagar;

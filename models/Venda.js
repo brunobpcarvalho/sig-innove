@@ -27,5 +27,5 @@ const Venda = db.define('vendas', {
 
 Venda.belongsTo(Pessoa);
 Venda.belongsTo(Usuario);
-Venda.sync({force: true})
+Venda.sync()
 module.exports = Venda;
