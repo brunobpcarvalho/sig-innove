@@ -33,6 +33,19 @@ exports.listAll = (req, res) => {
 												.then(vlrAPagarNoMes => {
 													var valorAPagarNoMes = vlrAPagarNoMes[0].sum
 													ContasPagar.count().then(pagamentosRealizados => {
+
+														if(valorRecebidoNoMes == null) {
+															valorRecebidoNoMes = 0.00
+														}
+														if(valorAReceberNoMes == null) {
+															valorAReceberNoMes = 0.00
+														}
+														if(valorPagoNoMes == null) {
+															valorPagoNoMes = 0.00
+														}
+														if(valorAPagarNoMes == null) {
+															valorAPagarNoMes = 0.00
+														}
 														var porcentagemRecebido = CalcPorcentagem(valorRecebidoNoMes, valorAReceberNoMes)
 														var diferencaRecebimento = Diferenca(valorRecebidoNoMes, valorAReceberNoMes).toFixed(2)
 
