@@ -46,6 +46,7 @@ exports.listAll = (req, res) => {
 														if(valorAPagarNoMes == null) {
 															valorAPagarNoMes = 0.00
 														}
+
 														var porcentagemRecebido = CalcPorcentagem(valorRecebidoNoMes, valorAReceberNoMes)
 														var diferencaRecebimento = Diferenca(valorRecebidoNoMes, valorAReceberNoMes).toFixed(2)
 
@@ -148,7 +149,12 @@ exports.listAll = (req, res) => {
 
 
 CalcPorcentagem = (vlrRecebidoPago, vlrReceberPagar) => {
-	return porcentagem = Math.round((vlrRecebidoPago * 100) / vlrReceberPagar)
+	if(vlrRecebidoPago == 0|| vlrReceberPagar == 0){
+		return 0
+	} else {
+		return porcentagem = Math.round((vlrRecebidoPago * 100) / vlrReceberPagar)
+	}
+	
 }
 
 Diferenca = (vlrRecebidoPago, vlrReceberPagar) => {
