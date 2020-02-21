@@ -9,8 +9,8 @@
 	<link rel="shortcut icon" type="image/x-icon" href="/icons/favicon.ico">
 	<!-- style -->
 	<link rel="stylesheet" href="/css/style.css">
-	<!-- Tell the browser to be responsive to screen width -->
-	
+	<!-- DataTables -->
+	<link rel="stylesheet" href="/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 	<!-- Bootstrap 3.3.7 -->
 	<link rel="stylesheet" href="/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
 	<!-- Font Awesome -->
@@ -110,7 +110,7 @@
 			recebimentos[i] = 0;
 		}
 	}
-	
+
 	for(var i = 0; i < meses.length; i++){
 		var sld = (recebimentos[i] + pagamentos[i]);
 		if(i > 0){
@@ -122,48 +122,48 @@
 
 	var ctx = document.getElementById('myChart').getContext('2d');
 	var chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'bar',
+		// The type of chart we want to create
+		type: 'bar',
 
-    // The data for our dataset
-    data: {
-    	labels: meses,
-    	datasets: [
-    	{
-    		label: 'Saldo',
-    		backgroundColor: 'rgb(30,144,255)',
-    		data: saldo,
-    		type: 'line',
-    		fill: false,
-    		borderColor: 'rgb(30,144,255)',
-    	},{
-    		label: 'recebimentos',
-    		backgroundColor: '#3E9C31',
-    		data: recebimentos,
-    	},{
-    		label: 'Pagamentos',
-    		backgroundColor: '#ED4800',
-    		data: pagamentos,
-    		type: 'bar'
-    	}]
-    },
+		// The data for our dataset
+		data: {
+			labels: meses,
+			datasets: [
+				{
+					label: 'Saldo',
+					backgroundColor: 'rgb(30,144,255)',
+					data: saldo,
+					type: 'line',
+					fill: false,
+					borderColor: 'rgb(30,144,255)',
+				},{
+					label: 'recebimentos',
+					backgroundColor: '#3E9C31',
+					data: recebimentos,
+				},{
+					label: 'Pagamentos',
+					backgroundColor: '#ED4800',
+					data: pagamentos,
+					type: 'bar'
+				}]
+			},
 
-    // Configuration options go here
-    options: {
-    	scales: {
-    		yAxes: [{
-    			stacked: true,
-    			ticks: {
-    				beginAtZero: true
-    			}
-    		}],
-    		xAxes: [{
-    			stacked: true
-    		}]
-    	}
-    }
-});
+			// Configuration options go here
+			options: {
+				scales: {
+					yAxes: [{
+						stacked: true,
+						ticks: {
+							beginAtZero: true
+						}
+					}],
+					xAxes: [{
+						stacked: true
+					}]
+				}
+			}
+		});
 
-	</script>
-</body>
-</html>
+		</script>
+	</body>
+	</html>

@@ -1,4 +1,4 @@
-<!-- 
+<!--
 	totalClientesCadastrados
 	totalFornecedoresCadastrados
 	totalProdutosCadastrados
@@ -16,7 +16,8 @@
 	valorPagoNoMes
 	valorAPagarNoMes
 	porcentagemPago
-	diferencaPagamento 
+	diferencaPagamento
+	lucratividade
 -->
 <div class="row">
 	<div class="col-md-8">
@@ -82,6 +83,43 @@
 					<div class="modal-footer">
 						<span class="pull-left">Valor a Pagar: R${{valorAPagarNoMes}} </span><br>
 						<span class="pull-left">Diferença: R${{diferencaPagamento}}</span>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-4 col-sm-6">
+				<div class="box box-solid">
+					<div class="box-header with-border text-center">
+						<h3 class="box-title">Lucratividade por Produto</h3>
+					</div>
+					<div class="box-body">
+						<div class="text-center">
+							<table class="table table-striped text-center">
+								<thead>
+									<tr>
+										<th></th>
+										<th>Produto</th>
+										<th>Lucratividade</th>
+									</tr>
+								</thead>
+								<tbody>
+									{{#each lucratividade}}
+									<tr>
+										<td>{{#index @index}}{{/index}}º</td>
+										<td>{{descricao}}</td>
+										<td>{{lucratividade}}</td>
+									</tr>
+									{{/each}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="box-footer text-center">
+						<a class="small-box-footer" href="/relatorios/relatorio-lucro-produto">
+							Visualizar todos
+							<i class="fa fa-arrow-circle-right"></i>
+						</a>
 					</div>
 				</div>
 			</div>

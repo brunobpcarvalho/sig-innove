@@ -31,50 +31,58 @@ exports.listAll = (req, res) => {
 												var valorPagoNoMes = vlrPagoNoMes[0].sum
 												db.query('SELECT SUM("valor") FROM pagamentos WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month, { type: db.QueryTypes.SELECT})
 												.then(vlrAPagarNoMes => {
-													var valorAPagarNoMes = vlrAPagarNoMes[0].sum
-													ContasPagar.count().then(pagamentosRealizados => {
+													db.query('SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade" FROM "produtos" ORDER BY "lucratividade" DESC LIMIT 5', { type: db.QueryTypes.SELECT})
+													.then(lucratividade => {
+														console.log(lucratividade)
+														var valorAPagarNoMes = vlrAPagarNoMes[0].sum
+														ContasPagar.count().then(pagamentosRealizados => {
 
-														if(valorRecebidoNoMes == null) {
-															valorRecebidoNoMes = 0.00
-														}
-														if(valorAReceberNoMes == null) {
-															valorAReceberNoMes = 0.00
-														}
-														if(valorPagoNoMes == null) {
-															valorPagoNoMes = 0.00
-														}
-														if(valorAPagarNoMes == null) {
-															valorAPagarNoMes = 0.00
-														}
+															if(valorRecebidoNoMes == null) {
+																valorRecebidoNoMes = 0.00
+															}
+															if(valorAReceberNoMes == null) {
+																valorAReceberNoMes = 0.00
+															}
+															if(valorPagoNoMes == null) {
+																valorPagoNoMes = 0.00
+															}
+															if(valorAPagarNoMes == null) {
+																valorAPagarNoMes = 0.00
+															}
+															var porcentagemRecebido = CalcPorcentagem(valorRecebidoNoMes, valorAReceberNoMes)
+															var diferencaRecebimento = Diferenca(valorRecebidoNoMes, valorAReceberNoMes).toFixed(2)
 
-														var porcentagemRecebido = CalcPorcentagem(valorRecebidoNoMes, valorAReceberNoMes)
-														var diferencaRecebimento = Diferenca(valorRecebidoNoMes, valorAReceberNoMes).toFixed(2)
+															var porcentagemPago = CalcPorcentagem(valorPagoNoMes, valorAPagarNoMes)
+															var diferencaPagamento = Diferenca(valorPagoNoMes, valorAPagarNoMes).toFixed(2)
 
-														var porcentagemPago = CalcPorcentagem(valorPagoNoMes, valorAPagarNoMes)
-														var diferencaPagamento = Diferenca(valorPagoNoMes, valorAPagarNoMes).toFixed(2)
-
-														Venda.sum('valorTotal').then(vlrTotVendas => {
-															var valorTotalVendas = parseFloat(vlrTotVendas).toFixed(2);
-															res.render("index", {
-															totalClientesCadastrados: totalClientesCadastrados, 
-															totalFornecedoresCadastrados: totalFornecedoresCadastrados, 
-															totalProdutosCadastrados: totalProdutosCadastrados, 
-															vendasRealizadas: vendasRealizadas, 
-															recebimentosRealizados: recebimentosRealizados, 
-															pagamentosRealizados: pagamentosRealizados, 
-															valorTotalEmEstoque: valorTotalEmEstoque, 
-															valorRecebimentosAnual: valorRecebimentosAnual,
-															valorPagamentosAnual: valorPagamentosAnual,
-															valorRecebidoNoMes: valorRecebidoNoMes,
-															valorAReceberNoMes: valorAReceberNoMes,
-															valorTotalVendas: valorTotalVendas,
-															porcentagemRecebido: porcentagemRecebido,
-															diferencaRecebimento: diferencaRecebimento,
-															valorPagoNoMes: valorPagoNoMes,
-															valorAPagarNoMes: valorAPagarNoMes,
-															porcentagemPago: porcentagemPago,
-															diferencaPagamento: diferencaPagamento
-														});	
+															Venda.sum('valorTotal').then(vlrTotVendas => {
+																var valorTotalVendas = parseFloat(vlrTotVendas).toFixed(2);
+																res.render("index", {
+																	totalClientesCadastrados: totalClientesCadastrados,
+																	totalFornecedoresCadastrados: totalFornecedoresCadastrados,
+																	totalProdutosCadastrados: totalProdutosCadastrados,
+																	vendasRealizadas: vendasRealizadas,
+																	recebimentosRealizados: recebimentosRealizados,
+																	pagamentosRealizados: pagamentosRealizados,
+																	valorTotalEmEstoque: valorTotalEmEstoque,
+																	valorRecebimentosAnual: valorRecebimentosAnual,
+																	valorPagamentosAnual: valorPagamentosAnual,
+																	valorRecebidoNoMes: valorRecebidoNoMes,
+																	valorAReceberNoMes: valorAReceberNoMes,
+																	valorTotalVendas: valorTotalVendas,
+																	porcentagemRecebido: porcentagemRecebido,
+																	diferencaRecebimento: diferencaRecebimento,
+																	valorPagoNoMes: valorPagoNoMes,
+																	valorAPagarNoMes: valorAPagarNoMes,
+																	porcentagemPago: porcentagemPago,
+																	diferencaPagamento: diferencaPagamento,
+																	lucratividade: lucratividade,
+																});
+															}).catch((erro) => {
+																console.log(erro);
+																req.flash("msg_erro", "Não foi possivel listar!")
+																res.render("/");
+															})
 														}).catch((erro) => {
 															console.log(erro);
 															req.flash("msg_erro", "Não foi possivel listar!")
@@ -149,12 +157,11 @@ exports.listAll = (req, res) => {
 
 
 CalcPorcentagem = (vlrRecebidoPago, vlrReceberPagar) => {
-	if(vlrRecebidoPago == 0|| vlrReceberPagar == 0){
-		return 0
+	if (vlrReceberPagar == 0 || vlrRecebidoPago == 0) {
+		return 0;
 	} else {
 		return porcentagem = Math.round((vlrRecebidoPago * 100) / vlrReceberPagar)
 	}
-	
 }
 
 Diferenca = (vlrRecebidoPago, vlrReceberPagar) => {

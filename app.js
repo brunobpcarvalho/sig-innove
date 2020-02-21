@@ -20,6 +20,8 @@ const Produto = require("./routes/Produto");
 const ContasReceber = require("./routes/ContasReceber");
 const ContasPagar = require("./routes/ContasPagar");
 
+const Relatorios = require("./routes/Relatorio");
+
 const path = require("path");
 const session = require('cookie-session');
 const flash = require('connect-flash');
@@ -66,6 +68,9 @@ require("./config/auth")(passport);
 					return options.fn(this);
 				}
 				return options.inverse(this);
+			},
+			index: (index) => {
+				return index + 1;
 			}
 		}
 	}));
@@ -94,9 +99,10 @@ app.use('/produtos', Produto);
 app.use('/vendas', Venda);
 app.use('/contas-receber', ContasReceber);
 app.use('/contas-pagar', ContasPagar);
+app.use('/relatorios', Relatorios);
 
 
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
 	const erro = new Error('Not found')
 	erro.status = 404
 	next(erro)
@@ -105,7 +111,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
 	res.status(error.status || 500)
 	res.render('error', { error: error });
-})
+})*/
 
 /*----------------------------------------------------------------------------*/
 
