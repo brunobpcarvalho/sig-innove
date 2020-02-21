@@ -29,6 +29,6 @@ Produto.belongsTo(Modelo);
 Produto.belongsTo(Fabricante);
 Produto.belongsTo(Categoria);
 
-Produto.sync()
+Produto.sync({force> true})
 
 module.exports = Produto;
