@@ -5,6 +5,8 @@ const Fabricante = require("../models/Fabricante")
 const Categoria = require("../models/Categoria")
 const Venda = require("../models/Venda")
 const ItensVenda = require("../models/ItensVenda")
+const Empresa = require("../models/Empresa")
+const PDFDocument = require("pdfkit")
 
 exports.listAll = (req, res) => {
 	Produto.findAll({include: [{ model: Fabricante, as: 'fabricante' }, { model: Modelo, as: 'modelo' }, { model: Categoria, as: 'categoria' }]}).then((dadosProduto) => {
@@ -12,8 +14,8 @@ exports.listAll = (req, res) => {
 			Fabricante.findAll({where: {ativo: 'Ativo'}}).then((dadosFabricante) => {
 				Categoria.findAll({where: {ativo: 'Ativo'}}).then((dadosCategoria) => {
 					const contextProduto = {
-			      produtos: dadosProduto.map(dado => {
-			        return {
+						produtos: dadosProduto.map(dado => {
+							return {
 								id: dado.id,
 								descricao: dado.descricao,
 								quantidade: dado.quantidade,
@@ -21,37 +23,39 @@ exports.listAll = (req, res) => {
 								modelo: dado.modelo.descricao,
 								categoria: dado.categoria.nome,
 								valorUnitario: dado.valorUnitario,
+								valorCusto: dado.valorCusto,
+								prazoReposicao: dado.prazoReposicao,
 								ativo: dado.ativo,
-			        }
-			      })
-			    }
+							}
+						})
+					}
 					const contextModelo = {
-			      modelos: dadosModelo.map(dado => {
-			        return {
-			          id: dado.id,
-			          descricao: dado.descricao,
-			          ativo: dado.ativo,
-			        }
-			      })
-			    }
+						modelos: dadosModelo.map(dado => {
+							return {
+								id: dado.id,
+								descricao: dado.descricao,
+								ativo: dado.ativo,
+							}
+						})
+					}
 					const contextFabricante = {
-			      fabricantes: dadosFabricante.map(dado => {
-			        return {
-			          id: dado.id,
-			          nome: dado.nome,
-			          ativo: dado.ativo,
-			        }
-			      })
-			    }
+						fabricantes: dadosFabricante.map(dado => {
+							return {
+								id: dado.id,
+								nome: dado.nome,
+								ativo: dado.ativo,
+							}
+						})
+					}
 					const contextCategoria = {
-			      categorias: dadosCategoria.map(dado => {
-			        return {
-			          id: dado.id,
-			          nome: dado.nome,
-			          ativo: dado.ativo,
-			        }
-			      })
-			    }
+						categorias: dadosCategoria.map(dado => {
+							return {
+								id: dado.id,
+								nome: dado.nome,
+								ativo: dado.ativo,
+							}
+						})
+					}
 
 					res.render("produtos/list-produtos", {produtos: contextProduto.produtos, modelos: contextModelo.modelos, fabricantes: contextFabricante.fabricantes, categorias: contextCategoria.categorias})
 				}).catch((erro) => {
@@ -75,11 +79,12 @@ exports.listAll = (req, res) => {
 exports.add = async (req, res) => {
 	const novoProduto = await Produto.create({
 		descricao: req.body.descricao,
-		quantidade: req.body.quantidade,
 		fabricanteId: req.body.fabricante,
 		modeloId: req.body.modelo,
 		categoriaId: req.body.categoria,
 		valorUnitario: req.body.valorUnitario,
+		valorCusto: req.body.valorCusto,
+		prazoReposicao: req.body.prazoReposicao,
 		ativo: req.body.ativo,
 	})
 
@@ -110,11 +115,12 @@ exports.delete = (req, res) => {
 exports.update = (req, res) => {
 	Produto.findByPk(id = req.body.id).then((produto) =>{
 		produto.descricao = req.body.descricao,
-		produto.quantidade = req.body.quantidade,
 		produto.fabricanteId = req.body.fabricante,
 		produto.modeloId = req.body.modelo,
 		produto.categoriaId = req.body.categoria,
 		produto.valorUnitario = req.body.valorUnitario,
+		valorCusto = req.body.valorCusto,
+		prazoReposicao = req.body.prazoReposicao,
 		produto.ativo = req.body.ativo
 
 		produto.save().then(() => {

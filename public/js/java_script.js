@@ -334,6 +334,9 @@ function validarFormProduto(Valor){
 	var modelo = formProduto.modelo.value;
 	var categoria = formProduto.categoria.value;
 	var valorUnitario = formProduto.valorUnitario.value;
+	var valorCusto = formProduto.valorCusto.value;
+	var prazoRepozicao = formProduto.prazoRepozicao.value;
+	
 	var erros = [];
 
 	if(!descricao || typeof descricao == undefined || descricao == null){erros.push(" Descrição");}
@@ -341,6 +344,8 @@ function validarFormProduto(Valor){
 	if(!modelo || typeof modelo == undefined || modelo == null){erros.push(" Modelo");}
 	if(!categoria || typeof categoria == undefined || categoria == null){erros.push(" Categoria");}
 	if(!valorUnitario || typeof valorUnitario == undefined || valorUnitario == null){erros.push(" Valor Unitario");}
+	if(!valorCusto || typeof valorCusto == undefined || valorCusto == null){erros.push(" Valor de Custo");}
+	if(!prazoRepozicao || typeof prazoRepozicao == undefined || prazoRepozicao == null){erros.push(" Prazo de Reposição");}
 
 	if(erros.length > 0 && erros.length == 1){
 		Swal.fire({

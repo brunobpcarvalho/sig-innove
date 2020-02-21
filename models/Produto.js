@@ -14,8 +14,11 @@ const Produto = db.define('produtos', {
   valorUnitario: {
     type: Sequelize.DECIMAL(10, 2)
   },
-  controlaLote: {
-    type: Sequelize.STRING
+  valorCusto: {
+    type: Sequelize.DECIMAL(10, 2)
+  },
+  prazoReposicao: {
+    type: Sequelize.INTEGER
   },
   ativo: {
     type: Sequelize.STRING
