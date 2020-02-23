@@ -1,103 +1,88 @@
-<div class="row">
-  <div class="col-xs-12">
-    <div class="box">
-      <div class="box-header">
-        <div class="box-body">
-          <div class="form-row">
-            <div class="col-xs-1">
-              <h1 class="box-title">Vendas</h1>
-            </div>
-            <div class="col-xs-9">
-            </div>
-            <div class="col-xs-2">
-              <div class="btn-group">
-                <a href="/vendas/add-venda"><button type="button" class="btn btn-primary"> Nova Venda </button></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /.box-header -->
-      <div class="box-body">
-        <table id="tabelaVenda" class="tbl table table-striped text-center">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Cliente</th>
-              <th>Status</th>
-              <th>Financeiro</th>
-              <th>Usuario</th>
-              <th>Data</th>
-              <th>Valor</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each vendas}}
-            <tr>
-              <td>{{id}}</td>
-              <td>{{pessoa}}</td>
-              <td>{{status}}</td>
-              <td>{{#ifCond financeiro "sim"}} Gerado {{/ifCond}}{{#ifCond financeiro "nao"}} Não Gerado {{/ifCond}}</td>
-              <td>{{usuario}}</td>
-              <td>{{#formatDate dataVenda}}{{/formatDate}}</td>
-              <td>{{valorTotal}}</td>
-              <td class="acao">
-                <div class="toolbar-actions">
-                  <div class="btn-group">
-                    {{#ifCond status "ORCAMENTO"}}
-                    <a>
-                      <button title="Aprovar Orçamento" type="button" onclick="AprovarVenda({{../id}})" class="btn btn-success"><i class="fa fa-check"></i></button>
-                    </a>
-                    {{/ifCond}}
-                  </div>
-                  <div class="btn-group">
-                    {{#ifCond status "VENDA"}}
-                    <a>
-                      <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
-                    </a>
-                    <a>
-                      <button title="Gerar Financeiro" onclick="GerarFinan({{../id}})" type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-usd"></i></button>
-                    </a>
-                    {{/ifCond}}
-                  </div>
-
-                  <div class="btn-group">
-                    <a href="/vendas/generate-pdf/{{id}}" target="_blank">
-                      <button title="Imprimir PDF" type="button" class="btn btn-primary"><i class="fa fa-print"></i></button>
-                    </a>
-                  </div>
-
-                  <div class="btn-group">
-                    <a href="/vendas/list-vendas/edit/{{id}}">
-                      <button title="Editar" type="button" class="edit btn btn-primary"><i class="fa fa-edit"></i></button>
-                    </a>
-                  </div>
-
-                  <div class="btn-group">
-                    <form action="/vendas/list-vendas/deletar" method="post">
-                      <input type="hidden" name="id" value="{{id}}">
-                      <button title="Excluir" type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
-                    </form>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            {{/each}}
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Código</th>
-              <th>Cliente</th>
-              <th>Status</th>
-              <th>Usuario</th>
-              <th>Data</th>
-              <th>Valor</th>
-              <th></th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+<div class="box">
+    <div class="box-header">
+        <h1 class="box-title">Vendas</h1>
     </div>
-  </div>
+    <div class="box-body">
+        <a href="/vendas/add-venda"><button type="button" class="btn btn-primary"> Nova Venda </button></a>
+
+        <table id="tabelaVenda" class="tbl table table-striped text-center">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Financeiro</th>
+                    <th>Usuario</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each vendas}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{pessoa}}</td>
+                    <td>{{status}}</td>
+                    <td>{{#ifCond financeiro "sim"}} Gerado {{/ifCond}}{{#ifCond financeiro "nao"}} Não Gerado {{/ifCond}}</td>
+                    <td>{{usuario}}</td>
+                    <td>{{#formatDate dataVenda}}{{/formatDate}}</td>
+                    <td>{{valorTotal}}</td>
+                    <td class="acao">
+                        <div class="toolbar-actions">
+                            <div class="btn-group">
+                                {{#ifCond status "ORCAMENTO"}}
+                                <a>
+                                    <button title="Aprovar Orçamento" type="button" onclick="AprovarVenda({{../id}})" class="btn btn-success"><i class="fa fa-check"></i></button>
+                                </a>
+                                {{/ifCond}}
+                            </div>
+                            <div class="btn-group">
+                                {{#ifCond status "VENDA"}}
+                                <a>
+                                    <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
+                                </a>
+                                <a>
+                                    <button title="Gerar Financeiro" onclick="GerarFinan({{../id}})" type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-usd"></i></button>
+                                </a>
+                                {{/ifCond}}
+                            </div>
+
+                            <div class="btn-group">
+                                <a href="/vendas/generate-pdf/{{id}}" target="_blank">
+                                    <button title="Imprimir PDF" type="button" class="btn btn-primary"><i class="fa fa-print"></i></button>
+                                </a>
+                            </div>
+
+                            <div class="btn-group">
+                                <a href="/vendas/list-vendas/edit/{{id}}">
+                                    <button title="Editar" type="button" class="edit btn btn-primary"><i class="fa fa-edit"></i></button>
+                                </a>
+                            </div>
+
+                            <div class="btn-group">
+                                <form action="/vendas/list-vendas/deletar" method="post">
+                                    <input type="hidden" name="id" value="{{id}}">
+                                    <button title="Excluir" type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Código</th>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Financeiro</th>
+                    <th>Usuario</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>

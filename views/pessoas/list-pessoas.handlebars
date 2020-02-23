@@ -1,108 +1,87 @@
-<div class="row">
-	<div class="col-xs-12">
-		<div class="box">
-			<div class="box-header">
-				<div class="box-body">
-					<div class="form-row">
+<div class="box">
+	<div class="box-header">
+		<h1 class="box-title">Pessoas</h1>
+	</div>
+	<div class="box-body">
+		<button type="button" class="add btn btn-primary"
+		data-tipo="Fisica"
+		data-funcao="Cliente"
+		data-ativo="Ativo"
+		data-toggle="modal" data-target="#modalPessoa"> Adicionar </button>
 
-						<div class="col-xs-1">
-							<h1 class="box-title">Pessoas</h1>
-						</div>
-
-						<div class="col-xs-9">
-
-						</div>
-
-						<div class="col-xs-2">
+		<table id="tabelaPessoas" class="tbl table table-striped text-center">
+			<thead>
+				<tr>
+					<th>Nome</th>
+					<th>CPF/CNPJ</th>
+					<th>Tipo</th>
+					<th>Função</th>
+					<th>Endereço</th>
+					<th>Ativo</th>
+					<th>Ação</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each pessoas}}
+				<tr>
+					<td>{{nome}}</td>
+					<td>{{cpf_cnpj}}</td>
+					<td>{{tipo}}</td>
+					<td>{{funcao}}</td>
+					<td>{{rua}}, {{numero}}<br>{{bairro}} | {{cidade}}</td>
+					<td>{{ativo}}</td>
+					<td>
+						<div class="toolbar-actions">
 							<div class="btn-group">
-								<button type="button" class="add btn btn-primary"
-								data-tipo="Fisica"
-								data-funcao="Cliente"
-								data-ativo="Ativo"
-								data-toggle="modal" data-target="#modalPessoa">
-								Adicionar
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- /.box-header -->
-		<div class="box-body">
-			<table id="tabelaPessoas" class="tbl table table-striped text-center">
-				<thead>
-					<tr>
-						<th>Nome</th>
-						<th>CPF/CNPJ</th>
-						<th>Tipo</th>
-						<th>Função</th>
-						<th>Endereço</th>
-						<th>Ativo</th>
-						<th>Ação</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{#each pessoas}}
-					<tr>
-						<td>{{nome}}</td>
-						<td>{{cpf_cnpj}}</td>
-						<td>{{tipo}}</td>
-						<td>{{funcao}}</td>
-						<td>{{rua}}, {{numero}}<br>{{bairro}} | {{cidade}}</td>
-						<td>{{ativo}}</td>
-						<td>
-							<div class="toolbar-actions">
-								<div class="btn-group">
-									<button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalPessoa"
-									data-id="{{id}}"
-									data-nome="{{nome}}"
-									data-tipo="{{tipo}}"
-									data-funcao="{{funcao}}"
-									data-cpf_cnpj="{{cpf_cnpj}}"
-									data-ie="{{ie}}"
-									data-razao_social="{{razao_social}}"
-									data-nome_mae="{{nome_mae}}"
-									data-data-nascimento="{{dataNascimento}}"
-									data-cep="{{cep}}"
-									data-rua="{{rua}}"
-									data-numero="{{numero}}"
-									data-bairro="{{bairro}}"
-									data-cidade="{{cidade}}"
-									data-uf="{{uf}}"
-									data-complemento="{{complemento}}"
-									data-telefone="{{telefone}}"
-									data-celular="{{celular}}"
-									data-email="{{email}}"
-									data-ativo="{{ativo}}">
-									<i class="fa fa-edit"></i></button>
-								</div>
-								<div class="btn-group">
-									<form action="/pessoas/list-pessoas/deletar" method="post">
-										<input type="hidden" name="id" value="{{id}}">
-										<button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
-									</form>
-								</div>
+								<button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalPessoa"
+								data-id="{{id}}"
+								data-nome="{{nome}}"
+								data-tipo="{{tipo}}"
+								data-funcao="{{funcao}}"
+								data-cpf_cnpj="{{cpf_cnpj}}"
+								data-ie="{{ie}}"
+								data-razao_social="{{razao_social}}"
+								data-nome_mae="{{nome_mae}}"
+								data-data-nascimento="{{dataNascimento}}"
+								data-cep="{{cep}}"
+								data-rua="{{rua}}"
+								data-numero="{{numero}}"
+								data-bairro="{{bairro}}"
+								data-cidade="{{cidade}}"
+								data-uf="{{uf}}"
+								data-complemento="{{complemento}}"
+								data-telefone="{{telefone}}"
+								data-celular="{{celular}}"
+								data-email="{{email}}"
+								data-ativo="{{ativo}}">
+								<i class="fa fa-edit"></i></button>
 							</div>
-						</td>
-					</tr>
-					{{/each}}
-				</tbody>
-				<tfoot>
-					<tr>
-						<th>Nome</th>
-						<th>CPF/CNPJ</th>
-						<th>Tipo</th>
-						<th>Função</th>
-						<th>Endereço</th>
-						<th>Ativo</th>
-						<th>Ação</th>
-					</tr>
-				</tfoot>
-			</table>
-		</div>
+							<div class="btn-group">
+								<form action="/pessoas/list-pessoas/deletar" method="post">
+									<input type="hidden" name="id" value="{{id}}">
+									<button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+								</form>
+							</div>
+						</div>
+					</td>
+				</tr>
+				{{/each}}
+			</tbody>
+			<tfoot>
+				<tr>
+					<th>Nome</th>
+					<th>CPF/CNPJ</th>
+					<th>Tipo</th>
+					<th>Função</th>
+					<th>Endereço</th>
+					<th>Ativo</th>
+					<th>Ação</th>
+				</tr>
+			</tfoot>
+		</table>
 	</div>
 </div>
-</div>
+
 
 <!-- ------------------------         MODAL         ------------------------ -->
 

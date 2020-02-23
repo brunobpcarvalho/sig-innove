@@ -1,202 +1,187 @@
-<div class="row">
-  <div class="col-xs-12">
-    <div class="box">
-      <div class="box-header">
-        <div class="box-body">
-          <div class="form-row">
-            <div class="col-xs-1">
-              <h1 class="box-title">Pagamentos</h1>
-            </div>
-            <div class="col-xs-9">
-            </div>
-            <div class="col-xs-2">
-              <button type="button" class="add btn btn-primary" data-toggle="modal" data-target="#modalPagamento"
-              data-forma-pagamento="Dinheiro"
-              data-pago="false">
-                Adicionar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /.box-header -->
-      <div class="box-body">
+<div class="box">
+    <div class="box-header">
+        <h1 class="box-title">Pagamentos</h1>
+    </div>
+    <div class="box-body">
+        <button type="button" class="add btn btn-primary" data-toggle="modal" data-target="#modalPagamento"
+        data-forma-pagamento="Dinheiro"
+        data-pago="false">Adicionar</button>
         <table id="tabelaPagamento" class="tbl table table-striped text-center">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Recebedor</th>
-              <th>Valor</th>
-              <th>Valor Pago</th>
-              <th>Pago</th>
-              <th>Data de Competencia</th>
-              <th>Data de Vencimento</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each contasPagar}}
-            <tr>
-              <td>{{id}}</td>
-              <td>{{pessoa}}</td>
-              <td>{{valor}}</td>
-              <td>{{valorPago}}</td>
-              <td>{{#ifCond pago true}} SIM {{/ifCond}} {{#ifCond pago false}} NÃO {{/ifCond}}</td>
-              <td>{{#formatDate dataCompetencia}}{{/formatDate}}</td>
-              <td>{{#formatDate dataVencimento}}{{/formatDate}}</td>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Recebedor</th>
+                    <th>Valor</th>
+                    <th>Valor Pago</th>
+                    <th>Pago</th>
+                    <th>Data de Competencia</th>
+                    <th>Data de Vencimento</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each contasPagar}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{pessoa}}</td>
+                    <td>{{valor}}</td>
+                    <td>{{valorPago}}</td>
+                    <td>{{#ifCond pago true}} SIM {{/ifCond}} {{#ifCond pago false}} NÃO {{/ifCond}}</td>
+                    <td>{{#formatDate dataCompetencia}}{{/formatDate}}</td>
+                    <td>{{#formatDate dataVencimento}}{{/formatDate}}</td>
 
-              <td class="acao">
-                <div class="toolbar-actions">
-                  <div class="btn-group">
-                    <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalPagamento"
-                    data-id="{{id}}"
-                    data-fornecedor="{{pessoa}}"
-                    data-forma-pagamento="{{formaPagamento}}"
-                    data-valor="{{valor}}"
-                    data-valor-pago="{{valorPago}}"
-                    data-desconto="{{desconto}}"
-                    data-data-competencia="{{dataCompetencia}}"
-                    data-data-vencimento="{{dataVencimento}}"
-                    data-data-pagamento="{{dataPagamento}}"
-                    data-pago="{{pago}}">
-                    <i class="fa fa-edit"></i></button>
-                  </div>
+                    <td class="acao">
+                        <div class="toolbar-actions">
+                            <div class="btn-group">
+                                <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalPagamento"
+                                data-id="{{id}}"
+                                data-fornecedor="{{pessoa}}"
+                                data-forma-pagamento="{{formaPagamento}}"
+                                data-valor="{{valor}}"
+                                data-valor-pago="{{valorPago}}"
+                                data-desconto="{{desconto}}"
+                                data-data-competencia="{{dataCompetencia}}"
+                                data-data-vencimento="{{dataVencimento}}"
+                                data-data-pagamento="{{dataPagamento}}"
+                                data-pago="{{pago}}">
+                                <i class="fa fa-edit"></i></button>
+                            </div>
 
-                  <div class="btn-group">
-                    <form action="/contas-pagar/destroy" method="post">
-                      <input type="hidden" name="id" value="{{id}}">
-                      <button title="Excluir" type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-              {{/each}}
+                            <div class="btn-group">
+                                <form action="/contas-pagar/destroy" method="post">
+                                    <input type="hidden" name="id" value="{{id}}">
+                                    <button title="Excluir" type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
             </tbody>
             <tfoot>
-              <tr>
-                <th>Código</th>
-                <th>Recebedor</th>
-                <th>Valor</th>
-                <th>Valor Pago</th>
-                <th>Pago</th>
-                <th>Data de Competencia</th>
-                <th>Data de Vencimento</th>
-                <th></th>
-              </tr>
+                <tr>
+                    <th>Código</th>
+                    <th>Recebedor</th>
+                    <th>Valor</th>
+                    <th>Valor Pago</th>
+                    <th>Pago</th>
+                    <th>Data de Competencia</th>
+                    <th>Data de Vencimento</th>
+                    <th></th>
+                </tr>
             </tfoot>
-          </table>
-        </div>
-      </div>
+        </table>
     </div>
-  </div>
+</div>
 
-  <!-- ------------------------         MODAL         ------------------------ -->
+<!-- ------------------------         MODAL         ------------------------ -->
 
-  <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalPagamento">
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalPagamento">
     <form name="formPagamento" id="formPagamento" method="post">
-      <input type="hidden" name="id" id="id" value="{{id}}">
-      <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">Adicionar Conta a Pagar</h4>
-          </div>
-          <div class="modal-body">
-            <div class="box-body">
-              <div class="row">
-                <div class="col-xs-8">
-                  <div class="input-group">
-                    <input class="form-control" type="search" id="fornecedor" name="pessoaId" list="listaFornecedor" placeholder="Selecione um Fornecedor"/>
-                    <span class="input-group-btn">
-                      <a href="/pessoas/list-pessoas"><button title="Adicionar Fornecedor" type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
-                    </span>
-                    <datalist id="listaFornecedor">
-                      {{#each fornecedores}}
-                      <option data-value="{{id}}" value="{{nome}}"></option>
-                      {{else}}
+        <input type="hidden" name="id" id="id" value="{{id}}">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Adicionar Conta a Pagar</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="input-group">
+                                    <input class="form-control" type="search" id="fornecedor" name="pessoaId" list="listaFornecedor" placeholder="Selecione um Fornecedor"/>
+                                    <span class="input-group-btn">
+                                        <a href="/pessoas/list-pessoas"><button title="Adicionar Fornecedor" type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                                    </span>
+                                    <datalist id="listaFornecedor">
+                                        {{#each fornecedores}}
+                                        <option data-value="{{id}}" value="{{nome}}"></option>
+                                        {{else}}
 
-                      {{/each}}
-                    </datalist>
-                  </div>
-                </div>
-                <div class="col-xs-4">
-                  <div class="input-group">
-                    <span class="input-group-addon">Forma de Pagamento</span>
-                    <select name="formaPagamento" class="formaPag form-control">
-                      <option value="Dinheiro"> Dinheiro </option>
-                      <option value="Cheque"> Cheque </option>
-                      <option value="CartaoC"> Cartão de Crédito </option>
-                      <option value="CartaoD"> Cartão de Débito </option>
-                      <option value="Boleto"> Boleto </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div style="margin-top: 2%;" class="row">
-                <div class="col-xs-3">
-                  <div class="input-group">
-                    <span>Data de Competencia</span><span class="obrigatorio"> *</span>
-                    <input class="inputData form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="">
-                  </div>
-                </div>
+                                        {{/each}}
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">Forma de Pagamento</span>
+                                    <select name="formaPagamento" class="formaPag form-control">
+                                        <option value="Dinheiro"> Dinheiro </option>
+                                        <option value="Cheque"> Cheque </option>
+                                        <option value="CartaoC"> Cartão de Crédito </option>
+                                        <option value="CartaoD"> Cartão de Débito </option>
+                                        <option value="Boleto"> Boleto </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 2%;" class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span>Data de Competencia</span><span class="obrigatorio"> *</span>
+                                    <input class="inputData form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="">
+                                </div>
+                            </div>
 
-                <div class="col-xs-3">
-                  <div class="input-group">
-                    <span>Data de Vencimento</span><span class="obrigatorio"> *</span>
-                    <input class="inputData form-control" type="date" name="dataVencimento" id="dataVencimento" value="">
-                  </div>
-                </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span>Data de Vencimento</span><span class="obrigatorio"> *</span>
+                                    <input class="inputData form-control" type="date" name="dataVencimento" id="dataVencimento" value="">
+                                </div>
+                            </div>
 
-                <div class="col-xs-3">
-                  <div class="input-group">
-                    <span>Valor</span><span class="obrigatorio"> *</span>
-                    <input id="valor" name="valor" class="money form-control" type="text" name="" value="0.00">
-                  </div>
-                </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span>Valor</span><span class="obrigatorio"> *</span>
+                                    <input id="valor" name="valor" class="money form-control" type="text" name="" value="0.00">
+                                </div>
+                            </div>
 
-                <div class="col-xs-3">
-                  <div class="input-group">
-                    <span class="input-group">Pago</span>
-                    <select class="form-control" name="pago" id="pago">
-                      <option value="false"> NÃO </option>
-                      <option value="true"> SIM </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group">Pago</span>
+                                    <select class="form-control" name="pago" id="pago">
+                                        <option value="false"> NÃO </option>
+                                        <option value="true"> SIM </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-              <div id="pagoTrue" style="margin-top: 2%;" class="row">
-                <div class="col-xs-3">
-                  <div class="input-group">
-                    <span>Data de Pagamento</span><span class="obrigatorio"> *</span>
-                    <input class="inputData form-control" type="date" name="dataPagamento" id="dataPagamento" value="">
-                  </div>
-                </div>
+                        <div id="pagoTrue" style="margin-top: 2%;" class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span>Data de Pagamento</span><span class="obrigatorio"> *</span>
+                                    <input class="inputData form-control" type="date" name="dataPagamento" id="dataPagamento" value="">
+                                </div>
+                            </div>
 
-                <div class="col-xs-3">
-                  <div class="input-group">
-                    <span>Desconto</span>
-                    <input class="money form-control" type="text" value="0.00" name="descontoPagamento" id="descontoRecPag">
-                  </div>
-                </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span>Desconto</span>
+                                    <input class="money form-control" type="text" value="0.00" name="descontoPagamento" id="descontoRecPag">
+                                </div>
+                            </div>
 
-                <div class="col-xs-3">
-                  <div class="input-group">
-                    <span>Valor Pago</span>
-                    <input class="money form-control" type="text" value="0.00" name="valorPago" id="valorPago" readonly>
-                  </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span>Valor Pago</span>
+                                    <input class="money form-control" type="text" value="0.00" name="valorPago" id="valorPago" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="position: relative;" class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                        <button style="position: absolute;" type="button" onclick="return validarFormPagamento('adicionar')" class="salvar btn btn-primary">Salvar</button>
+                        <button type="button" onclick="return validarFormPagamento('editar')" class="editar btn btn-primary">Editar</button>
+                    </div>
                 </div>
-              </div>
             </div>
-
-            <div style="position: relative;" class="modal-footer">
-              <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
-              <button style="position: absolute;" type="button" onclick="return validarFormPagamento('adicionar')" class="salvar btn btn-primary">Salvar</button>
-              <button type="button" onclick="return validarFormPagamento('editar')" class="editar btn btn-primary">Editar</button>
-            </div>
-          </div>
         </div>
-      </form>
-    </div>
+    </form>
+</div>

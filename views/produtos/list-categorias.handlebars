@@ -1,112 +1,97 @@
-<div class="row">
-  <div class="col-xs-12">
-    <div class="box">
-      <div class="box-header">
-        <div class="box-body">
-          <div class="form-row">
-            <div class="col-xs-1">
-              <h1 class="box-title">Categorias</h1>
-            </div>
-            <div class="col-xs-10">
-            </div>
-            <div class="col-xs-1">
-              <button type="button" class="add btn btn-primary"
-              data-ativo="Ativo"
-              data-toggle="modal" data-target="#modalCategoria">
-              Adicionar
-             </button>
-          </div>
-        </div>
-      </div>
+<div class="box">
+    <div class="box-header">
+        <h1 class="box-title">Categorias</h1>
     </div>
-    <!-- /.box-header -->
     <div class="box-body">
-      <table id="tabelaCategorias" class="tbl table table-striped text-center">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Ativo</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each categorias}}
-          <tr>
-            <td>{{nome}}</td>
-            <td>{{ativo}}</td>
-            <td class="acao">
-              <div class="toolbar-actions">
-                <div class="btn-group">
-                  <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalCategoria"
-                  data-id="{{id}}"
-                  data-nome="{{nome}}"
-                  data-ativo="{{ativo}}">
-                  <i class="fa fa-edit"></i></button>
-                </div>
-                <div class="btn-group">
-                  <form action="/produtos/list-categorias/deletar" method="post">
-                    <input type="hidden" name="id" value="{{id}}">
-                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
-                  </form>
-                </div>
-              </div>
-            </td>
-          </tr>
-          {{/each}}
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Nome</th>
-            <th>Ativo</th>
-          </tr>
-        </tfoot>
-      </table>
+        <button type="button" class="add btn btn-primary"
+        data-ativo="Ativo"
+        data-toggle="modal" data-target="#modalCategoria"> Adicionar </button>
+
+        <table id="tabelaCategorias" class="tbl table table-striped text-center">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Ativo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each categorias}}
+                <tr>
+                    <td>{{nome}}</td>
+                    <td>{{ativo}}</td>
+                    <td class="acao">
+                        <div class="toolbar-actions">
+                            <div class="btn-group">
+                                <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalCategoria"
+                                data-id="{{id}}"
+                                data-nome="{{nome}}"
+                                data-ativo="{{ativo}}">
+                                <i class="fa fa-edit"></i></button>
+                            </div>
+                            <div class="btn-group">
+                                <form action="/produtos/list-categorias/deletar" method="post">
+                                    <input type="hidden" name="id" value="{{id}}">
+                                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Nome</th>
+                    <th>Ativo</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
     </div>
-  </div>
-</div>
 </div>
 
 <!-- ------------------------        MODAL         ------------------------ -->
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalCategoria">
-  <form name="formCategoria" id="formCategoria" method="post">
-    <input type="hidden" name="id" id="id" value="{{id}}">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title">Adicionar Categoria</h4>
-        </div>
+    <form name="formCategoria" id="formCategoria" method="post">
+        <input type="hidden" name="id" id="id" value="{{id}}">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Adicionar Categoria</h4>
+                </div>
 
-        <div class="modal-body">
-          <div class="box-body">
-            <div class="row">
-              <div class="col-xs-12">
-                <span>Nome</span><span class="obrigatorio"> *</span>
-                <input type="text" class="form-control" name="nome" id="nome">
-              </div>
+                <div class="modal-body">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span>Nome</span><span class="obrigatorio"> *</span>
+                                <input type="text" class="form-control" name="nome" id="nome">
+                            </div>
+                        </div>
+                        <div style="margin-top: 2%;"class="row">
+                        </div>
+                        <div style="margin-top: 2%;" class="row">
+                            <div class="col-xs-2">
+                                <span>Ativo</span>
+                                <select id="ativo" name="ativo" class="form-control">
+                                    <option value='Ativo'> SIM </option>
+                                    <option value='Inativo'> NÃO </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position: relative;" class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                    <button style="position: absolute;" type="button" onclick="return validarFormCategoria('adicionar')" class="salvar btn btn-primary">Salvar</button>
+                    <button type="button" onclick="return validarFormCategoria('editar')" class="editar btn btn-primary">Editar</button>
+                </div>
             </div>
-            <div style="margin-top: 2%;"class="row">
-            </div>
-            <div style="margin-top: 2%;" class="row">
-              <div class="col-xs-2">
-                <span>Ativo</span>
-                <select id="ativo" name="ativo" class="form-control">
-                  <option value='Ativo'> SIM </option>
-                  <option value='Inativo'> NÃO </option>
-                </select>
-              </div>
-            </div>
-          </div>
         </div>
-        <div style="position: relative;" class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
-          <button style="position: absolute;" type="button" onclick="return validarFormCategoria('adicionar')" class="salvar btn btn-primary">Salvar</button>
-          <button type="button" onclick="return validarFormCategoria('editar')" class="editar btn btn-primary">Editar</button>
-        </div>
-      </div>
-    </div>
-  </form>
+    </form>
 </div>

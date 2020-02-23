@@ -44,8 +44,8 @@ $(document).on('blur', '#dataNascimento', function () {
 	nascimento = new Date($("#dataNascimento").val());
 	var diferencaAnos = hoje.getFullYear() - nascimento.getFullYear();
 	if (new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) <
-		new Date(hoje.getFullYear(), nascimento.getMonth(), nascimento.getDate()))
-		diferencaAnos--;
+	new Date(hoje.getFullYear(), nascimento.getMonth(), nascimento.getDate()))
+	diferencaAnos--;
 
 	if(diferencaAnos < 16) {
 		Swal.fire({
@@ -336,7 +336,7 @@ function validarFormProduto(Valor){
 	var valorUnitario = formProduto.valorUnitario.value;
 	var valorCusto = formProduto.valorCusto.value;
 	var prazoRepozicao = formProduto.prazoRepozicao.value;
-	
+
 	var erros = [];
 
 	if(!descricao || typeof descricao == undefined || descricao == null){erros.push(" Descrição");}
@@ -453,188 +453,188 @@ $('#addParcelas').on('click', function(){
 });
 
 $(document).ready(function(){
-  //Remove o botão de excluir do primeiro item ao editar uma venda.
-  $('.tdAcao button').first().css("visibility", "hidden");
+	//Remove o botão de excluir do primeiro item ao editar uma venda.
+	$('.tdAcao button').first().css("visibility", "hidden");
 
-  //Verifica se o Status é  igual a VENDA, e desabilita os inputs e botões.
-  if($("#status").val() == 'VENDA'){
-  	var FormVenda = $("#formVenda");
-  	FormVenda.find("input").attr("disabled", true)
-  	FormVenda.find("select").attr("disabled", true)
-  	$(".desativado").attr("disabled", true)
-  }
+	//Verifica se o Status é  igual a VENDA, e desabilita os inputs e botões.
+	if($("#status").val() == 'VENDA'){
+		var FormVenda = $("#formVenda");
+		FormVenda.find("input").attr("disabled", true)
+		FormVenda.find("select").attr("disabled", true)
+		$(".desativado").attr("disabled", true)
+	}
 
-  //Não deixa o valor dos campos de quantidade ficarem menores que 0.
-  $(document).on( 'focusout', '.quantidade', function(){
-  	if($(this).val() < 0){
-  		$(this).val('1');
-  	}
-  });
+	//Não deixa o valor dos campos de quantidade ficarem menores que 0.
+	$(document).on( 'focusout', '.quantidade', function(){
+		if($(this).val() < 0){
+			$(this).val('1');
+		}
+	});
 
-  $('#dataVenda').val(new Date().DataAtual());
-  $('.inputData').val(new Date().DataAtual());
-  /************************************************/
-  var input;
+	$('#dataVenda').val(new Date().DataAtual());
+	$('.inputData').val(new Date().DataAtual());
 
-  $(document).on('blur', '#desconto', function(){
-  	$('#total').val(Total());
-  });
+	var input;
 
-  $(document).on('click', '.linha', function(){
-  	input = this.getElementsByTagName("INPUT");
-  });
+	$(document).on('blur', '#desconto', function(){
+		$('#total').val(Total());
+	});
 
-  $(document).on('blur', '.valorUnitario', function(){
-  	input[3].value = SubTotal(this.value, input[1].value)
-  	$('#total').val(Total());
-  });
+	$(document).on('click', '.linha', function(){
+		input = this.getElementsByTagName("INPUT");
+	});
 
-  $(document).on('change', '.quantidade', function(){
-  	input[3].value = SubTotal(input[2].value, this.value)
-  	$('#total').val(Total());
-  });
+	$(document).on('blur', '.valorUnitario', function(){
+		input[3].value = SubTotal(this.value, input[1].value)
+		$('#total').val(Total());
+	});
 
-  function SubTotal(vlrUnit, quant){
-  	return (vlrUnit * quant).toFixed(2);
-  }
-  function Total(){
-  	var tabela = document.body.querySelectorAll("#tabelaItens td:nth-child(4) input");
-  	var total = 0.0;
-  	var desconto = $('#desconto').val();
+	$(document).on('change', '.quantidade', function(){
+		input[3].value = SubTotal(input[2].value, this.value)
+		$('#total').val(Total());
+	});
 
-  	for(var x = 0; x < tabela.length; x++){
-  		var val = parseFloat(tabela[x].value);
+	function SubTotal(vlrUnit, quant){
+		return (vlrUnit * quant).toFixed(2);
+	}
+	function Total(){
+		var tabela = document.body.querySelectorAll("#tabelaItens td:nth-child(4) input");
+		var total = 0.0;
+		var desconto = $('#desconto').val();
 
-  		total += val;
-  	}
-  	if(desconto > total){
-  		$('#desconto').val('0.00');
-  		Swal.fire({
-  			icon: 'warning',
-  			title: 'Atenção',
-  			text: "O valor do desconto é maior que o Total da Venda!",
-  		})
-  	}else {
-  		total -= desconto;
-  	}
-  	return total.toFixed(2);
-  }
+		for(var x = 0; x < tabela.length; x++){
+			var val = parseFloat(tabela[x].value);
 
-  var tdItens = $(".tdItens").html();
-  var tdQuant = $(".tdQuant").html();
-  var tdValor = $(".tdValor").html();
-  var tdTotal = $(".tdTotal").html();
+			total += val;
+		}
+		if(desconto > total){
+			$('#desconto').val('0.00');
+			Swal.fire({
+				icon: 'warning',
+				title: 'Atenção',
+				text: "O valor do desconto é maior que o Total da Venda!",
+			})
+		}else {
+			total -= desconto;
+		}
+		return total.toFixed(2);
+	}
 
-  $(document).on('click', '#addItem', function(){
+	var tdItens = $(".tdItens").html();
+	var tdQuant = $(".tdQuant").html();
+	var tdValor = $(".tdValor").html();
+	var tdTotal = $(".tdTotal").html();
 
-  	var newRow = $('<tr class="linha">');
-  	var cols = "";
-  	cols += '<td>' + tdItens + '</td>';
-  	cols += '<td>' + tdQuant + '</td>';
-  	cols += '<td>' + tdValor + '</td>';
-  	cols += '<td>' + tdTotal + '</td>';
-  	cols += '<td>' + '<button type="button" onclick="RemoveTableRow(this)" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>' + '</td>';
+	$(document).on('click', '#addItem', function(){
 
-  	newRow.append(cols);
+		var newRow = $('<tr class="linha">');
+		var cols = "";
+		cols += '<td>' + tdItens + '</td>';
+		cols += '<td>' + tdQuant + '</td>';
+		cols += '<td>' + tdValor + '</td>';
+		cols += '<td>' + tdTotal + '</td>';
+		cols += '<td>' + '<button type="button" onclick="RemoveTableRow(this)" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>' + '</td>';
 
-  	$("#tabelaItens").append(newRow);
-  	$("#tabelaItens .item").last().val('');
-  	$("#tabelaItens .valorUnitario").last().val('');
-  	$("#tabelaItens .subTotal").last().val('');
-  	$("#tabelaItens .quantidade").last().val(1);
+		newRow.append(cols);
 
-  });
+		$("#tabelaItens").append(newRow);
+		$("#tabelaItens .item").last().val('');
+		$("#tabelaItens .valorUnitario").last().val('');
+		$("#tabelaItens .subTotal").last().val('');
+		$("#tabelaItens .quantidade").last().val(1);
 
-  $(document).on('change', '.item', function () {
+	});
 
-  	var prod = input[0].value;
-  	var valor = $('#listaProdutos [value="' + prod + '"]').data('valor')
-  	input[2].value = valor;
+	$(document).on('change', '.item', function () {
 
-  	input[3].value = SubTotal(input[2].value, input[1].value)
-  	$('#total').val(Total());
+		var prod = input[0].value;
+		var valor = $('#listaProdutos [value="' + prod + '"]').data('valor')
+		input[2].value = valor;
 
-  	$('.money').mask("###0.00", {reverse: true});
-  	return false;
-  });
+		input[3].value = SubTotal(input[2].value, input[1].value)
+		$('#total').val(Total());
 
-  RemoveTableRow = function (handler) {
-  	var tr = $(handler).closest('tr');
-  	tr.remove();
-  	$('#total').val(Total());
-  	return false;
-  };
+		$('.money').mask("###0.00", {reverse: true});
+		return false;
+	});
 
-  $(document).on(SalvarVenda = function (opcao) {
-  	var TabelaItens = $("#tabelaItens");
-  	var formaPag = $('.formaPag').val();
-  	var inputProduto =  TabelaItens.find("td:nth-child(1) input");
-  	var inputQuantidade = TabelaItens.find("td:nth-child(2) input");
+	RemoveTableRow = function (handler) {
+		var tr = $(handler).closest('tr');
+		tr.remove();
+		$('#total').val(Total());
+		return false;
+	};
 
-  	var quantidade = [];
-  	var ids = [];
+	$(document).on(SalvarVenda = function (opcao) {
+		var TabelaItens = $("#tabelaItens");
+		var formaPag = $('.formaPag').val();
+		var inputProduto =  TabelaItens.find("td:nth-child(1) input");
+		var inputQuantidade = TabelaItens.find("td:nth-child(2) input");
 
-  	var produto = inputProduto[0].value;
-  	var cliente = formVenda.cliente.value;
-  	var erros = [];
+		var quantidade = [];
+		var ids = [];
 
-  	if(!cliente || typeof cliente == undefined || cliente == null){erros.push("Cliente");}
-  	if(!produto || typeof produto == undefined || produto == null){erros.push("Produto");}
-  	if(!formaPag || typeof formaPag == undefined || formaPag == null){erros.push("Pagamento");}
+		var produto = inputProduto[0].value;
+		var cliente = formVenda.cliente.value;
+		var erros = [];
 
-  	if(erros.length > 0 && erros.length == 1){
-  		Swal.fire({
-  			icon: 'error',
-  			title: 'Erro ...',
-  			text: "O campo " + erros + " não foi preenchido!",
-  		})
-  		return false;
-  	}else if(erros.length > 1){
-  		Swal.fire({
-  			icon: 'error',
-  			title: 'Erro ...',
-  			text: "Os campos " + erros + " não foram preenchidos!",
-  		})
-  		return false;
-  	}
+		if(!cliente || typeof cliente == undefined || cliente == null){erros.push("Cliente");}
+		if(!produto || typeof produto == undefined || produto == null){erros.push("Produto");}
+		if(!formaPag || typeof formaPag == undefined || formaPag == null){erros.push("Pagamento");}
 
-  	for (var i = 0; i < inputProduto.length; i++) {
-  		var prod = inputProduto[i].value;
-  		var id = $('#listaProdutos [value="' + prod + '"]').data('id')
+		if(erros.length > 0 && erros.length == 1){
+			Swal.fire({
+				icon: 'error',
+				title: 'Erro ...',
+				text: "O campo " + erros + " não foi preenchido!",
+			})
+			return false;
+		}else if(erros.length > 1){
+			Swal.fire({
+				icon: 'error',
+				title: 'Erro ...',
+				text: "Os campos " + erros + " não foram preenchidos!",
+			})
+			return false;
+		}
 
-  		ids.push(id);
+		for (var i = 0; i < inputProduto.length; i++) {
+			var prod = inputProduto[i].value;
+			var id = $('#listaProdutos [value="' + prod + '"]').data('id')
 
-  		var quantidadeEstoque = $('#listaProdutos [value="' + prod + '"]').data('quantidade')
-  		if(quantidadeEstoque < inputQuantidade[i].value){
-  			quantidade.push(" " + prod);
-  		}
-  	}
+			ids.push(id);
 
-  	if(quantidade.length > 0){
-  		Swal.fire({
-  			icon: 'warning',
-  			title: 'Atenção',
-  			text: "Produtos com estoque insuficiente:" + quantidade,
-  		})
-  		return false;
-  	}
-  	for(var i = 0; i < inputProduto.length; i++) {
-  		inputProduto[i].value = ids[i];
-  	}
+			var quantidadeEstoque = $('#listaProdutos [value="' + prod + '"]').data('quantidade')
+			if(quantidadeEstoque < inputQuantidade[i].value){
+				quantidade.push(" " + prod);
+			}
+		}
 
-  	if(opcao == 'adicionar'){
-  		var value = $('#cliente').val();
-  		var id = $('#listaCliente [value="' + value + '"]').data('value')
-  		$('#cliente').val(id);
+		if(quantidade.length > 0){
+			Swal.fire({
+				icon: 'warning',
+				title: 'Atenção',
+				text: "Produtos com estoque insuficiente:" + quantidade,
+			})
+			return false;
+		}
+		for(var i = 0; i < inputProduto.length; i++) {
+			inputProduto[i].value = ids[i];
+		}
 
-  		document.formVenda.action = '/vendas/add-venda/nova';
-  		document.formVenda.submit();
+		if(opcao == 'adicionar'){
+			var value = $('#cliente').val();
+			var id = $('#listaCliente [value="' + value + '"]').data('value')
+			$('#cliente').val(id);
 
-  	} else if(opcao == "editar"){
-  		document.formVenda.action = '/vendas/list-vendas/update';
-  		document.formVenda.submit();
-  	}
-  });
+			document.formVenda.action = '/vendas/add-venda/nova';
+			document.formVenda.submit();
+
+		} else if(opcao == "editar"){
+			document.formVenda.action = '/vendas/list-vendas/update';
+			document.formVenda.submit();
+		}
+	});
 });
 
 $(document).on(GerarFinan = function(id){
@@ -726,44 +726,44 @@ $(document).on(validarFormRecebimento = function(opcao){
 	console.log(pago)
 
 	if(!cliente || typeof cliente == undefined || cliente == null){erros.push(" Pagador")}
-		if(!dataVencimento || typeof dataVencimento == undefined || dataVencimento == null){erros.push(" Data de Vencimento")}
-			if(!dataCompetencia || typeof dataCompetencia == undefined || dataCompetencia == null){erros.push(" Data de Competencia")}
-				if(!valor || typeof valor == undefined || valor == null || valor == 0){erros.push(" Valor")}
+	if(!dataVencimento || typeof dataVencimento == undefined || dataVencimento == null){erros.push(" Data de Vencimento")}
+	if(!dataCompetencia || typeof dataCompetencia == undefined || dataCompetencia == null){erros.push(" Data de Competencia")}
+	if(!valor || typeof valor == undefined || valor == null || valor == 0){erros.push(" Valor")}
 
-					if(pago === "true"){
-						var dataPagamento = $("#dataPagamento").val()
-						if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-							erros.push(" Data de Pagamento")
-						}
-					}
+	if(pago === "true"){
+		var dataPagamento = $("#dataPagamento").val()
+		if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
+			erros.push(" Data de Pagamento")
+		}
+	}
 
-					if(erros.length > 0 && erros.length == 1){
-						Swal.fire({
-							icon: 'error',
-							title: 'Erro ...',
-							text: "O campo " + erros + " não foi preenchido!",
-						})
-						return false;
-					}else if(erros.length > 1){
-						Swal.fire({
-							icon: 'error',
-							title: 'Erro ...',
-							text: "Os campos " + erros + " não foram preenchidos!",
-						})
-						return false;
-					}
+	if(erros.length > 0 && erros.length == 1){
+		Swal.fire({
+			icon: 'error',
+			title: 'Erro ...',
+			text: "O campo " + erros + " não foi preenchido!",
+		})
+		return false;
+	}else if(erros.length > 1){
+		Swal.fire({
+			icon: 'error',
+			title: 'Erro ...',
+			text: "Os campos " + erros + " não foram preenchidos!",
+		})
+		return false;
+	}
 
-					var id = $('#listaCliente [value="' + cliente + '"]').data('value')
-					$('#cliente').val(id);
+	var id = $('#listaCliente [value="' + cliente + '"]').data('value')
+	$('#cliente').val(id);
 
-					if(opcao === 'adicionar'){
-						document.formRecebimento.action = '/contas-receber/store';
-						document.formRecebimento.submit();
-					}else if(opcao === 'editar'){
-						document.formRecebimento.action = '/contas-receber/update';
-						document.formRecebimento.submit();
-					}
-				})
+	if(opcao === 'adicionar'){
+		document.formRecebimento.action = '/contas-receber/store';
+		document.formRecebimento.submit();
+	}else if(opcao === 'editar'){
+		document.formRecebimento.action = '/contas-receber/update';
+		document.formRecebimento.submit();
+	}
+})
 
 $('#modalRecebimento').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
@@ -799,44 +799,44 @@ $(document).on(validarFormPagamento = function(opcao){
 	var erros = [];
 
 	if(!fornecedor || typeof fornecedor == undefined || fornecedor == null){erros.push(" Pagador")}
-		if(!dataVencimento || typeof dataVencimento == undefined || dataVencimento == null){erros.push(" Data de Vencimento")}
-			if(!dataCompetencia || typeof dataCompetencia == undefined || dataCompetencia == null){erros.push(" Data de Competencia")}
-				if(!valor || typeof valor == undefined || valor == null || valor == 0){erros.push(" Valor")}
+	if(!dataVencimento || typeof dataVencimento == undefined || dataVencimento == null){erros.push(" Data de Vencimento")}
+	if(!dataCompetencia || typeof dataCompetencia == undefined || dataCompetencia == null){erros.push(" Data de Competencia")}
+	if(!valor || typeof valor == undefined || valor == null || valor == 0){erros.push(" Valor")}
 
-					if(pago === "true"){
-						var dataPagamento = $("#dataPagamento").val()
-						if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-							erros.push(" Data de Pagamento")
-						}
-					}
+	if(pago === "true"){
+		var dataPagamento = $("#dataPagamento").val()
+		if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
+			erros.push(" Data de Pagamento")
+		}
+	}
 
-					if(erros.length > 0 && erros.length == 1){
-						Swal.fire({
-							icon: 'error',
-							title: 'Erro ...',
-							text: "O campo " + erros + " não foi preenchido!",
-						})
-						return false;
-					}else if(erros.length > 1){
-						Swal.fire({
-							icon: 'error',
-							title: 'Erro ...',
-							text: "Os campos " + erros + " não foram preenchidos!",
-						})
-						return false;
-					}
+	if(erros.length > 0 && erros.length == 1){
+		Swal.fire({
+			icon: 'error',
+			title: 'Erro ...',
+			text: "O campo " + erros + " não foi preenchido!",
+		})
+		return false;
+	}else if(erros.length > 1){
+		Swal.fire({
+			icon: 'error',
+			title: 'Erro ...',
+			text: "Os campos " + erros + " não foram preenchidos!",
+		})
+		return false;
+	}
 
-					var id = $('#listaFornecedor [value="' + fornecedor + '"]').data('value')
-					$('#fornecedor').val(id);
+	var id = $('#listaFornecedor [value="' + fornecedor + '"]').data('value')
+	$('#fornecedor').val(id);
 
-					if(opcao === 'adicionar'){
-						document.formPagamento.action = '/contas-pagar/store';
-						document.formPagamento.submit();
-					}else if(opcao === 'editar'){
-						document.formPagamento.action = '/contas-pagar/update';
-						document.formPagamento.submit();
-					}
-				})
+	if(opcao === 'adicionar'){
+		document.formPagamento.action = '/contas-pagar/store';
+		document.formPagamento.submit();
+	}else if(opcao === 'editar'){
+		document.formPagamento.action = '/contas-pagar/update';
+		document.formPagamento.submit();
+	}
+})
 
 $('#modalPagamento').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
@@ -875,18 +875,4 @@ $(function(){
 		}
 		fileReader.readAsDataURL(file)
 	})
-})
-
-$(document).on(AddSub = (id, tipo) => {
-	var input = $('#' + id);
-	var quant;
-	if(tipo === 'add'){
-		quant = parseFloat(input.val()) + 1;
-	}else {
-		quant = parseFloat(input.val()) - 1;
-	}
-	if(quant < 0){
-		return false;
-	}
-	input.val(quant)
 })

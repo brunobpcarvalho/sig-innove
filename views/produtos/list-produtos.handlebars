@@ -1,210 +1,188 @@
-<div class="row">
-  <div class="col-xs-12">
-    <div class="box">
-      <div class="box-header">
-        <div class="box-body">
-          <div  class="form-row">
-            <div class="col-xs-1">
-              <h1 class="box-title">Produtos</h1>
-            </div>
-            <div class="col-xs-8">
-
-            </div>
-            <div class="col-xs-3">
-              <div class="btn-group">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalEstoque"> Controle de Estoque </button>
-              </div>
-              <div class="btn-group">
-                <button type="button" class="add btn btn-primary"
-                data-ativo="Ativo"
-                data-unidade="unitario"
-                data-toggle="modal" data-target="#modalProduto">
-                Adicionar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="box">
+    <div class="box-header">
+        <h1 class="box-title">Produtos</h1>
     </div>
-    <!-- /.box-header -->
     <div class="box-body">
-      <table id="tabelaProdutos" class="tbl table table-striped text-center">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Descrição</th>
-            <th>Quantidade</th>
-            <th>Fabricante</th>
-            <th>Modelo</th>
-            <th>Categoria</th>
-            <th>Valor</th>
-            <th>Ativo</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each produtos}}
-          <tr>
-            <td>{{id}}</td>
-            <td>{{descricao}}</td>
-            <td>{{quantidade}}</td>
-            <td>{{fabricante}}</td>
-            <td>{{modelo}}</td>
-            <td>{{categoria}}</td>
-            <td>{{valorUnitario}}</td>
-            <td>{{ativo}}</td>
-            <td class="acao">
-              <div class="toolbar-actions">
-                <div class="btn-group">
-                  <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalProduto"
-                  data-id="{{id}}"
-                  data-descricao="{{descricao}}"
-                  data-quantidade="{{quantidade}}"
-                  data-fabricante="{{fabricante}}"
-                  data-modelo="{{modelo}}"
-                  data-categoria="{{categoria}}"
-                  data-valor="{{valorUnitario}}"
-                  data-ativo="{{ativo}}">
-                  <i class="fa fa-edit"></i></button>
-                </div>
-                <div class="btn-group">
-                  <form action="/produtos/list-produtos/deletar" method="post">
-                    <input type="hidden" name="id" value="{{id}}">
-                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
-                  </form>
-                </div>
-              </div>
-            </td>
-          </tr>
-          {{/each}}
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Código</th>
-            <th>Descrição</th>
-            <th>Quantidade</th>
-            <th>Fabricante</th>
-            <th>Modelo</th>
-            <th>Categoria</th>
-            <th>Valor Unitário</th>
-            <th>Ativo</th>
-            <th></th>
-          </tr>
-        </tfoot>
-      </table>
+        <button type="button" class="add btn btn-primary"
+        data-ativo="Ativo"
+        data-unidade="unitario"
+        data-toggle="modal" data-target="#modalProduto"> Adicionar </button>
+
+        <table id="tabelaProdutos" class="tbl table table-striped text-center">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Fabricante</th>
+                    <th>Modelo</th>
+                    <th>Categoria</th>
+                    <th>Valor</th>
+                    <th>Ativo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each produtos}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td>{{descricao}}</td>
+                    <td>{{quantidade}}</td>
+                    <td>{{fabricante}}</td>
+                    <td>{{modelo}}</td>
+                    <td>{{categoria}}</td>
+                    <td>{{valorUnitario}}</td>
+                    <td>{{ativo}}</td>
+                    <td class="acao">
+                        <div class="toolbar-actions">
+                            <div class="btn-group">
+                                <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalProduto"
+                                data-id="{{id}}"
+                                data-descricao="{{descricao}}"
+                                data-quantidade="{{quantidade}}"
+                                data-fabricante="{{fabricante}}"
+                                data-modelo="{{modelo}}"
+                                data-categoria="{{categoria}}"
+                                data-valor="{{valorUnitario}}"
+                                data-ativo="{{ativo}}">
+                                <i class="fa fa-edit"></i></button>
+                            </div>
+                            <div class="btn-group">
+                                <form action="/produtos/list-produtos/deletar" method="post">
+                                    <input type="hidden" name="id" value="{{id}}">
+                                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Fabricante</th>
+                    <th>Modelo</th>
+                    <th>Categoria</th>
+                    <th>Valor Unitário</th>
+                    <th>Ativo</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
     </div>
-  </div>
-</div>
 </div>
 
 <!-- ------------------------        MODAL         ------------------------ -->
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalProduto">
-  <form name="formProduto" id="formProduto" method="post">
-    <input type="hidden" name="id" id="id" value="{{id}}">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title">Adicionar Produto</h4>
-        </div>
+    <form name="formProduto" id="formProduto" method="post">
+        <input type="hidden" name="id" id="id" value="{{id}}">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Adicionar Produto</h4>
+                </div>
 
-        <div class="modal-body">
-          <div class="box-body">
-            <div class="row">
-              <div class="col-xs-8">
-                <span>Descrição</span><span class="obrigatorio"> *</span>
-                <input type="text" class="form-control" name="descricao" id="descricao">
-              </div>
-              <div class="col-xs-2">
-                <span>Quantidade</span><span class="obrigatorio"> *</span>
-                <input type="number" class="quantidade form-control" id="quantidade" name="quantidade" min="1" value="1" disabled>
-              </div>
-            </div>
-            <div class="row">
-              <div style="margin-top: 2%;" class="col-xs-4">
-                <span>Fabricante</span><span class="obrigatorio"> *</span>
-                <div class="input-group">
-                  <input class="form-control" type="search" id="fabricante" name="fabricante" list="listaFabricantes" placeholder="Selecione um Fabricante"/>
-                  <span class="input-group-btn">
-                    <a href="/produtos/list-fabricantes"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
-                  </span>
-                  <datalist id="listaFabricantes">
-                    {{#each fabricantes}}
-                    <option data-value="{{id}}" value="{{nome}}"></option>
-                    {{else}}
-                    <option data-value="0" value="Nenhum fabricante registrado"></option>
-                    {{/each}}
-                  </datalist>
-                </div>
-              </div>
-              <div style="margin-top: 2%;" class="col-xs-4">
-                <span>Modelo</span><span class="obrigatorio"> *</span>
-                <div class="input-group">
-                  <input class="form-control" type="search" id="modelo" name="modelo" list="listaModelos" placeholder="Selecione um Modelo"/>
-                  <span class="input-group-btn">
-                    <a href="/produtos/listModelo"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
-                  </span>
-                  <datalist id="listaModelos">
-                    {{#each modelos}}
-                    <option data-value="{{id}}" value="{{descricao}}"></option>
-                    {{else}}
-                    <option data-value="0" value="Nenhum modelo registrado"></option>
-                    {{/each}}
-                  </datalist>
-                </div>
-              </div>
-              <div style="margin-top: 2%;" class="col-xs-4">
-                <span>Categoria</span><span class="obrigatorio"> *</span>
-                <div class="input-group">
-                  <input class="form-control" type="search" id="categoria" name="categoria" list="listaCategorias" placeholder="Selecione uma Categoria"/>
-                  <span class="input-group-btn">
-                    <a href="/produtos/list-categoria"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
-                  </span>
-                  <datalist id="listaCategorias">
-                    {{#each categorias}}
-                    <option data-value="{{id}}" value="{{nome}}"></option>
-                    {{else}}
-                    <option data-value="0" value="Nenhuma categoria registrada"></option>
-                    {{/each}}
-                  </datalist>
-                </div>
-              </div>
-            </div>
-            <div style="margin-top: 2%;" class="row">
+                <div class="modal-body">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <span>Descrição</span><span class="obrigatorio"> *</span>
+                                <input type="text" class="form-control" name="descricao" id="descricao">
+                            </div>
+                            <div class="col-xs-2">
+                                <span>Quantidade</span><span class="obrigatorio"> *</span>
+                                <input type="number" class="quantidade form-control" id="quantidade" name="quantidade" min="1" value="1" disabled>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="margin-top: 2%;" class="col-xs-4">
+                                <span>Fabricante</span><span class="obrigatorio"> *</span>
+                                <div class="input-group">
+                                    <input class="form-control" type="search" id="fabricante" name="fabricante" list="listaFabricantes" placeholder="Selecione um Fabricante"/>
+                                    <span class="input-group-btn">
+                                        <a href="/produtos/list-fabricantes"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                                    </span>
+                                    <datalist id="listaFabricantes">
+                                        {{#each fabricantes}}
+                                        <option data-value="{{id}}" value="{{nome}}"></option>
+                                        {{else}}
+                                        <option data-value="0" value="Nenhum fabricante registrado"></option>
+                                        {{/each}}
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div style="margin-top: 2%;" class="col-xs-4">
+                                <span>Modelo</span><span class="obrigatorio"> *</span>
+                                <div class="input-group">
+                                    <input class="form-control" type="search" id="modelo" name="modelo" list="listaModelos" placeholder="Selecione um Modelo"/>
+                                    <span class="input-group-btn">
+                                        <a href="/produtos/listModelo"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                                    </span>
+                                    <datalist id="listaModelos">
+                                        {{#each modelos}}
+                                        <option data-value="{{id}}" value="{{descricao}}"></option>
+                                        {{else}}
+                                        <option data-value="0" value="Nenhum modelo registrado"></option>
+                                        {{/each}}
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div style="margin-top: 2%;" class="col-xs-4">
+                                <span>Categoria</span><span class="obrigatorio"> *</span>
+                                <div class="input-group">
+                                    <input class="form-control" type="search" id="categoria" name="categoria" list="listaCategorias" placeholder="Selecione uma Categoria"/>
+                                    <span class="input-group-btn">
+                                        <a href="/produtos/list-categoria"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
+                                    </span>
+                                    <datalist id="listaCategorias">
+                                        {{#each categorias}}
+                                        <option data-value="{{id}}" value="{{nome}}"></option>
+                                        {{else}}
+                                        <option data-value="0" value="Nenhuma categoria registrada"></option>
+                                        {{/each}}
+                                    </datalist>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 2%;" class="row">
 
-              <div class="col-xs-3">
-                <span>Valor Unitário</span><span class="obrigatorio"> *</span>
-                <input class="money form-control" type="text" name="valorUnitario" id="valorUnitario" value="">
-              </div>
-              <div class="col-xs-3">
-                <span>Valor de Custo</span><span class="obrigatorio"> *</span>
-                <input class="money form-control" type="text" name="valorCusto" id="valorCusto" value="">
-              </div>
-              <div class="col-xs-3">
-                <span>Prazo de Reposição (dias)</span><span class="obrigatorio"> *</span>
-                <input class="form-control" type="number" name="prazoRepozicao" id="prazoRepozicao" value="1">
-              </div>
-              <div class="col-xs-2">
-                <span>Ativo</span>
-                <select id="ativo" name="ativo" class="form-control">
-                  <option value='Ativo'> SIM </option>
-                  <option value='Inativo'> NÃO </option>
-                </select>
-              </div>
+                            <div class="col-xs-3">
+                                <span>Valor Unitário</span><span class="obrigatorio"> *</span>
+                                <input class="money form-control" type="text" name="valorUnitario" id="valorUnitario" value="">
+                            </div>
+                            <div class="col-xs-3">
+                                <span>Valor de Custo</span><span class="obrigatorio"> *</span>
+                                <input class="money form-control" type="text" name="valorCusto" id="valorCusto" value="">
+                            </div>
+                            <div class="col-xs-3">
+                                <span>Prazo de Reposição (dias)</span><span class="obrigatorio"> *</span>
+                                <input class="form-control" type="number" name="prazoRepozicao" id="prazoRepozicao" value="1">
+                            </div>
+                            <div class="col-xs-2">
+                                <span>Ativo</span>
+                                <select id="ativo" name="ativo" class="form-control">
+                                    <option value='Ativo'> SIM </option>
+                                    <option value='Inativo'> NÃO </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position: relative;" class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                    <button style="position: absolute;" type="button" onclick="return validarFormProduto('adicionar')" class="salvar btn btn-primary">Salvar</button>
+                    <button type="button" onclick="return validarFormProduto('editar')" class="editar btn btn-primary">Editar</button>
+                </div>
             </div>
-          </div>
         </div>
-        <div style="position: relative;" class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
-          <button style="position: absolute;" type="button" onclick="return validarFormProduto('adicionar')" class="salvar btn btn-primary">Salvar</button>
-          <button type="button" onclick="return validarFormProduto('editar')" class="editar btn btn-primary">Editar</button>
-        </div>
-      </div>
-    </div>
-  </form>
+    </form>
 </div>
 
 
@@ -213,68 +191,68 @@
 <!-- MODAL CONTROLE DE ESTOQUE -->
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalEstoque">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button onclick="Fechar()" type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title">Controle de Estoque</h4>
-      </div>
-      <div class="modal-body">
-        <table id="tabelaEstoque" class="tbl table table-striped">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Descrição</th>
-              <th>Quantidade</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each produtos}}
-            <tr>
-              <form action="/produtos/list-produtos/controle-estoque" method="post">
-                <input type="hidden" name="id" value="{{id}}"/>
-                <td>{{id}}</td>
-                <td>{{descricao}}</td>
-                <td>
-                  <div class="btn-group">
-                    <div class="input-group">
-                      <span class="input-group-btn">
-                        <button type="button" class="btn btn-primary" onclick="AddSub('{{id}}', 'sub')">-</button>
-                      </span>
-                      <input class="form-control" type="text" id="{{id}}" name="quantidadeEstoque" size="1" value="{{quantidade}}"/>
-                      <span class="input-group-btn">
-                        <button type="button" class="btn btn-primary" onclick="AddSub('{{id}}', 'add')">+</button>
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td class="acao">
-                  <div class="toolbar-actions">
-                    <div class="btn-group">
-                      <button type="submit" name="button" class="btn btn-success"><i class="fa fa-save"></i></button>
-                    </div>
-                  </div>
-                </td>
-              </form>
-            </tr>
-            {{/each}}
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Código</th>
-              <th>Descrição</th>
-              <th>Quantidade</th>
-              <th></th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal"> Fechar </button>
-      </div>
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button onclick="Fechar()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Controle de Estoque</h4>
+            </div>
+            <div class="modal-body">
+                <table id="tabelaEstoque" class="tbl table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Quantidade</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each produtos}}
+                        <tr>
+                            <form action="/produtos/list-produtos/controle-estoque" method="post">
+                                <input type="hidden" name="id" value="{{id}}"/>
+                                <td>{{id}}</td>
+                                <td>{{descricao}}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-primary" onclick="AddSub('{{id}}', 'sub')">-</button>
+                                            </span>
+                                            <input class="form-control" type="text" id="{{id}}" name="quantidadeEstoque" size="1" value="{{quantidade}}"/>
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-primary" onclick="AddSub('{{id}}', 'add')">+</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="acao">
+                                    <div class="toolbar-actions">
+                                        <div class="btn-group">
+                                            <button type="submit" name="button" class="btn btn-success"><i class="fa fa-save"></i></button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </form>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Quantidade</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"> Fechar </button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
