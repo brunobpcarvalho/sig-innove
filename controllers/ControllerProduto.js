@@ -135,20 +135,3 @@ exports.update = (req, res) => {
 		res.redirect("/produtos/list-produtos")
 	})
 }
-
-exports.controleEstoque = (req, res) => {
-	Produto.findByPk(req.body.id, {attributes: ['id', 'quantidade']}).then((produto) =>{
-		produto.quantidade = req.body.quantidadeEstoque
-
-		produto.save().then(() => {
-			req.flash("msg_sucesso", "Estoque editado com sucesso!")
-			res.redirect("/produtos/list-produtos")
-		}).catch((erro) => {
-			req.flash("msg_erro", "Não foi possivel salvar a alteração: " + erro)
-			res.redirect("/produtos/list-produtos")
-		})
-	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possivel encontrar o produto: " + erro)
-		res.redirect("/produtos/list-produtos")
-	})
-}
