@@ -1,12 +1,12 @@
 require("dotenv").config();
 const Sequelize = require('sequelize');
-var conexao; 
+var conexao;
 
 if (process.env.DATABASE_URL) {
 	conexao = new Sequelize(process.env.DATABASE_URL, {
 		dialect:  'postgres',
 		protocol: 'postgres',
-        logging: false 
+        logging: false
   })
 } else {
 	conexao = new Sequelize('dbinnove', 'postgres', '123456', {

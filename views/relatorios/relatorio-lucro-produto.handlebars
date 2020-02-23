@@ -4,37 +4,41 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <a href="/relatorios/relatorio-lucro-produto/gerar-pdf" target="_blank"><button type="button" class="btn btn-primary"> Gerar PDF </button></a>
-        <table class="tbl table table-striped text-center">
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Descrição</th>
-                    <th>Valor Unitário</th>
-                    <th>Valor de Custo</th>
-                    <th>Lucratividade</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each lucratividade}}
-                <tr>
-                    <td>{{id}}</td>
-                    <td>{{descricao}}</td>
-                    <td>{{valorUnitario}}</td>
-                    <td>{{valorCusto}}</td>
-                    <td>{{lucratividade}}</td>
-                </tr>
-                {{/each}}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th>Código</th>
-                    <th>Descrição</th>
-                    <th>Valor Unitário</th>
-                    <th>Valor de Custo</th>
-                    <th>Lucratividade</th>
-                </tr>
-            </tfoot>
-        </table>
+        <a href="/relatorios/relatorio-lucro-produto/gerar-pdf" target="_blank"><button type="button" class="btn btn-primary"
+            {{#if lucratividade}}
+            {{else}}
+            disabled
+            {{/if}}> Gerar PDF </button></a>
+            <table class="tbl table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Valor Unitário</th>
+                        <th>Valor de Custo</th>
+                        <th>Lucratividade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each lucratividade}}
+                    <tr>
+                        <td>{{id}}</td>
+                        <td>{{descricao}}</td>
+                        <td>{{valorUnitario}}</td>
+                        <td>{{valorCusto}}</td>
+                        <td>{{lucratividade}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Valor Unitário</th>
+                        <th>Valor de Custo</th>
+                        <th>Lucratividade</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
-</div>
