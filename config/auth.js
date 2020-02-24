@@ -14,7 +14,7 @@ module.exports = function(passport){
         if(usuario == user.usuario && senha == user.senha){
             return done(null, user);
         }
-        if(usuario != user.usuario && senha != user.senha){
+        if(usuario != user.usuario || senha != user.senha){
             Usuario.findOne({ where: {usuario: usuario}}).then((usuario) => {
                 if(!usuario){
                     return done(null, false, {message: "Esta conta não existe"});
