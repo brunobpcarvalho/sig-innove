@@ -13,51 +13,58 @@ exports.listAll = (req, res) => {
 		Modelo.findAll({where: {ativo: 'Ativo'}}).then((dadosModelo) => {
 			Fabricante.findAll({where: {ativo: 'Ativo'}}).then((dadosFabricante) => {
 				Categoria.findAll({where: {ativo: 'Ativo'}}).then((dadosCategoria) => {
-					const contextProduto = {
-						produtos: dadosProduto.map(dado => {
-							return {
-								id: dado.id,
-								descricao: dado.descricao,
-								quantidade: dado.quantidade,
-								fabricante: dado.fabricante.nome,
-								modelo: dado.modelo.descricao,
-								categoria: dado.categoria.nome,
-								valorUnitario: dado.valorUnitario,
-								valorCusto: dado.valorCusto,
-								prazoReposicao: dado.prazoReposicao,
-								ativo: dado.ativo,
-							}
-						})
-					}
-					const contextModelo = {
-						modelos: dadosModelo.map(dado => {
-							return {
-								id: dado.id,
-								descricao: dado.descricao,
-								ativo: dado.ativo,
-							}
-						})
-					}
-					const contextFabricante = {
-						fabricantes: dadosFabricante.map(dado => {
-							return {
-								id: dado.id,
-								nome: dado.nome,
-								ativo: dado.ativo,
-							}
-						})
-					}
-					const contextCategoria = {
-						categorias: dadosCategoria.map(dado => {
-							return {
-								id: dado.id,
-								nome: dado.nome,
-								ativo: dado.ativo,
-							}
-						})
-					}
+					db.query('SELECT EXTRACT(MONTH FROM "dataVenda") as "dataVenda" FROM "vendas"', { type: db.QueryTypes.SELECT})
+					.then(dataVenda => {
+						console.log('dataVenda', dataVenda);
+						const contextProduto = {
+							produtos: dadosProduto.map(dado => {
+								return {
+									id: dado.id,
+									descricao: dado.descricao,
+									quantidade: dado.quantidade,
+									fabricante: dado.fabricante.nome,
+									modelo: dado.modelo.descricao,
+									categoria: dado.categoria.nome,
+									valorUnitario: dado.valorUnitario,
+									valorCusto: dado.valorCusto,
+									prazoReposicao: dado.prazoReposicao,
+									ativo: dado.ativo,
+								}
+							})
+						}
+						const contextModelo = {
+							modelos: dadosModelo.map(dado => {
+								return {
+									id: dado.id,
+									descricao: dado.descricao,
+									ativo: dado.ativo,
+								}
+							})
+						}
+						const contextFabricante = {
+							fabricantes: dadosFabricante.map(dado => {
+								return {
+									id: dado.id,
+									nome: dado.nome,
+									ativo: dado.ativo,
+								}
+							})
+						}
+						const contextCategoria = {
+							categorias: dadosCategoria.map(dado => {
+								return {
+									id: dado.id,
+									nome: dado.nome,
+									ativo: dado.ativo,
+								}
+							})
+						}
 
-					res.render("produtos/list-produtos", {produtos: contextProduto.produtos, modelos: contextModelo.modelos, fabricantes: contextFabricante.fabricantes, categorias: contextCategoria.categorias})
+						res.render("produtos/list-produtos", {produtos: contextProduto.produtos, modelos: contextModelo.modelos, fabricantes: contextFabricante.fabricantes, categorias: contextCategoria.categorias})
+					}).catch((erro) => {
+						req.flash("msg_erro", "Não foi possivel listar as Categorias!" + erro)
+						res.redirect("/index")
+					})
 				}).catch((erro) => {
 					req.flash("msg_erro", "Não foi possivel listar as Categorias!" + erro)
 					res.redirect("/index")

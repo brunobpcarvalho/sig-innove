@@ -10,7 +10,7 @@ const ContasReceber = require("../models/ContasReceber")
 const Empresa = require("../models/Empresa")
 const PDFDocument = require("pdfkit")
 
-exports.listAll = (req, res) => {
+exports.listAll = async (req, res) => {
 	Venda.findAll({include: [{ model: Pessoa, as: 'pessoa' }, { model: Usuario, as: 'usuario' }]}).then((dadosVenda) => {
 		const contextVenda = {
 			vendas: dadosVenda.map(dado => {
@@ -32,7 +32,7 @@ exports.listAll = (req, res) => {
 	})
 }
 
-exports.addVenda = (req, res) => {
+exports.addVenda = async (req, res) => {
 	Pessoa.findAll({where: {[Op.and]: [{funcao: 'Cliente'}, {ativo: 'Ativo'}]}}).then((dadosCliente) => {
 		Produto.findAll({where: {ativo: 'Ativo'}}, {attributes: ['id', 'quantidade', 'valorUnitario', 'descricao']}).then((dadosProduto) => {
 			const contextPessoa = {
@@ -66,6 +66,7 @@ exports.addVenda = (req, res) => {
 }
 
 exports.add = async (req, res) => {
+
 	const venda = await Venda.create({ usuarioId, pessoaId, dataVenda, valorTotal, desconto, status } = req.body)
 
 	const itens = req.body.produtos
@@ -120,7 +121,7 @@ exports.add = async (req, res) => {
 	}
 }
 
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
 	Venda.findOne({where: {id: req.body.id}}).then(venda => {
 		if(venda.financeiro === 'sim' || venda.status === "VENDA"){
 
@@ -147,7 +148,7 @@ exports.delete = (req, res) => {
 	})
 }
 
-exports.updateVenda = (req, res) => {
+exports.updateVenda = async (req, res) => {
 	Venda.findByPk(req.params.id, {include: [{ model: Pessoa, as: 'pessoa' }, { model: Usuario, as: 'usuario'}]}).then((dadosVenda) =>{
 		ItensVenda.findAll({where: {vendaId: req.params.id}, include: [{ model: Produto, as: 'produto' }]}).then((dadosItensVenda) =>{
 			Parcela.findAll({where: {vendaId: req.params.id}}).then((dadosParcela) =>{
@@ -292,7 +293,7 @@ exports.update = async (req, res) => {
 	}
 }
 
-exports.gerarFinanceiro = (req, res) => {
+exports.gerarFinanceiro = async (req, res) => {
 	Venda.findByPk(req.params.id).then(venda => {
 		Parcela.findAll({ where: {vendaId: venda.id}}).then(parcelas => {
 			for (var i = 0; i < parcelas.length; i++) {
@@ -329,7 +330,7 @@ exports.gerarFinanceiro = (req, res) => {
 	})
 }
 
-exports.estornarVenda = (req, res) => {
+exports.estornarVenda = async (req, res) => {
 	Venda.update({ financeiro: 'nao', status: 'ORCAMENTO' }, { where: {id: req.params.id}}).then((venda) =>{
 		req.flash("msg_sucesso", "Venda estornada com sucesso!")
 		res.redirect("/vendas/list-vendas")
@@ -339,7 +340,7 @@ exports.estornarVenda = (req, res) => {
 	})
 }
 
-exports.aprovarVenda = (req, res) => {
+exports.aprovarVenda = async (req, res) => {
 	Venda.findByPk(req.params.id).then((venda) =>{
 		ItensVenda.findAll({where: {vendaId: venda.id}}).then(itensVenda => {
 			for(var i = 0; i < itensVenda.length; i++){
@@ -382,7 +383,7 @@ exports.aprovarVenda = (req, res) => {
 	})
 }
 
-exports.generatePdf = (req, res) => {
+exports.generatePdf = async (req, res) => {
 	Empresa.findByPk(1).then(empresa => {
 		Venda.findByPk(req.params.id, {include: [{ model: Pessoa, as: 'pessoa' }]}).then(venda => {
 			ItensVenda.findAll({where: {vendaId: req.params.id}, include: [{ model: Produto, as: 'produto' }]}).then(itensVenda => {
@@ -402,7 +403,7 @@ exports.generatePdf = (req, res) => {
 				res.setHeader(
 					"Content-disposition",
 					'filename="Pedido-' + venda.id + ".pdf" + '"'
-					)
+				)
 				doc.pipe(res)
 				doc.end()
 			}).catch(erro => {
@@ -474,10 +475,10 @@ function generateInvoiceTable(doc, itensVenda, venda) {
 		"Quantidade",
 		"Valor Unitário",
 		"Total"
-		);
+	);
 	generateHr(doc, 45, 545, invoiceTableTop + 12);
 	doc.font("Helvetica");
-	
+
 	for (i = 0; i < itensVenda.length; i++) {
 		const position = invoiceTableTop + (i + 1) * 20;
 		generateTableRow(
@@ -488,7 +489,7 @@ function generateInvoiceTable(doc, itensVenda, venda) {
 			itensVenda[i].quantidade,
 			"R$ " + itensVenda[i].valorUnitario,
 			"R$ " + itensVenda[i].valorTotal
-			);
+		);
 		sub_total += parseFloat(itensVenda[i].valorTotal);
 		generateHr(doc, 45, 545, position + 13);
 	}
@@ -502,7 +503,7 @@ function generateInvoiceTable(doc, itensVenda, venda) {
 		"",
 		"Subtotal",
 		"R$ " + sub_total.toFixed(2)
-		);
+	);
 
 	const paidToDatePosition = subtotalPosition + 20;
 	generateTableRow(
@@ -513,7 +514,7 @@ function generateInvoiceTable(doc, itensVenda, venda) {
 		"",
 		"Desconto",
 		"R$ " + venda.desconto
-		);
+	);
 
 	const duePosition = paidToDatePosition + 25;
 	doc.font("Helvetica-Bold");
@@ -525,7 +526,7 @@ function generateInvoiceTable(doc, itensVenda, venda) {
 		"",
 		"VALOR TOTAL",
 		"R$ " + venda.valorTotal
-		);
+	);
 	doc.font("Helvetica");
 
 	generateFooter(doc, paidToDatePosition + 45);
@@ -541,7 +542,7 @@ function generateFooter(doc, alt) {
 		50,
 		alt + 15,
 		{ align: "center", width: 500 }
-		);
+	);
 }
 
 function generateTableRow(doc, y, codigo, descricao, quantidade, valorUnitario,	total) {
@@ -567,7 +568,7 @@ function formatDate(date) {
 	const day = date.getDate();
 	const month = date.getMonth() + 1;
 	const year = date.getFullYear();
-	const hr = date.getHours(); 
+	const hr = date.getHours();
 	const min = date.getMinutes();
 	const seg = date.getSeconds();
 
