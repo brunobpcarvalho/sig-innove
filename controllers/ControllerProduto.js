@@ -6,64 +6,72 @@ const Categoria = require("../models/Categoria")
 const Venda = require("../models/Venda")
 const ItensVenda = require("../models/ItensVenda")
 const Empresa = require("../models/Empresa")
-const PDFDocument = require("pdfkit")
 
 exports.listAll = (req, res) => {
-	Produto.findAll({include: [{ model: Fabricante, as: 'fabricante' }, { model: Modelo, as: 'modelo' }, { model: Categoria, as: 'categoria' }]}).then((dadosProduto) => {
+	Produto.findAll({
+		include: [
+			{ model: Fabricante, as: 'fabricante' },
+			{ model: Modelo, as: 'modelo' },
+			{ model: Categoria, as: 'categoria' }
+		]
+	}).then((dadosProduto) => {
 		Modelo.findAll({where: {ativo: 'Ativo'}}).then((dadosModelo) => {
 			Fabricante.findAll({where: {ativo: 'Ativo'}}).then((dadosFabricante) => {
 				Categoria.findAll({where: {ativo: 'Ativo'}}).then((dadosCategoria) => {
-					db.query('SELECT EXTRACT(MONTH FROM "dataVenda") as "dataVenda" FROM "vendas"', { type: db.QueryTypes.SELECT})
-					.then(dataVenda => {
-						console.log('dataVenda', dataVenda);
-						const contextProduto = {
-							produtos: dadosProduto.map(dado => {
-								return {
-									id: dado.id,
-									descricao: dado.descricao,
-									quantidade: dado.quantidade,
-									fabricante: dado.fabricante.nome,
-									modelo: dado.modelo.descricao,
-									categoria: dado.categoria.nome,
-									valorUnitario: dado.valorUnitario,
-									valorCusto: dado.valorCusto,
-									prazoReposicao: dado.prazoReposicao,
-									ativo: dado.ativo,
-								}
-							})
-						}
-						const contextModelo = {
-							modelos: dadosModelo.map(dado => {
-								return {
-									id: dado.id,
-									descricao: dado.descricao,
-									ativo: dado.ativo,
-								}
-							})
-						}
-						const contextFabricante = {
-							fabricantes: dadosFabricante.map(dado => {
-								return {
-									id: dado.id,
-									nome: dado.nome,
-									ativo: dado.ativo,
-								}
-							})
-						}
-						const contextCategoria = {
-							categorias: dadosCategoria.map(dado => {
-								return {
-									id: dado.id,
-									nome: dado.nome,
-									ativo: dado.ativo,
-								}
-							})
-						}
+					//SELECT EXTRACT(DAY FROM "dataVenda") as "diaVenda", EXTRACT(MONTH FROM "dataVenda") as "mesVenda" FROM "vendas"
+					//SELECT "produtoId" AS "id", SUM(quantidade) AS "demanda", EXTRACT(MONTH FROM "createdAt") AS "mes" FROM "itens_vendas" GROUP BY  EXTRACT(MONTH FROM "createdAt"), "produtoId"
+					//SELECT SUM(iv."quantidade") AS "demanda", iv."produtoId" AS "id", p."prazoReposicao" AS "tempoDeEntrega", EXTRACT(MONTH FROM v."dataVenda") AS "mes" FROM "itens_vendas" iv INNER JOIN "produtos" p on p."id" = iv."produtoId" INNER JOIN "vendas" v on v."id" = iv."vendaId" GROUP BY EXTRACT(MONTH FROM v."dataVenda"), iv."produtoId"
+					//'WHERE v."dataVenda" BETWEEN NOW() - INTERVAL 30 DAY AND NOW()' +
 
-						res.render("produtos/list-produtos", {produtos: contextProduto.produtos, modelos: contextModelo.modelos, fabricantes: contextFabricante.fabricantes, categorias: contextCategoria.categorias})
-					}).catch((erro) => {
-						req.flash("msg_erro", "Não foi possivel listar as Categorias!" + erro)
-						res.redirect("/index")
+					const contextProduto = {
+						produtos: dadosProduto.map(dado => {
+							return {
+								id: dado.id,
+								descricao: dado.descricao,
+								quantidade: dado.quantidade,
+								fabricante: dado.fabricante.nome,
+								modelo: dado.modelo.descricao,
+								categoria: dado.categoria.nome,
+								valorUnitario: dado.valorUnitario,
+								valorCusto: dado.valorCusto,
+								prazoReposicao: dado.prazoReposicao,
+								ativo: dado.ativo,
+							}
+						})
+					}
+					const contextModelo = {
+						modelos: dadosModelo.map(dado => {
+							return {
+								id: dado.id,
+								descricao: dado.descricao,
+								ativo: dado.ativo,
+							}
+						})
+					}
+					const contextFabricante = {
+						fabricantes: dadosFabricante.map(dado => {
+							return {
+								id: dado.id,
+								nome: dado.nome,
+								ativo: dado.ativo,
+							}
+						})
+					}
+					const contextCategoria = {
+						categorias: dadosCategoria.map(dado => {
+							return {
+								id: dado.id,
+								nome: dado.nome,
+								ativo: dado.ativo,
+							}
+						})
+					}
+
+					res.render("produtos/list-produtos", {
+						produtos: contextProduto.produtos,
+						modelos: contextModelo.modelos,
+						fabricantes: contextFabricante.fabricantes,
+						categorias: contextCategoria.categorias
 					})
 				}).catch((erro) => {
 					req.flash("msg_erro", "Não foi possivel listar as Categorias!" + erro)

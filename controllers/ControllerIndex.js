@@ -33,7 +33,6 @@ exports.listAll = (req, res) => {
 												.then(vlrAPagarNoMes => {
 													db.query('SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade" FROM "produtos" ORDER BY "lucratividade" DESC LIMIT 5', { type: db.QueryTypes.SELECT})
 													.then(lucratividade => {
-														console.log(lucratividade)
 														var valorAPagarNoMes = vlrAPagarNoMes[0].sum
 														ContasPagar.count().then(pagamentosRealizados => {
 

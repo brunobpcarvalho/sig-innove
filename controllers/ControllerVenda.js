@@ -112,13 +112,13 @@ exports.add = async (req, res) => {
 			})
 		}
 		itensVenda.save().then(() => {
-			req.flash("msg_sucesso", "Venda realizada com sucesso!")
-			res.redirect("/vendas/list-vendas")
 		}).catch((erro) => {
 			req.flash("msg_erro", "Erro: Não foi possível salvar itens da venda!" + erro)
 			res.redirect("/vendas/list-vendas")
 		})
 	}
+	req.flash("msg_sucesso", "Venda realizada com sucesso!")
+	res.redirect("/vendas/list-vendas")
 }
 
 exports.delete = async (req, res) => {

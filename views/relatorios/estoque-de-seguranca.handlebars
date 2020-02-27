@@ -1,11 +1,11 @@
 <div class="box">
     <div class="box-header text-center">
-        <h1 class="box-title">Relatorio de Lucratividade por Produto</h1>
+        <h1 class="box-title">Relatorio de Estoque de Segurança</h1>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <a href="/relatorios/relatorio-lucro-produto/gerar-pdf" target="_blank"><button type="button" class="btn btn-primary"
-            {{#if lucratividade}}
+        <a href="/relatorios/estoque-de-seguranca/gerar-pdf" target="_blank"><button type="button" class="btn btn-primary"
+            {{#if estoqueDeSeguranca}}
             {{else}}
             disabled
             {{/if}}> Gerar PDF </button></a>
@@ -14,19 +14,19 @@
                     <tr>
                         <th>Código</th>
                         <th>Descrição</th>
-                        <th>Valor Unitário</th>
-                        <th>Valor de Custo</th>
-                        <th>Lucratividade</th>
+                        <th>Quantidade no Estoque</th>
+                        <th>Quantidade Vendida nos Ultimos 30 dias</th>
+                        <th>Estoque de Segurança</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each lucratividade}}
+                    {{#each estoqueDeSeguranca}}
                     <tr>
                         <td>{{id}}</td>
                         <td>{{descricao}}</td>
-                        <td>{{valorUnitario}}</td>
-                        <td>{{valorCusto}}</td>
-                        <td>{{lucratividade}}</td>
+                        <td>{{quantidade}}</td>
+                        <td>{{quantVendida}}</td>
+                        <td>{{estoqueDeSeguranca}}</td>
                     </tr>
                     {{/each}}
                 </tbody>
@@ -34,9 +34,9 @@
                     <tr>
                         <th>Código</th>
                         <th>Descrição</th>
-                        <th>Valor Unitário</th>
-                        <th>Valor de Custo</th>
-                        <th>Lucratividade</th>
+                        <th>Quantidade no Estoque</th>
+                        <th>Quantidade Vendida nos Ultimos 30 dias</th>
+                        <th>Estoque de Segurança</th>
                     </tr>
                 </tfoot>
             </table>
