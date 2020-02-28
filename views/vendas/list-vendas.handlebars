@@ -63,7 +63,7 @@
                             <div class="btn-group">
                                 <form action="/vendas/list-vendas/deletar" method="post">
                                     <input type="hidden" name="id" value="{{id}}">
-                                    <button title="Excluir" type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                    <button title="Excluir" type="submit" name="button" class="btn btn-danger" {{#ifCond status "VENDA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
                                 </form>
                             </div>
                         </div>

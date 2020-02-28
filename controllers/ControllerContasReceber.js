@@ -124,7 +124,7 @@ exports.destroy = (req, res) => {
 			res.redirect("/contas-receber/index")
 		})
 	}
-	
+
 }
 
 exports.update = (req, res) => {
