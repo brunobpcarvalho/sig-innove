@@ -102,16 +102,19 @@ app.use('/contas-pagar', ContasPagar);
 app.use('/relatorios', Relatorios);
 
 
-/*app.use((req, res, next) => {
-	const erro = new Error('Not found')
-	erro.status = 404
-	next(erro)
+app.use((req, res, next) => {
+	const error = new Error('Pagina nao encontrada')
+	error.httpStatusCode = 404
+	next(error)
 })
 
 app.use((error, req, res, next) => {
-	res.status(error.status || 500)
-	res.render('error', { error: error });
-})*/
+	if(error.httpStatusCode == 404){
+		res.render('404', { error: error });
+	} else if(error.httpStatusCode == 500) {
+		res.render('500', { error: error });
+	}
+})
 
 /*----------------------------------------------------------------------------*/
 
