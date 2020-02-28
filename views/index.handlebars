@@ -34,10 +34,10 @@
 				<div class="box-body">
 
 					{{#each valorRecebimentosAnual}}
-					<input class="totalMesRecebimento" data-mes="{{date_part}}"type="hidden" value="{{vlrRecebAnual}}">
+					<input class="totalMesRecebimento" data-mes="{{mes}}"type="hidden" value="{{vlrRecebAnual}}">
 					{{/each}}
 					{{#each valorPagamentosAnual}}
-					<input class="totalMesPagamento" data-mes="{{date_part}}" type="hidden" value="{{vlrPagaAnual}}">
+					<input class="totalMesPagamento" data-mes="{{mes}}" type="hidden" value="{{vlrPagaAnual}}">
 					{{/each}}
 					<canvas id="myChart"></canvas>
 				</div>

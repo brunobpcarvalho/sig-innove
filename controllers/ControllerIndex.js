@@ -5,33 +5,72 @@ const Produto = require("../models/Produto")
 const ContasReceber = require("../models/ContasReceber")
 const ContasPagar = require("../models/ContasPagar")
 
-exports.listAll = (req, res) => {
-	var date = new Date();
-	var month = date.getMonth() + 1;
+var date = new Date();
+var month = date.getMonth() + 1;
+var year = date.getFullYear();
+
+const Querys = {
+	valorTotalEmEstoque: 'SELECT Sum("quantidade" * "valorUnitario") as "vlrTotEmEstoque" FROM "produtos"',
+
+	valorRecebimentosAnual: 'SELECT EXTRACT(MONTH FROM "dataVencimento") AS "mes", ' +
+	'Sum("valor") as "vlrRecebAnual" ' +
+	'FROM "recebimentos" ' +
+	'WHERE EXTRACT(YEAR FROM "dataVencimento") = ' + year +
+	' GROUP BY EXTRACT(MONTH FROM"dataVencimento") ' +
+	'ORDER BY EXTRACT(MONTH FROM"dataVencimento") ASC',
+
+	valorPagamentosAnual: 'SELECT EXTRACT(MONTH FROM "dataVencimento") AS "mes", ' +
+	'Sum("valor") as "vlrPagaAnual" ' +
+	'FROM "pagamentos" ' +
+	'WHERE EXTRACT(YEAR FROM "dataVencimento") = ' + year +
+	' GROUP BY EXTRACT(MONTH FROM"dataVencimento") '+
+	'ORDER BY EXTRACT(MONTH FROM"dataVencimento") ASC',
+
+	vlrRecebidoNoMes: 'SELECT SUM("valorPago") ' +
+	'FROM recebimentos '+
+	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month + ' AND pago = true',
+
+	vlrAReceberNoMes: 'SELECT SUM("valor") ' +
+	'FROM recebimentos ' +
+	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month,
+
+	vlrPagoNoMes: 'SELECT SUM("valorPago") ' +
+	'FROM pagamentos ' +
+	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month + ' AND pago = true',
+
+	vlrAPagarNoMes: 'SELECT SUM("valor") ' +
+	'FROM pagamentos ' +
+	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month,
+
+	lucratividade: 'SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade" ' +
+	'FROM "produtos" ORDER BY "lucratividade" DESC LIMIT 5'
+}
+
+exports.listAll = (req, res, next) => {
 
 	Pessoa.count({where: {funcao: 'Cliente'}}).then(totalClientesCadastrados => {
 		Pessoa.count({where: {funcao: 'Fornecedor'}}).then(totalFornecedoresCadastrados => {
 			Venda.count().then(vendasRealizadas => {
 				Produto.count().then(totalProdutosCadastrados => {
-					db.query('SELECT Sum("quantidade" * "valorUnitario") as "vlrTotEmEstoque" FROM "produtos"', { type: db.QueryTypes.SELECT})
+					db.query(Querys.valorTotalEmEstoque, { type: db.QueryTypes.SELECT})
 					.then(valorTotalEmEstoque => {
-						db.query('SELECT EXTRACT(MONTH FROM "dataVencimento"), Sum("valor") as "vlrRecebAnual" FROM "recebimentos" GROUP BY EXTRACT(MONTH FROM"dataVencimento") ORDER BY EXTRACT(MONTH FROM"dataVencimento") ASC', { type: db.QueryTypes.SELECT})
+						db.query(Querys.valorRecebimentosAnual, { type: db.QueryTypes.SELECT})
 						.then(valorRecebimentosAnual => {
-							db.query('SELECT EXTRACT(MONTH FROM "dataVencimento"), Sum("valor") as "vlrPagaAnual" FROM "pagamentos" GROUP BY EXTRACT(MONTH FROM"dataVencimento") ORDER BY EXTRACT(MONTH FROM"dataVencimento") ASC', { type: db.QueryTypes.SELECT})
+							db.query(Querys.valorPagamentosAnual, { type: db.QueryTypes.SELECT})
 							.then(valorPagamentosAnual => {
 								ContasReceber.count().then(recebimentosRealizados => {
-									db.query('SELECT SUM("valorPago") FROM recebimentos WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month + ' AND pago = true', { type: db.QueryTypes.SELECT})
+									db.query(Querys.vlrRecebidoNoMes, { type: db.QueryTypes.SELECT})
 									.then(vlrRecebidoNoMes => {
 										var valorRecebidoNoMes = vlrRecebidoNoMes[0].sum
-										db.query('SELECT SUM("valor") FROM recebimentos WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month, { type: db.QueryTypes.SELECT})
+										db.query(Querys.vlrAReceberNoMes, { type: db.QueryTypes.SELECT})
 										.then(vlrAReceberNoMes => {
 											var valorAReceberNoMes = vlrAReceberNoMes[0].sum
-											db.query('SELECT SUM("valorPago") FROM pagamentos WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month + ' AND pago = true', { type: db.QueryTypes.SELECT})
+											db.query(Querys.vlrPagoNoMes, { type: db.QueryTypes.SELECT})
 											.then(vlrPagoNoMes => {
 												var valorPagoNoMes = vlrPagoNoMes[0].sum
-												db.query('SELECT SUM("valor") FROM pagamentos WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month, { type: db.QueryTypes.SELECT})
+												db.query(Querys.vlrAPagarNoMes, { type: db.QueryTypes.SELECT})
 												.then(vlrAPagarNoMes => {
-													db.query('SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade" FROM "produtos" ORDER BY "lucratividade" DESC LIMIT 5', { type: db.QueryTypes.SELECT})
+													db.query(Querys.lucratividade, { type: db.QueryTypes.SELECT})
 													.then(lucratividade => {
 														var valorAPagarNoMes = vlrAPagarNoMes[0].sum
 														ContasPagar.count().then(pagamentosRealizados => {
@@ -78,79 +117,49 @@ exports.listAll = (req, res) => {
 																	lucratividade: lucratividade,
 																});
 															}).catch((erro) => {
-																console.log(erro);
-																req.flash("msg_erro", "Não foi possivel listar!")
-																res.render("/");
+																Erro(req, res, next, 'Não foi possivel buscar valor total das vendas! ' + erro)
 															})
 														}).catch((erro) => {
-															console.log(erro);
-															req.flash("msg_erro", "Não foi possivel listar!")
-															res.render("/");
+															Erro(req, res, next, 'Não foi possivel buscar pagamentos realizados! ' + erro)
 														})
 													}).catch((erro) => {
-														console.log(erro);
-														req.flash("msg_erro", "Não foi possivel listar!")
-														res.render("/");
+														Erro(req, res, next, 'Não foi possivel buscar lucratividade dos produtos! ' + erro)
 													})
 												}).catch((erro) => {
-													console.log(erro);
-													req.flash("msg_erro", "Não foi possivel listar!")
-													res.render("/");
+													Erro(req, res, next, 'Não foi possivel buscar valor a pagar no mes! ' + erro)
 												})
 											}).catch((erro) => {
-												console.log(erro);
-												req.flash("msg_erro", "Não foi possivel listar!")
-												res.render("/");
+												Erro(req, res, next, 'Não foi possivel buscar valor pago no mes! ' + erro)
 											})
 										}).catch((erro) => {
-											console.log(erro);
-											req.flash("msg_erro", "Não foi possivel listar!")
-											res.render("/");
+											Erro(req, res, next, 'Não foi possivel buscar valor a receber no mes! ' + erro)
 										})
 									}).catch((erro) => {
-										console.log(erro);
-										req.flash("msg_erro", "Não foi possivel listar!")
-										res.render("/");
+										Erro(req, res, next, 'Não foi possivel buscar valor recebido no mes! ' + erro)
 									})
 								}).catch((erro) => {
-									console.log(erro);
-									req.flash("msg_erro", "Não foi possivel listar!")
-									res.render("/");
+									Erro(req, res, next, 'Não foi possivel buscar recebimentos realizados! ' + erro)
 								})
 							}).catch((erro) => {
-								console.log(erro);
-								req.flash("msg_erro", "Não foi possivel listar!")
-								res.render("/");
+								Erro(req, res, next, 'Não foi possivel buscar valor dos pagamentos realizados no ano! ' + erro)
 							})
 						}).catch((erro) => {
-							console.log(erro);
-							req.flash("msg_erro", "Não foi possivel listar!")
-							res.render("/");
+							Erro(req, res, next, 'Não foi possivel buscar valor dos recebimentos realizados no ano! ' + erro)
 						})
 					}).catch((erro) => {
-						console.log(erro);
-						req.flash("msg_erro", "Não foi possivel listar!")
-						res.render("/");
+						Erro(req, res, next, 'Não foi possivel buscar valor total dos produtos em estoque! ' + erro)
 					})
 				}).catch((erro) => {
-					console.log(erro);
-					req.flash("msg_erro", "Não foi possivel listar!")
-					res.render("/");
+					Erro(req, res, next, 'Não foi possivel buscar total de produtos cadastrados! ' + erro)
 				})
 			}).catch((erro) => {
-				console.log(erro);
-				req.flash("msg_erro", "Não foi possivel listar total de Vendas realizadas!")
-				res.render("/");
+				Erro(req, res, next, 'Não foi possivel buscar total de vendas realizadas! ' + erro)
 			})
 		}).catch((erro) => {
-			console.log(erro);
-			req.flash("msg_erro", "Não foi possivel listar total de Fornecedores!")
-			res.render("/");
+			Erro(req, res, next, 'Não foi possivel buscar total de fornecedores cadastrados! ' + erro)
 		})
 	}).catch((erro) => {
-		console.log(erro);
-		req.flash("msg_erro", "Não foi possivel listar total de Clientes!")
-		res.render("/");
+		Erro(req, res, next, 'Não foi possivel buscar total de clientes cadastrados! ' + erro)
 	})
 }
 
@@ -165,4 +174,10 @@ CalcPorcentagem = (vlrRecebidoPago, vlrReceberPagar) => {
 
 Diferenca = (vlrRecebidoPago, vlrReceberPagar) => {
 	return diferenca = vlrReceberPagar - vlrRecebidoPago
+}
+
+Erro = (req, res, next, msg) => {
+	const error = new Error(msg)
+	error.httpStatusCode = 500;
+	return next(error)
 }
