@@ -1,22 +1,22 @@
 var db = require("../config/conexao")
 const Categoria = require("../models/Categoria")
 const Produto = require("../models/Produto")
+var Erro = require('../helpers/Erro')
 
-exports.listAll = (req, res) => {
+exports.listAll = (req, res, next) => {
 	Categoria.findAll().then((dados) => {
 		const context = {
-      categorias: dados.map(dado => {
-        return {
-          id: dado.id,
-          nome: dado.nome,
-          ativo: dado.ativo,
-        }
-      })
-    }
+			categorias: dados.map(dado => {
+				return {
+					id: dado.id,
+					nome: dado.nome,
+					ativo: dado.ativo,
+				}
+			})
+		}
 		res.render("produtos/list-categorias", {categorias: context.categorias})
 	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível listar as categorias!")
-		res.redirect("/index")
+		Erro.erro(req, res, next, "Não foi possivel abrir a página de Categorias! " + erro)
 	})
 }
 
@@ -28,7 +28,8 @@ exports.add = (req, res) => {
 		req.flash("msg_sucesso", "Categoria salva com sucesso!")
 		res.redirect("/produtos/list-categorias")
 	}).catch((erro) => {
-		res.redirect("/index")
+		req.flash("msg_erro", "Não foi possivel salvar a Categoria! " + erro)
+		res.redirect("/produtos/list-categorias")
 	})
 }
 
@@ -47,7 +48,7 @@ exports.delete = (req, res) => {
 			res.redirect("/produtos/list-categorias")
 		}
 	}).catch((erro)=>{
-		req.flash("msg_erro", "Não foi possível deletar esta categoria!")
+		req.flash("msg_erro", "Não foi possível deletar esta categoria! " + erro)
 		res.redirect("/produtos/list-categorias")
 	})
 }
@@ -62,11 +63,11 @@ exports.update = (req, res) => {
 			res.redirect("/produtos/list-categorias")
 		}).catch((erro) => {
 			req.flash("msg_erro", "Não foi possível editar esta categoria!")
-			res.redirect("/index")
+			res.redirect("/produtos/list-categorias")
 		})
 	}).catch((erro) => {
 		req.flash("msg_erro", "Não foi possível encontrar esta categoria!")
-		res.redirect("/index")
+		res.redirect("/produtos/list-categorias")
 	})
 }
 

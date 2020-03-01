@@ -4,6 +4,7 @@ const Venda = require("../models/Venda")
 const Produto = require("../models/Produto")
 const ContasReceber = require("../models/ContasReceber")
 const ContasPagar = require("../models/ContasPagar")
+var Erro = require('../helpers/Erro')
 
 var date = new Date();
 var month = date.getMonth() + 1;
@@ -43,7 +44,22 @@ const Querys = {
 	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month,
 
 	lucratividade: 'SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade" ' +
-	'FROM "produtos" ORDER BY "lucratividade" DESC LIMIT 5'
+	'FROM "produtos" ORDER BY "lucratividade" DESC LIMIT 5',
+
+	estoqueDeSeguranca: `SELECT P."descricao",
+	P."id",
+	P."quantidade",
+	SUM(iv."quantidade") AS "quantVendida",
+	(SELECT
+	 	SUM(iv."quantidade") * P."prazoReposicao"
+	 	FROM "itens_vendas" iv
+	 	INNER JOIN "vendas" v on v."id" = iv."vendaId"
+		WHERE P."id" = iv."produtoId" AND v."dataVenda" > CURRENT_DATE - INTERVAL '30 days'
+	) AS "estoqueDeSeguranca"
+	FROM "produtos" P
+	INNER JOIN "itens_vendas" iv on iv."produtoId" = P."id"
+	INNER JOIN "vendas" v on v."id" = iv."vendaId"
+	GROUP BY p."id"`,
 }
 
 exports.listAll = (req, res, next) => {
@@ -72,94 +88,100 @@ exports.listAll = (req, res, next) => {
 												.then(vlrAPagarNoMes => {
 													db.query(Querys.lucratividade, { type: db.QueryTypes.SELECT})
 													.then(lucratividade => {
-														var valorAPagarNoMes = vlrAPagarNoMes[0].sum
-														ContasPagar.count().then(pagamentosRealizados => {
+														db.query(Querys.estoqueDeSeguranca, { type: db.QueryTypes.SELECT})
+														.then(estoqueDeSeguranca => {
+															var valorAPagarNoMes = vlrAPagarNoMes[0].sum
+															ContasPagar.count().then(pagamentosRealizados => {
 
-															if(valorRecebidoNoMes == null) {
-																valorRecebidoNoMes = 0.00
-															}
-															if(valorAReceberNoMes == null) {
-																valorAReceberNoMes = 0.00
-															}
-															if(valorPagoNoMes == null) {
-																valorPagoNoMes = 0.00
-															}
-															if(valorAPagarNoMes == null) {
-																valorAPagarNoMes = 0.00
-															}
-															var porcentagemRecebido = CalcPorcentagem(valorRecebidoNoMes, valorAReceberNoMes)
-															var diferencaRecebimento = Diferenca(valorRecebidoNoMes, valorAReceberNoMes).toFixed(2)
+																if(valorRecebidoNoMes == null) {
+																	valorRecebidoNoMes = 0.00
+																}
+																if(valorAReceberNoMes == null) {
+																	valorAReceberNoMes = 0.00
+																}
+																if(valorPagoNoMes == null) {
+																	valorPagoNoMes = 0.00
+																}
+																if(valorAPagarNoMes == null) {
+																	valorAPagarNoMes = 0.00
+																}
+																var porcentagemRecebido = CalcPorcentagem(valorRecebidoNoMes, valorAReceberNoMes)
+																var diferencaRecebimento = Diferenca(valorRecebidoNoMes, valorAReceberNoMes).toFixed(2)
 
-															var porcentagemPago = CalcPorcentagem(valorPagoNoMes, valorAPagarNoMes)
-															var diferencaPagamento = Diferenca(valorPagoNoMes, valorAPagarNoMes).toFixed(2)
+																var porcentagemPago = CalcPorcentagem(valorPagoNoMes, valorAPagarNoMes)
+																var diferencaPagamento = Diferenca(valorPagoNoMes, valorAPagarNoMes).toFixed(2)
 
-															Venda.sum('valorTotal').then(vlrTotVendas => {
-																var valorTotalVendas = parseFloat(vlrTotVendas).toFixed(2);
-																res.render("index", {
-																	totalClientesCadastrados: totalClientesCadastrados,
-																	totalFornecedoresCadastrados: totalFornecedoresCadastrados,
-																	totalProdutosCadastrados: totalProdutosCadastrados,
-																	vendasRealizadas: vendasRealizadas,
-																	recebimentosRealizados: recebimentosRealizados,
-																	pagamentosRealizados: pagamentosRealizados,
-																	valorTotalEmEstoque: valorTotalEmEstoque,
-																	valorRecebimentosAnual: valorRecebimentosAnual,
-																	valorPagamentosAnual: valorPagamentosAnual,
-																	valorRecebidoNoMes: valorRecebidoNoMes,
-																	valorAReceberNoMes: valorAReceberNoMes,
-																	valorTotalVendas: valorTotalVendas,
-																	porcentagemRecebido: porcentagemRecebido,
-																	diferencaRecebimento: diferencaRecebimento,
-																	valorPagoNoMes: valorPagoNoMes,
-																	valorAPagarNoMes: valorAPagarNoMes,
-																	porcentagemPago: porcentagemPago,
-																	diferencaPagamento: diferencaPagamento,
-																	lucratividade: lucratividade,
-																});
+																Venda.sum('valorTotal').then(vlrTotVendas => {
+																	var valorTotalVendas = parseFloat(vlrTotVendas).toFixed(2);
+																	res.render("index", {
+																		totalClientesCadastrados: totalClientesCadastrados,
+																		totalFornecedoresCadastrados: totalFornecedoresCadastrados,
+																		totalProdutosCadastrados: totalProdutosCadastrados,
+																		vendasRealizadas: vendasRealizadas,
+																		recebimentosRealizados: recebimentosRealizados,
+																		pagamentosRealizados: pagamentosRealizados,
+																		valorTotalEmEstoque: valorTotalEmEstoque,
+																		valorRecebimentosAnual: valorRecebimentosAnual,
+																		valorPagamentosAnual: valorPagamentosAnual,
+																		valorRecebidoNoMes: valorRecebidoNoMes,
+																		valorAReceberNoMes: valorAReceberNoMes,
+																		valorTotalVendas: valorTotalVendas,
+																		porcentagemRecebido: porcentagemRecebido,
+																		diferencaRecebimento: diferencaRecebimento,
+																		valorPagoNoMes: valorPagoNoMes,
+																		valorAPagarNoMes: valorAPagarNoMes,
+																		porcentagemPago: porcentagemPago,
+																		diferencaPagamento: diferencaPagamento,
+																		lucratividade: lucratividade,
+																		estoqueDeSeguranca: estoqueDeSeguranca
+																	});
+																}).catch((erro) => {
+																	Erro.erro(req, res, next, 'Não foi possivel buscar valor total das vendas! ' + erro)
+																})
 															}).catch((erro) => {
-																Erro(req, res, next, 'Não foi possivel buscar valor total das vendas! ' + erro)
+																Erro.erro(req, res, next, 'Não foi possivel buscar pagamentos realizados! ' + erro)
 															})
 														}).catch((erro) => {
-															Erro(req, res, next, 'Não foi possivel buscar pagamentos realizados! ' + erro)
+															Erro.erro(req, res, next, 'Não foi possivel buscar estoque de segurança! ' + erro)
 														})
 													}).catch((erro) => {
-														Erro(req, res, next, 'Não foi possivel buscar lucratividade dos produtos! ' + erro)
+														Erro.erro(req, res, next, 'Não foi possivel buscar lucratividade dos produtos! ' + erro)
 													})
 												}).catch((erro) => {
-													Erro(req, res, next, 'Não foi possivel buscar valor a pagar no mes! ' + erro)
+													Erro.erro(req, res, next, 'Não foi possivel buscar valor a pagar no mes! ' + erro)
 												})
 											}).catch((erro) => {
-												Erro(req, res, next, 'Não foi possivel buscar valor pago no mes! ' + erro)
+												Erro.erro(req, res, next, 'Não foi possivel buscar valor pago no mes! ' + erro)
 											})
 										}).catch((erro) => {
-											Erro(req, res, next, 'Não foi possivel buscar valor a receber no mes! ' + erro)
+											Erro.erro(req, res, next, 'Não foi possivel buscar valor a receber no mes! ' + erro)
 										})
 									}).catch((erro) => {
-										Erro(req, res, next, 'Não foi possivel buscar valor recebido no mes! ' + erro)
+										Erro.erro(req, res, next, 'Não foi possivel buscar valor recebido no mes! ' + erro)
 									})
 								}).catch((erro) => {
-									Erro(req, res, next, 'Não foi possivel buscar recebimentos realizados! ' + erro)
+									Erro.erro(req, res, next, 'Não foi possivel buscar recebimentos realizados! ' + erro)
 								})
 							}).catch((erro) => {
-								Erro(req, res, next, 'Não foi possivel buscar valor dos pagamentos realizados no ano! ' + erro)
+								Erro.erro(req, res, next, 'Não foi possivel buscar valor dos pagamentos realizados no ano! ' + erro)
 							})
 						}).catch((erro) => {
-							Erro(req, res, next, 'Não foi possivel buscar valor dos recebimentos realizados no ano! ' + erro)
+							Erro.erro(req, res, next, 'Não foi possivel buscar valor dos recebimentos realizados no ano! ' + erro)
 						})
 					}).catch((erro) => {
-						Erro(req, res, next, 'Não foi possivel buscar valor total dos produtos em estoque! ' + erro)
+						Erro.erro(req, res, next, 'Não foi possivel buscar valor total dos produtos em estoque! ' + erro)
 					})
 				}).catch((erro) => {
-					Erro(req, res, next, 'Não foi possivel buscar total de produtos cadastrados! ' + erro)
+					Erro.erro(req, res, next, 'Não foi possivel buscar total de produtos cadastrados! ' + erro)
 				})
 			}).catch((erro) => {
-				Erro(req, res, next, 'Não foi possivel buscar total de vendas realizadas! ' + erro)
+				Erro.erro(req, res, next, 'Não foi possivel buscar total de vendas realizadas! ' + erro)
 			})
 		}).catch((erro) => {
-			Erro(req, res, next, 'Não foi possivel buscar total de fornecedores cadastrados! ' + erro)
+			Erro.erro(req, res, next, 'Não foi possivel buscar total de fornecedores cadastrados! ' + erro)
 		})
 	}).catch((erro) => {
-		Erro(req, res, next, 'Não foi possivel buscar total de clientes cadastrados! ' + erro)
+		Erro.erro(req, res, next, 'Não foi possivel buscar total de clientes cadastrados! ' + erro)
 	})
 }
 
@@ -174,10 +196,4 @@ CalcPorcentagem = (vlrRecebidoPago, vlrReceberPagar) => {
 
 Diferenca = (vlrRecebidoPago, vlrReceberPagar) => {
 	return diferenca = vlrReceberPagar - vlrRecebidoPago
-}
-
-Erro = (req, res, next, msg) => {
-	const error = new Error(msg)
-	error.httpStatusCode = 500;
-	return next(error)
 }

@@ -32,56 +32,56 @@ require("./config/auth")(passport);
 /*----------------------------------------------------------------------------*/
 
 //Configurações
-	//Sessão
-	app.use(session({
-		secret: "f1306605fc98209c44499314874211a0", // sistema innove
-		resave: true,
-		saveUninitialized: true
-	}));
+//Sessão
+app.use(session({
+	secret: "f1306605fc98209c44499314874211a0", // sistema innove
+	resave: true,
+	saveUninitialized: true
+}));
 
-	app.use(passport.initialize());
-	app.use(passport.session());
-	//Flash
-	app.use(flash());
-	//MiddleWare
-	app.use((req, res, next) => {
-		res.locals.msg_sucesso = req.flash("msg_sucesso");
-		res.locals.msg_erro = req.flash("msg_erro");
-		res.locals.error = req.flash("error");
-		res.locals.user = req.user || null;
-		next();
-	});
+app.use(passport.initialize());
+app.use(passport.session());
+//Flash
+app.use(flash());
+//MiddleWare
+app.use((req, res, next) => {
+	res.locals.msg_sucesso = req.flash("msg_sucesso");
+	res.locals.msg_erro = req.flash("msg_erro");
+	res.locals.error = req.flash("error");
+	res.locals.user = req.user || null;
+	next();
+});
 
-	//Body parser
-	app.use(bodyParser.urlencoded({extended: true}));
-	app.use(bodyParser.json());
+//Body parser
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
-	//handlebars
-	app.engine('handlebars', handlebars({
-		defaultLayout: 'main',
-		helpers: {
-			formatDate: (date) => {
-				return moment(date).format('DD/MM/YYYY')
-			},
-			ifCond: (v1, v2, options) => {
-				if(v1 === v2) {
-					return options.fn(this);
-				}
-				return options.inverse(this);
-			},
-			index: (index) => {
-				return index + 1;
+//handlebars
+app.engine('handlebars', handlebars({
+	defaultLayout: 'main',
+	helpers: {
+		formatDate: (date) => {
+			return moment(date).format('DD/MM/YYYY')
+		},
+		ifCond: (v1, v2, options) => {
+			if(v1 === v2) {
+				return options.fn(this);
 			}
+			return options.inverse(this);
+		},
+		index: (index) => {
+			return index + 1;
 		}
-	}));
-	app.set('view engine', 'handlebars');
+	}
+}));
+app.set('view engine', 'handlebars');
 
-	var conexao = require("./config/conexao");
+var conexao = require("./config/conexao");
 
-	//Public
-	app.use(express.static(path.resolve(__dirname, "public")));
+//Public
+app.use(express.static(path.resolve(__dirname, "public")));
 
-	/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 //Rotas
 app.get('/', (req, res) => {

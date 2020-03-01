@@ -116,7 +116,43 @@
 						</div>
 					</div>
 					<div class="box-footer text-center">
-						<a class="small-box-footer" href="/relatorios/relatorio-lucro-produto">
+						<a class="small-box-footer" href="/relatorios/lucro-por-produto">
+							Visualizar todos
+							<i class="fa fa-arrow-circle-right"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-4 col-sm-6">
+				<div class="box box-solid">
+					<div class="box-header with-border text-center">
+						<h3 class="box-title">Estoque de Segurança</h3>
+					</div>
+					<div class="box-body">
+						<div class="text-center">
+							<table class="table table-striped text-center">
+								<thead>
+									<tr>
+										<th>Produto</th>
+										<th>Qtde. Estoque</th>
+										<th>Estq. de Segurança</th>
+									</tr>
+								</thead>
+								<tbody>
+									{{#each estoqueDeSeguranca}}
+									<tr>
+										<td>{{descricao}}</td>
+										<td>{{quantidade}}</td>
+										<td>{{estoqueDeSeguranca}}</td>
+									</tr>
+									{{/each}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="box-footer text-center">
+						<a class="small-box-footer" href="/relatorios/estoque-de-segurança">
 							Visualizar todos
 							<i class="fa fa-arrow-circle-right"></i>
 						</a>

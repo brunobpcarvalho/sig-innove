@@ -13,16 +13,35 @@ const Querys = {
 	'ORDER BY "lucratividade" DESC',
 
 	estoqueDeSeguranca:
-	'SELECT p."descricao", ' +
-	'p."id", ' +
-	'p."quantidade", ' +
-	'SUM(iv."quantidade") AS "quantVendida", ' +
-	'(SUM(iv."quantidade") * p."prazoReposicao") AS "estoqueDeSeguranca" ' +
-	'FROM "produtos" p ' +
-	'INNER JOIN "itens_vendas" iv on iv."produtoId" = p."id" ' +
-	'INNER JOIN "vendas" v on v."id" = iv."vendaId" ' +
-	`WHERE v."dataVenda" > CURRENT_DATE - INTERVAL '30 days'` +
-	'GROUP BY p."id"',
+	`SELECT P."descricao",
+	P."id",
+	P."quantidade",
+	P."prazoReposicao",
+	COALESCE(
+		SUM(iv."quantidade"),
+		0) AS "quantVendida",
+	COALESCE(
+		(SELECT
+	 		SUM(iv."quantidade") * P."prazoReposicao"
+	 		FROM "itens_vendas" iv
+	 		INNER JOIN "vendas" v on v."id" = iv."vendaId"
+			WHERE P."id" = iv."produtoId" AND v."dataVenda" > CURRENT_DATE - INTERVAL '30 days'
+			GROUP BY iv."produtoId"
+		),
+		COALESCE(
+			(SELECT
+	 			SUM(iv."quantidade") * P."prazoReposicao"
+	 			FROM "itens_vendas" iv
+	 			INNER JOIN "vendas" v on v."id" = iv."vendaId"
+				WHERE P."id" = iv."produtoId"
+				GROUP BY iv."produtoId"
+			),
+			P."quantidade"
+		)
+	) AS "estoqueDeSeguranca"
+	FROM "produtos" P
+	LEFT JOIN "itens_vendas" iv on P."id" = iv."produtoId"
+	GROUP BY P."id"`,
 }
 exports.LucroPorProduto = (req, res) => {
 	db.query(Querys.lucratividade, { type: db.QueryTypes.SELECT})
@@ -61,7 +80,7 @@ exports.GerarPdfEstoqueDeSeguranca = (req, res) => {
 				"CÓDIGO",
 				"DESCRIÇÃO",
 				"QTDE. ESTOQUE",
-				"QTDE. VENDIDA(30 dias)",
+				"QTDE. VENDIDA",
 				"ESTOQUE DE SEGURANÇA"
 			]
 			const largura = [
