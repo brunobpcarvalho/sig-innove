@@ -11,7 +11,6 @@ const Empresa = require("./routes/Empresa");
 const Pessoa = require("./routes/Pessoa");
 const Usuario = require("./routes/Usuario");
 
-const Categoria = require("./routes/Categoria");
 const Fabricante = require("./routes/Fabricante");
 const Modelo = require("./routes/Modelo");
 const Venda = require("./routes/Venda");
@@ -71,6 +70,12 @@ app.engine('handlebars', handlebars({
 		},
 		index: (index) => {
 			return index + 1;
+		},
+		ifMenor: (v1, v2, options) => {
+			if(v1 <= v2) {
+				return options.fn(this);
+			}
+			return options.inverse(this);
 		}
 	}
 }));
@@ -92,7 +97,6 @@ app.use(Index)
 app.use('/pessoas', Pessoa);
 app.use('/usuarios', Usuario);
 app.use('/empresa', Empresa);
-app.use('/produtos', Categoria);
 app.use('/produtos', Fabricante);
 app.use('/produtos', Modelo);
 app.use('/produtos', Produto);

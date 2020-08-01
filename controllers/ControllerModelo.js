@@ -1,5 +1,4 @@
 var db = require("../config/conexao")
-const Categoria = require("../models/Categoria")
 const Modelo = require("../models/Modelo")
 const Produto = require("../models/Produto")
 
@@ -74,11 +73,12 @@ exports.update = (req, res) => {
 }
 
 exports.validar = (req, res) => {
-	Modelo.findAll({where: {descricao: req.body.descricao}}).then((modelo) => {
+	Modelo.findAll({where: {descricao: req.body.campo}}).then((modelo) => {
 		if(modelo.length > 0){
-			res.send('existe')
+			res.send(true)
+		} else {
+			res.send(false)
 		}
-		res.send('nao')
 	}).catch((erro) => {
 		req.flash("msg_erro", "Houve um erro ao validar!")
 		res.redirect("/produtos/list-modelos")

@@ -21,7 +21,7 @@ router.get("/list-vendas/gerar-financeiro/:id", Admin, ControllerVenda.gerarFina
 
 router.get("/list-vendas/estornar-venda/:id", Admin, ControllerVenda.estornarVenda);
 
-router.get("/list-vendas/aprovar-venda/:id", Admin, ControllerVenda.aprovarVenda);
+router.post("/list-vendas/filter", Admin, ControllerVenda.filter);
 
 router.get("/generate-pdf/:id", Admin, ControllerVenda.generatePdf);
 

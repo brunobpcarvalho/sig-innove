@@ -48,10 +48,10 @@
                             </div>
 
                             <div class="btn-group">
-                                <form action="/contas-receber/destroy" method="post">
+                                <form class="deletar" action="/contas-receber/destroy" method="post">
                                     <input type="hidden" name="id" value="{{id}}">
                                     <input type="hidden" name="venda" value="{{venda}}">
-                                    <button title="Excluir" type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                    <button title="Excluir" type="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div style="position: relative;" class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
                         <button style="position: absolute;" type="button" onclick="return validarFormRecebimento('adicionar')" class="salvar btn btn-primary">Salvar</button>

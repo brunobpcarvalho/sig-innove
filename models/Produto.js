@@ -2,7 +2,6 @@ const Sequelize = require('sequelize');
 var db = require("../config/conexao");
 const Modelo = require("./Modelo");
 const Fabricante = require("./Fabricante");
-const Categoria = require("./Categoria");
 
 const Produto = db.define('produtos', {
     descricao: {
@@ -10,6 +9,9 @@ const Produto = db.define('produtos', {
     },
     quantidade: {
         type: Sequelize.INTEGER
+    },
+    genero: {
+        type: Sequelize.STRING
     },
     valorUnitario: {
         type: Sequelize.DECIMAL(10, 2)
@@ -22,16 +24,12 @@ const Produto = db.define('produtos', {
     },
     ativo: {
         type: Sequelize.STRING
-    },
-    teste: {
-      type: Sequelize.STRING
     }
 })
 
 Produto.belongsTo(Modelo);
 Produto.belongsTo(Fabricante);
-Produto.belongsTo(Categoria);
 
-Produto.sync()
+Produto.sync({force:true})
 
 module.exports = Produto;

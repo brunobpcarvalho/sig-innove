@@ -22,7 +22,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 
-<body style="background: #DCDCDC;" class="hold-transition skin-blue-light fixed sidebar-collapse sidebar-mini">
+<body style="background: #F1F4F9;" class="hold-transition skin-blue-light fixed sidebar-collapse sidebar-mini">
 
 	{{#if user}}
 
@@ -38,7 +38,7 @@
 		</aside>
 		{{else}}
 		{{/if}}
-		<div style="background: #DCDCDC;" class="content-wrapper">
+		<div style="background: #F1F4F9;" class="content-wrapper">
 			<section class="content">
 				{{>_msg}}
 				{{{body}}}
@@ -74,7 +74,9 @@
 	$('.knob').knob();
 
 	$(function () {
-		$('.tbl').DataTable()
+		$('.tbl').DataTable({
+			'paging': false
+		})
 	});
 
 	Date.prototype.DataAtual = (function() {

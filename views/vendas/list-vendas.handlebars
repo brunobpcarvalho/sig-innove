@@ -1,10 +1,43 @@
 <div class="box">
     <div class="box-header">
         <h1 class="box-title">Vendas</h1>
+
+        <div class="box-tools pull-right">
+            &nbsp
+            <a href="/vendas/add-venda"><button type="button" class="btn btn-primary"> Nova Venda </button></a>
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtroVenda"> <i class="fa fa-filter"></i> Filtrar </button>
+            <div class="btn-group">
+				<form action="" method="post">
+					<input type="hidden" name="filterTipo" value="{{values.tipo}}">
+					<input type="hidden" name="filterFuncao" value="{{values.funcao}}">
+					<input type="hidden" name="filterCidade" value="{{values.cidade}}">
+					<input type="hidden" name="filterUf" value="{{values.uf}}">
+					<input type="hidden" name="filterAtivo" value="{{values.ativo}}">
+					<button type="submit" name="button" class="btn btn-primary"> Gerar PDF </button>
+				</form>
+			</div>
+        </div>
+        {{#if filters}}
+		<div class="box-tools pull-right">
+			<ol class="breadcrumb">
+				Filtrando por:
+				{{#each filters}}
+				<li>
+					<font _mstmutation="1">{{this}}</font>
+				</li>
+				{{/each}}
+				&nbsp
+				<a href="/vendas/list-vendas">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</a>
+			</ol>
+		</div>
+		{{/if}}
     </div>
     <div class="box-body">
-        <a href="/vendas/add-venda"><button type="button" class="btn btn-primary"> Nova Venda </button></a>
-
         <table id="tabelaVenda" class="tbl table table-striped text-center">
             <thead>
                 <tr>
@@ -31,13 +64,6 @@
                     <td class="acao">
                         <div class="toolbar-actions">
                             <div class="btn-group">
-                                {{#ifCond status "ORCAMENTO"}}
-                                <a>
-                                    <button title="Aprovar Orçamento" type="button" onclick="AprovarVenda({{../id}})" class="btn btn-success"><i class="fa fa-check"></i></button>
-                                </a>
-                                {{/ifCond}}
-                            </div>
-                            <div class="btn-group">
                                 {{#ifCond status "VENDA"}}
                                 <a>
                                     <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
@@ -61,9 +87,9 @@
                             </div>
 
                             <div class="btn-group">
-                                <form action="/vendas/list-vendas/deletar" method="post">
+                                <form class="deletar" method="post" action="/vendas/list-vendas/deletar">
                                     <input type="hidden" name="id" value="{{id}}">
-                                    <button title="Excluir" type="submit" name="button" class="btn btn-danger" {{#ifCond status "VENDA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
+                                    <button title="Excluir" type="button" class="btn btn-danger" {{#ifCond status "VENDA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -85,4 +111,50 @@
             </tfoot>
         </table>
     </div>
+</div>
+
+<!-- Modal de Filtros-->
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" id="filtroVenda">
+	<div class="modal-dialog modal-sm modal-dialog-scrollable" role="document">
+		<div class="modal-content">
+			<form name="formFilterVenda" id="formFilterVenda" action="/vendas/list-vendas/filter" method="post">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+                        <input type="text" id="filterCliente" name="filterCliente" class="form-control" placeholder="Cliente...">
+                        <br>
+						<select class="form-control" name="filterStatus" id="filterStatus">
+							<!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
+							<option value=''> Status da Negociação...</option>
+							<option value="ORCAMENTO"> Orçamento </option>
+							<option value="VENDA"> Venda </option>
+						</select>
+						<br>
+                        <select class="form-control" name="filterFinanceiro" id="filterFinanceiro">
+							<!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
+							<option value=''>Financeiro gerado...</option>
+							<option value="sim"> SIM </option>
+							<option value="nao"> NÂO </option>
+						</select>
+						<br>
+                        <span> Data da Venda</span>
+                        <span> De: </span>
+                        <input class="form-control" type="date" name="filterDataInicio" id="filterDataInicio">
+                        <br>
+                        <span> Até: </span>
+                        <input class="form-control" type="date" name="filterDataFim" id="filterDataFim">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+					<button type="submit" class="editar btn btn-primary">Aplicar</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>

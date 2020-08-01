@@ -15,18 +15,18 @@
                         <th>Código</th>
                         <th>Descrição</th>
                         <th>Quantidade no Estoque</th>
-                        <th>Quantidade Vendida</th>
-                        <th>Estoque de Segurança</th>
+                        <th>Prazo de Reposição</th>
+                        <th>Ponto de Pedido</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each estoqueDeSeguranca}}
-                    <tr>
+                    <tr {{#ifMenor quantidade pontoDePedido}}class="obrigatorio"{{/ifMenor}}>
                         <td>{{id}}</td>
                         <td>{{descricao}}</td>
                         <td>{{quantidade}}</td>
-                        <td>{{quantVendida}}</td>
-                        <td>{{estoqueDeSeguranca}}</td>
+                        <td>{{prazoReposicao}}</td>
+                        <td>{{pontoDePedido}}</td>
                     </tr>
                     {{/each}}
                 </tbody>
@@ -35,8 +35,8 @@
                         <th>Código</th>
                         <th>Descrição</th>
                         <th>Quantidade no Estoque</th>
-                        <th>Quantidade Vendida</th>
-                        <th>Estoque de Segurança</th>
+                        <th>Prazo de Reposição</th>
+                        <th>Ponto de Pedido</th>
                     </tr>
                 </tfoot>
             </table>

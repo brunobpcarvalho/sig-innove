@@ -1,14 +1,47 @@
 <div class="box">
 	<div class="box-header">
 		<h1 class="box-title">Pessoas</h1>
+
+		<div class="box-tools pull-right">
+			&nbsp
+			<button type="button" class="add btn btn-primary"
+			data-tipo="Fisica"
+			data-funcao="Cliente"
+			data-ativo="Ativo"
+			data-toggle="modal" data-target="#modalPessoa"> Adicionar </button>
+
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtroPessoa"> <i class="fa fa-filter"></i> Filtrar</button>
+			<div class="btn-group">
+				<form action="/pessoas/list-pessoas/gerar-pdf" method="post">
+					<input type="hidden" name="filterTipo" value="{{values.tipo}}">
+					<input type="hidden" name="filterFuncao" value="{{values.funcao}}">
+					<input type="hidden" name="filterCidade" value="{{values.cidade}}">
+					<input type="hidden" name="filterUf" value="{{values.uf}}">
+					<input type="hidden" name="filterAtivo" value="{{values.ativo}}">
+					<button type="submit" name="button" class="btn btn-primary"> Gerar PDF </button>
+				</form>
+			</div>
+		</div>
+		{{#if filters}}
+		<div class="box-tools pull-right">
+			<ol class="breadcrumb">
+				Filtrando por:
+				{{#each filters}}
+				<li>
+					<font _mstmutation="1">{{this}}</font>
+				</li>
+				{{/each}}
+				&nbsp
+				<a href="/pessoas/list-pessoas">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</a>
+			</ol>
+		</div>
+		{{/if}}
 	</div>
 	<div class="box-body">
-		<button type="button" class="add btn btn-primary"
-		data-tipo="Fisica"
-		data-funcao="Cliente"
-		data-ativo="Ativo"
-		data-toggle="modal" data-target="#modalPessoa"> Adicionar </button>
-
 		<table id="tabelaPessoas" class="tbl table table-striped text-center">
 			<thead>
 				<tr>
@@ -28,7 +61,7 @@
 					<td>{{cpf_cnpj}}</td>
 					<td>{{tipo}}</td>
 					<td>{{funcao}}</td>
-					<td>{{rua}}, {{numero}}<br>{{bairro}} | {{cidade}}</td>
+					<td>{{rua}}{{#if rua}}, {{/if}}{{numero}}<br>{{bairro}} {{#if cidade}}|{{/if}} {{cidade}}{{#if uf}} - {{/if}}{{uf}}</td>
 					<td>{{ativo}}</td>
 					<td>
 						<div class="toolbar-actions">
@@ -57,9 +90,9 @@
 								<i class="fa fa-edit"></i></button>
 							</div>
 							<div class="btn-group">
-								<form action="/pessoas/list-pessoas/deletar" method="post">
+								<form class="deletar" action="/pessoas/list-pessoas/deletar" method="post">
 									<input type="hidden" name="id" value="{{id}}">
-									<button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+									<button type="button" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
 								</form>
 							</div>
 						</div>
@@ -91,63 +124,58 @@
 		<div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
 					<h4 class="modal-title">Adicionar Pessoa</h4>
 				</div>
 				<div class="modal-body">
-					<div class="box-body">
-						<div class="row">
-							<div class="col-xs-3">
-								<span>Física/Jurídica</span>
-								<select id="tipo" name="tipo" class="form-control">
-									<option value='Fisica'> Física </option>
-									<option value='Juridica'> Jurídica </option>
-								</select>
-							</div>
-							<div class="col-xs-9">
-								<span>Nome</span><span class="obrigatorio"> *</span>
-								<input type="text" class="form-control" name="nome" id="nome">
-							</div>
+					<div class="row">
+						<div class="col-xs-3">
+							<span>Física/Jurídica</span>
+							<select id="tipo" name="tipo" class="form-control">
+								<option value='Fisica'> Física </option>
+								<option value='Juridica'> Jurídica </option>
+							</select>
 						</div>
-						<div style="margin-top: 2%;" class="row">
-							<div class="col-xs-3">
-								<span>CPF/CNPJ</span><span class="obrigatorio"> *</span>
-								<input type="text" class="form-control" name="cpf_cnpj" id="cpf_cnpj">
-							</div>
-							<div class="col-xs-2">
-								<span>Ativo</span>
-								<select id="ativo" name="ativo" class="form-control">
-									<option value='Ativo'> SIM </option>
-									<option value='Inativo'> NÃO </option>
-								</select>
-							</div>
-							<div class="col-xs-2">
-								<span>Função</span>
-								<select id="funcao" name="funcao" class="form-control">
-									<option value='Cliente'> Cliente </option>
-									<option value='Fornecedor'> Fornecedor </option>
-								</select>
-							</div>
-							<div class="col-xs-3">
-								<div class="dataNas input-group">
-									<span>Data de Nascimento</span><span class="obrigatorio"> *</span>
-									<input class="dataNas form-control" type="date" name="dataNascimento" id="dataNascimento" value="">
-								</div>
+						<div class="col-xs-9">
+							<span>Nome</span><span class="obrigatorio"> *</span>
+							<input type="text" class="form-control" name="nome" id="nome">
+						</div>
+					</div>
+					<div style="margin-top: 2%;" class="row">
+						<div class="col-xs-3">
+							<span>CPF/CNPJ</span><span class="obrigatorio"> *</span>
+							<input type="text" class="form-control" name="cpf_cnpj" id="cpf_cnpj">
+						</div>
+						<div class="col-xs-2">
+							<span>Ativo</span>
+							<select id="ativo" name="ativo" class="form-control">
+								<option value='Ativo'> SIM </option>
+								<option value='Inativo'> NÃO </option>
+							</select>
+						</div>
+						<div class="col-xs-2">
+							<span>Função</span>
+							<select id="funcao" name="funcao" class="form-control">
+								<option value='Cliente'> Cliente </option>
+								<option value='Fornecedor'> Fornecedor </option>
+							</select>
+						</div>
+						<div class="col-xs-3">
+							<div class="dataNas input-group">
+								<span>Data de Nascimento</span><span class="obrigatorio"> *</span>
+								<input class="dataNas form-control" type="date" name="dataNascimento" id="dataNascimento" value="">
 							</div>
 						</div>
 					</div>
 
 
-
-					<div class="nav-tabs-custom mb-0">
+					<br>
+					<div class="nav-tabs-custom">
 						<ul class="nav nav-tabs">
 							<li class="active"><a href="#tab_endereco" data-toggle="tab">Endereço</a></li>
 							<li><a href="#tab_contato" data-toggle="tab">Contato</a></li>
 							<li><a href="#tab_fiscal" data-toggle="tab">Fiscal</a></li>
 						</ul>
-						<div style="border-color: black;" class="tab-content">
+						<div class="tab-content">
 							<div class="tab-pane active" id="tab_endereco">
 								<div class="box-body">
 									<div class="row">
@@ -277,4 +305,80 @@
 			</div>
 		</div>
 	</form>
+</div>
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" id="filtroPessoa">
+	<div class="modal-dialog modal-sm modal-dialog-scrollable" role="document">
+		<div class="modal-content">
+			<form name="formFilterPessoa" id="formFilterPessoa" action="/pessoas/list-pessoas/filter" method="post">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<select class="form-control" name="filterTipo" id="filterTipo">
+							{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}
+							<option value=''>Selecione um Tipo...</option>
+							<option value="Fisica"> Física </option>
+							<option value="Juridica"> Jurídica </option>
+						</select>
+						<br>
+						<select class="form-control mt-1" name="filterFuncao" id="filterFuncao">
+							{{#if values.funcao}} <option value='{{values.funcao}}'> {{values.funcao}} </option> {{/if}}
+							<option value=''>Selecione uma Função...</option>
+							<option value="Cliente"> Cliente </option>
+							<option value="Fornecedor"> Fornecedor </option>
+						</select>
+						<br>
+						<input type="text" id="filterCidade" name="filterCidade" class="form-control" placeholder="Informe uma cidade" {{#if values.cidade}} value='{{values.cidade}}'{{/if}}>
+						<br>
+						<select id="filterUf" name="filterUf" class="form-control">
+							{{#if values.uf}} <option value='{{values.uf}}'> {{values.uf}} </option> {{/if}}
+							<option value=''>Selecione um Estado...</option>
+							<option value='AC'> AC </option>
+							<option value='AL'> AL </option>
+							<option value='AP'> AP </option>
+							<option value='AM'> AM </option>
+							<option value='BA'> BA </option>
+							<option value='CE'> CE </option>
+							<option value='DF'> DF </option>
+							<option value='ES'> ES </option>
+							<option value='GO'> GO </option>
+							<option value='MA'> MA </option>
+							<option value='MT'> MT </option>
+							<option value='MS'> MS </option>
+							<option value='MG'> MG </option>
+							<option value='PA'> PA </option>
+							<option value='PB'> PB </option>
+							<option value='PR'> PR </option>
+							<option value='PE'> PE </option>
+							<option value='PI'> PI </option>
+							<option value='RJ'> RJ </option>
+							<option value='RN'> RN </option>
+							<option value='RS'> RS </option>
+							<option value='RO'> RO </option>
+							<option value='RO'> RR </option>
+							<option value='RO'> SC </option>
+							<option value='RO'> SP </option>
+							<option value='RO'> SE </option>
+							<option value='RO'> TO </option>
+						</select>
+						<br>
+						<select id="filterAtivo" name="filterAtivo" class="form-control">
+							{{#if values.ativo}} <option value='{{values.ativo}}'> {{values.ativo}} </option> {{/if}}
+							<option value=''>Selecione um Status...</option>
+							<option value='Ativo'> Ativo </option>
+							<option value='Inativo'> Inativo </option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+					<button type="submit" class="editar btn btn-primary">Aplicar</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>

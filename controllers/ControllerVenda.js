@@ -1,3 +1,4 @@
+var db = require("../config/conexao")
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const Venda = require("../models/Venda")
@@ -332,6 +333,24 @@ exports.gerarFinanceiro = async (req, res) => {
 
 exports.estornarVenda = async (req, res) => {
 	Venda.update({ financeiro: 'nao', status: 'ORCAMENTO' }, { where: {id: req.params.id}}).then((venda) =>{
+		ItensVenda.findAll({where: {vendaId: req.params.id}}).then((itensVenda) => {
+			for(var i = 0; i < itensVenda.length; i++){
+				const quantidadeItensVenda = itensVenda[i].quantidade
+				Produto.findOne({where: {id: itensVenda[i].produtoId}}).then((produto)=>{
+					produto.quantidade += quantidadeItensVenda
+					produto.save().then(() => {
+					}).catch((erro) => {
+						req.flash("error_msg", "Erro ao estornar essa venda!")
+						res.redirect("/vendas/list-vendas")
+					})
+				}).catch((erro) => {
+					req.flash("error_msg", "Erro ao estornar essa venda!")
+					res.redirect("/vendas/list-vendas")
+				})
+			}
+		}).catch((erro) => {
+			console.log('erro3', erro);
+		})
 		req.flash("msg_sucesso", "Venda estornada com sucesso!")
 		res.redirect("/vendas/list-vendas")
 	}).catch((erro) => {
@@ -340,46 +359,54 @@ exports.estornarVenda = async (req, res) => {
 	})
 }
 
-exports.aprovarVenda = async (req, res) => {
-	Venda.findByPk(req.params.id).then((venda) =>{
-		ItensVenda.findAll({where: {vendaId: venda.id}}).then(itensVenda => {
-			for(var i = 0; i < itensVenda.length; i++){
-				const id = itensVenda[i].produtoId;
-				const quantidade = itensVenda[i].quantidade;
-				Produto.findByPk(id).then(produto => {
-					const quantProd = produto.quantidade - quantidade;
-					if(quantidade > produto.quantidade){
-						req.flash("error_msg", "Produto com estoque Insuficiente - " + produto.descricao)
-						res.redirect("/vendas/list-vendas")
-					}
-					produto.quantidade = quantProd;
-					produto.save().then(()=> {
+/*---------------- Filtros ---------------------------------------------------------------------------------------*/
 
-					}).catch(erro => {
-						req.flash("error_msg", "Erro ao aprovar essa venda!" + erro)
-						res.redirect("/vendas/list-vendas")
-					})
-				}).catch(erro => {
-					req.flash("error_msg", "Erro ao aprovar essa venda!" + erro)
-					res.redirect("/vendas/list-vendas")
-				})
-			}
-		}).catch(erro => {
-			req.flash("error_msg", "Erro ao aprovar essa venda!" + erro)
-			res.redirect("/vendas/list-vendas")
-		})
+exports.filter = (req, res) => {
+	const { filterCliente, filterDataInicio, filterDataFim, filterStatus, filterFinanceiro } = req.body
+	let sql = `select V."id", P."nome" AS pessoa, V."status", V."financeiro", U."usuario", V."dataVenda", V."valorTotal" `
+	+ `FROM "vendas" AS V `
+	+ `JOIN "pessoas" AS P ON V."pessoaId" = P."id" `
+	+ `JOIN "usuarios" AS U ON V."usuarioId" = U."id" `
+	+ `WHERE 1=1`;
+	console.log('sql', sql);
+	let filters = [];
+	let values = {
+		cliente: '',
+		status: '',
+		financeiro: '',
+		dataInicio: '',
+		dataFim: ''
+	}
 
-		venda.status = 'VENDA';
-		venda.save().then(() => {
-			req.flash("msg_sucesso", "Venda aprovada com sucesso!")
-			res.redirect("/vendas/list-vendas")
-		}).catch(erro => {
-			req.flash("error_msg", "Erro ao aprovar essa venda!" + erro)
-			res.redirect("/vendas/list-vendas")
-		})
+	if (filterCliente !== '') {
+		sql += ` AND P."nome" ~* '` + filterCliente + `'` ;
+		filters.push('Cliente')
+		values.cliente = filterCliente
+	}
+	if (filterStatus !== '') {
+		sql += ` AND "status" = '` + filterStatus + `'` ;
+		filters.push('Status')
+		values.status = filterStatus
+	}
+	if (filterFinanceiro !== '') {
+		sql += ` AND "financeiro" = '` + filterFinanceiro + `'` ;
+		filters.push('Financeiro')
+		values.financeiro = filterFinanceiro
+	}
+	// TEM QUE VALIDAR SE AS DUAS DATAS ESTÂO PREENCHIDAS
+	if (filterDataInicio !== '' || filterDataFim !== '') {
+		sql += ` AND (V."dataVenda" BETWEEN '` + filterDataInicio + `' AND '` + filterDataFim + `')`;
+		filters.push('Periodo de: ' + filterDataInicio + ' Até: ' + filterDataFim)
+		values.dataInicio = filterDataInicio
+		values.dataFim = filterDataFim
+	}
+
+	db.query(sql, { type: db.QueryTypes.SELECT}).then(vendas => {
+		console.log('vendas', vendas);
+		res.render("vendas/list-vendas", {vendas: vendas, filters: filters, values: values})
 	}).catch((erro) => {
-		req.flash("error_msg", "Erro ao aprovar essa venda!" + erro)
-		res.redirect("/vendas/list-vendas")
+		req.flash("msg_erro", "Erro ao buscar pessoas: " + erro)
+		res.redirect("/index")
 	})
 }
 

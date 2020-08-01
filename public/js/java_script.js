@@ -57,58 +57,38 @@ $(document).on('blur', '#dataNascimento', function () {
 	}
 });
 
-function validarFormPessoa(Valor){
+function validarFormPessoa(valor){
+	var formPessoa = $("#formPessoa");
 	var nome = $('#nome').val();
 	var cpf_cnpj = $('#cpf_cnpj').val();
 	var dataNascimento = $('#dataNascimento').val();
 	var tipo = $('#tipo').val();
 	var erros = [];
 
-	if(!nome || typeof nome == undefined || nome == null){erros.push("Nome");}
-	if(!cpf_cnpj || typeof cpf_cnpj == undefined || cpf_cnpj == null){erros.push("CPF/CNPJ");}
+	if(!nome || typeof nome == undefined || nome == null){erros.push(" Nome");}
+	if(!cpf_cnpj || typeof cpf_cnpj == undefined || cpf_cnpj == null){erros.push(" CPF/CNPJ");}
 	if(tipo === 'Fisica'){
-		if(!dataNascimento || typeof dataNascimento == undefined || dataNascimento == null){erros.push("Data de Nascimento");}
+		if(!dataNascimento || typeof dataNascimento == undefined || dataNascimento == null){erros.push(" Data de Nascimento");}
 	}
 
-	if(erros.length > 0 && erros.length == 1){
+	if(erros.length > 0 ){
 		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "O campo " + erros + " não foi preenchido!",
-		})
-		return false;
-	}else if(erros.length > 1){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "Os campos " + erros + " não foram preenchidos!",
+			icon: 'warning',
+			title: 'Atenção!',
+			text: "Preencha o(s) campo(s) a seguir:" + erros,
 		})
 		return false;
 	}
-	$.ajax({
-		method: "POST",
-		url: "/pessoas/list-pessoas/validar",
-		data: { cpf_cnpj: cpf_cnpj }
-	})
-	.done( function (res) {
 
-		if(Valor == 'adicionar'){
-			if(res === 'existe'){
-				Swal.fire({
-					icon: 'error',
-					title: 'Erro ...',
-					text: "Já existe uma pessoa cadastrada com esse CPF/CNPJ!",
-				})
-			}else{
-				document.formPessoa.action = '/pessoas/list-pessoas/nova';
-				document.formPessoa.submit();
-			}
-		} else if(Valor == "editar"){
-			document.formPessoa.action = '/pessoas/list-pessoas/editar';
-			document.formPessoa.submit();
-		}
-
-	});
+	verificaSeExiste(
+		"/pessoas/list-pessoas/validar",
+		cpf_cnpj,
+		"Já existe uma pessoa cadastrada com esse CPF/CNPJ!",
+		formPessoa,
+		'/pessoas/list-pessoas/editar',
+		'/pessoas/list-pessoas/nova',
+		valor
+	);
 }
 
 $('#modalPessoa').on('show.bs.modal', function (event) {
@@ -175,58 +155,9 @@ function validarFormUsuario(){
 	document.formUsuario.submit();
 }
 
-/* --------------  FORMULARIO DE CATEGORIAS --------------------------------------*/
-
-function validarFormCategoria(Valor){
-	var nome = $("#nome").val();
-	var erros = [];
-
-	if(!nome || typeof nome == undefined || nome == null){erros.push("Nome");}
-
-	if(erros.length > 0){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "Preencha o Nome da Categoria!",
-		})
-		return false;
-	}
-
-	$.ajax({
-		method: "POST",
-		url: "/produtos/list-categorias/validar",
-		data: { nome: nome }
-	})
-	.done( function (res) {
-		if(res === 'existe'){
-			Swal.fire({
-				icon: 'error',
-				title: 'Erro ...',
-				text: "Já existe uma Categoria registrada com esse nome!",
-			})
-		}else {
-			if(Valor == 'adicionar'){
-				document.formCategoria.action = '/produtos/list-categorias/nova';
-				document.formCategoria.submit();
-			} else if(Valor == "editar"){
-				document.formCategoria.action = '/produtos/list-categorias/editar';
-				document.formCategoria.submit();
-			}
-		}
-	});
-}
-
-$('#modalCategoria').on('show.bs.modal', function (event) {
-	var button = $(event.relatedTarget)
-
-	var modal = $(this)
-	modal.find('#id').val(button.data('id'))
-	modal.find('#nome').val(button.data('nome'))
-	modal.find('#ativo').val(button.data('ativo'))
-})
-
 /* --------------  FORMULARIO DE MODELO --------------------------------------*/
-$(document).on(validarFormModelo = function (Valor) {
+$(document).on(validarFormModelo = function (valor) {
+	var formModelo = $("#formModelo");
 	var descricao = $("#descricao").val();
 	var erros = [];
 
@@ -241,34 +172,19 @@ $(document).on(validarFormModelo = function (Valor) {
 		return false;
 	}
 
-
-	$.ajax({
-		method: "POST",
-		url: "/produtos/list-modelos/validar",
-		data: { descricao: descricao }
-	})
-	.done( function (res) {
-		if(res === 'existe'){
-			Swal.fire({
-				icon: 'error',
-				title: 'Erro ...',
-				text: "Já existe um Modelo registrado com essa Descrição!",
-			})
-		}else {
-			if(Valor == 'adicionar'){
-				document.formModelo.action = '/produtos/list-modelos/nova';
-				document.formModelo.submit();
-			} else if(Valor == "editar"){
-				document.formModelo.action = '/produtos/list-modelos/editar';
-				document.formModelo.submit();
-			}
-		}
-	});
+	verificaSeExiste(
+		"/produtos/list-modelos/validar",
+		descricao,
+		"Já existe um Modelo registrado com essa Descrição!",
+		formModelo,
+		'/produtos/list-modelos/editar',
+		'/produtos/list-modelos/nova',
+		valor
+	);
 })
 
 $('#modalModelo').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
-
 	var modal = $(this)
 	modal.find('#id').val(button.data('id'))
 	modal.find('#descricao').val(button.data('descricao'))
@@ -277,7 +193,8 @@ $('#modalModelo').on('show.bs.modal', function (event) {
 
 /* --------------  FORMULARIO DE FABRICANTE -----------------------------------*/
 
-function validarFormFabricante(Valor){
+function validarFormFabricante(valor){
+	var formFabricante = $("#formFabricante");
 	var nome = $('#nome').val();
 	var erros = [];
 
@@ -292,33 +209,19 @@ function validarFormFabricante(Valor){
 		return false;
 	}
 
-	$.ajax({
-		method: "POST",
-		url: "/produtos/list-fabricantes/validar",
-		data: { nome: nome }
-	})
-	.done( function (res) {
-		if(res === 'existe'){
-			Swal.fire({
-				icon: 'error',
-				title: 'Erro ...',
-				text: "Já existe um Fabricante registrado com esse nome!",
-			})
-		}else {
-			if(Valor == 'adicionar'){
-				document.formFabricante.action = '/produtos/list-fabricantes/nova';
-				document.formFabricante.submit();
-			} else if(Valor == "editar"){
-				document.formFabricante.action = '/produtos/list-fabricantes/editar';
-				document.formFabricante.submit();
-			}
-		}
-	});
+	verificaSeExiste(
+		"/produtos/list-fabricantes/validar",
+		nome,
+		"Já existe um Fabricante registrado com esse nome!",
+		formFabricante,
+		'/produtos/list-fabricante/editar',
+		'/produtos/list-fabricante/nova',
+		valor
+	);
 }
 
 $('#modalFabricante').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
-
 	var modal = $(this)
 	modal.find('#id').val(button.data('id'))
 	modal.find('#nome').val(button.data('nome'))
@@ -328,24 +231,22 @@ $('#modalFabricante').on('show.bs.modal', function (event) {
 /* --------------  FORMULARIO DE PRODUTO -----------------------------------*/
 $('.money').mask("###0.00", {reverse: true});
 
-function validarFormProduto(Valor){
-	var descricao = formProduto.descricao.value.trim().toLowerCase();
-	var fabricante = formProduto.fabricante.value;
-	var modelo = formProduto.modelo.value;
-	var categoria = formProduto.categoria.value;
-	var valorUnitario = formProduto.valorUnitario.value;
-	var valorCusto = formProduto.valorCusto.value;
-	var prazoRepozicao = formProduto.prazoRepozicao.value;
-
+function validarFormProduto(valor){
+	var formProduto = $("#formProduto");
+	var descricao = $("#descricao").val();
+	var fabricante = $("#fabricante").val();
+	var modelo = $("#modelo").val();
+	var valorUnitario = $("#valorUnitario").val();
+	var valorCusto = $("#valorCusto").val();
+	var prazoReposicao = $("#prazoReposicao").val();
 	var erros = [];
 
 	if(!descricao || typeof descricao == undefined || descricao == null){erros.push(" Descrição");}
 	if(!fabricante || typeof fabricante == undefined || fabricante == null){erros.push(" Fabricante");}
 	if(!modelo || typeof modelo == undefined || modelo == null){erros.push(" Modelo");}
-	if(!categoria || typeof categoria == undefined || categoria == null){erros.push(" Categoria");}
 	if(!valorUnitario || typeof valorUnitario == undefined || valorUnitario == null){erros.push(" Valor Unitario");}
 	if(!valorCusto || typeof valorCusto == undefined || valorCusto == null){erros.push(" Valor de Custo");}
-	if(!prazoRepozicao || typeof prazoRepozicao == undefined || prazoRepozicao == null){erros.push(" Prazo de Reposição");}
+	if(!prazoReposicao || typeof prazoReposicao == undefined || prazoReposicao == null){erros.push(" Prazo de Reposição");}
 
 	if(erros.length > 0 && erros.length == 1){
 		Swal.fire({
@@ -368,37 +269,21 @@ function validarFormProduto(Valor){
 	var valueFabricante = $('#fabricante').val();
 	var idFabricante = $('#listaFabricantes [value="' + valueFabricante + '"]').data('value')
 
-	var valueCategoria = $('#categoria').val();
-	var idCategoria = $('#listaCategorias [value="' + valueCategoria + '"]').data('value')
 
-	if(Valor == 'adicionar'){
-		var tabela = document.body.querySelectorAll("#tabelaProdutos td:nth-child(1)");
-		for(var x = 0; x < tabela.length; x++){
-			if(descricao === tabela[x].textContent.trim().toLowerCase()){
-				var descricaoResult = tabela[x].textContent.trim().toLowerCase();
-				break;
-			}
-		}
-		if(descricaoResult){
-			Swal.fire({
-				icon: 'error',
-				title: 'Erro ...',
-				text: "Já existe um Produto registrado com essa descrição!",
-			})
-			return false;
-		}
-		$('#fabricante').val(idFabricante);
-		$('#modelo').val(idModelo);
-		$('#categoria').val(idCategoria);
-		document.formProduto.action = '/produtos/list-produtos/nova';
-		document.formProduto.submit();
-	}else if(Valor == "editar"){
-		$('#fabricante').val(idFabricante);
-		$('#modelo').val(idModelo);
-		$('#categoria').val(idCategoria);
-		document.formProduto.action = '/produtos/list-produtos/editar';
-		document.formProduto.submit();
-	}
+	//Tem que achar uma solução para o dataList, pois da erro ao encontrar registro que ja existe
+
+
+	$('#fabricante').val(idFabricante);
+	$('#modelo').val(idModelo);
+	verificaSeExiste(
+		"/produtos/list-produtos/validar",
+		descricao,
+		"Já existe um Produto registrado com essa descrição!",
+		formProduto,
+		'/produtos/list-produtos/editar',
+		'/produtos/list-produtos/nova',
+		valor
+	);
 }
 
 $('#modalProduto').on('show.bs.modal', function (event) {
@@ -410,8 +295,10 @@ $('#modalProduto').on('show.bs.modal', function (event) {
 	modal.find('#quantidade').val(button.data('quantidade'))
 	modal.find('#fabricante').val(button.data('fabricante'))
 	modal.find('#modelo').val(button.data('modelo'))
-	modal.find('#categoria').val(button.data('categoria'))
+	modal.find('#genero').val(button.data('genero'))
 	modal.find('#valorUnitario').val(button.data('valor'))
+	modal.find('#valorCusto').val(button.data('valorcusto'))
+	modal.find('#prazoReposicao').val(button.data('prazo'))
 	modal.find('#ativo').val(button.data('ativo'))
 })
 
@@ -470,8 +357,6 @@ $(document).ready(function(){
 			$(this).val('1');
 		}
 	});
-
-	$('#dataVenda').val(new Date().DataAtual());
 	$('.inputData').val(new Date().DataAtual());
 
 	var input;
@@ -580,7 +465,6 @@ $(document).ready(function(){
 
 		if(!cliente || typeof cliente == undefined || cliente == null){erros.push("Cliente");}
 		if(!produto || typeof produto == undefined || produto == null){erros.push("Produto");}
-		if(!formaPag || typeof formaPag == undefined || formaPag == null){erros.push("Pagamento");}
 
 		if(erros.length > 0 && erros.length == 1){
 			Swal.fire({
@@ -597,10 +481,14 @@ $(document).ready(function(){
 			})
 			return false;
 		}
-
+		var produtoNaoExistente = [];
 		for (var i = 0; i < inputProduto.length; i++) {
 			var prod = inputProduto[i].value;
 			var id = $('#listaProdutos [value="' + prod + '"]').data('id')
+
+			if(id == undefined){
+				produtoNaoExistente.push(" " + prod);
+			}
 
 			ids.push(id);
 
@@ -608,6 +496,15 @@ $(document).ready(function(){
 			if(quantidadeEstoque < inputQuantidade[i].value){
 				quantidade.push(" " + prod);
 			}
+		}
+
+		if(produtoNaoExistente.length > 0){
+			Swal.fire({
+				icon: 'warning',
+				title: 'Atenção',
+				text: "Produto não cadastrado!" + produtoNaoExistente,
+			})
+			return false;
 		}
 
 		if(quantidade.length > 0){
@@ -618,6 +515,16 @@ $(document).ready(function(){
 			})
 			return false;
 		}
+
+		if(!formaPag || typeof formaPag == undefined || formaPag == null){
+			Swal.fire({
+				icon: 'error',
+				title: 'Erro ...',
+				text: "A forma de pagamento não foi preenchida!",
+			})
+			return false;
+		}
+
 		for(var i = 0; i < inputProduto.length; i++) {
 			inputProduto[i].value = ids[i];
 		}
@@ -625,6 +532,15 @@ $(document).ready(function(){
 		if(opcao == 'adicionar'){
 			var value = $('#cliente').val();
 			var id = $('#listaCliente [value="' + value + '"]').data('value')
+
+			if(id == undefined){
+				Swal.fire({
+					icon: 'warning',
+					title: 'Atenção',
+					text: "Cliente não cadastrado!",
+				})
+				return false;
+			}
 			$('#cliente').val(id);
 
 			document.formVenda.action = '/vendas/add-venda/nova';
@@ -670,21 +586,7 @@ $(document).on(EstornarVenda = function(id){
 	})
 });
 
-$(document).on(AprovarVenda = function(id){
-	Swal.fire({
-		title: 'Deseja realmente aprovar esta venda?',
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonColor: '#3085d6',
-		cancelButtonColor: '#d33',
-		cancelButtonText: 'Cancelar',
-		confirmButtonText: 'Sim, aprovar!'
-	}).then((result) => {
-		if (result.value) {
-			location.href = '/vendas/list-vendas/aprovar-venda/' + id;
-		}
-	})
-});
+
 
 /* --------------  FORMULARIO DE RECEBIMENTO --------------------------------------*/
 $('#pagoTrue').css("visibility","hidden");
@@ -875,4 +777,48 @@ $(function(){
 		}
 		fileReader.readAsDataURL(file)
 	})
+})
+
+/*---------------------------------------------------------------------------*/
+
+$( ".deletar" ).click(function(){
+	Swal.fire({
+		title: 'Deseja realmente deletar este registro?',
+		text: 'Esta ação não poderá ser desfeita!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#3085d6',
+		cancelButtonColor: '#d33',
+		cancelButtonText: 'Cancelar',
+		confirmButtonText: 'Sim, deletar!'
+	}).then((result) => {
+		if (result.value) {
+			this.submit();
+		}
+	})
+});
+
+$(document).on(verificaSeExiste = function(url, campo, msg, formulario, actionEditar, actionAdd, valor){
+	$.ajax({
+		method: "POST",
+		url: url,
+		data: {campo: campo}
+	})
+	.done( function (res) {
+		if(valor == 'adicionar'){
+			if(res === true){
+				Swal.fire({
+					icon: 'error',
+					title: 'Erro ...',
+					text: msg,
+				})
+			}else{
+				formulario.attr('action','' + actionAdd);
+				formulario.submit();
+			}
+		} else if(valor == "editar"){
+			formulario.attr('action','' + actionEditar);
+			formulario.submit();
+		}
+	});
 })

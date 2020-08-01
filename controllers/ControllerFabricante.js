@@ -75,9 +75,10 @@ exports.update = (req, res) => {
 exports.validar = (req, res) => {
 	Fabricante.findAll({where: {nome: req.body.nome}}).then((fabricante) => {
 		if(fabricante.length > 0){
-			res.send('existe')
+			res.send(true)
+		} else {
+			res.send(false)
 		}
-		res.send('nao')
 	}).catch((erro) => {
 		req.flash("msg_erro", "Houve um erro ao validar!")
 		res.redirect("/produtos/list-fabricantes")

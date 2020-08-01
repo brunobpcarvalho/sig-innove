@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 var ControllerPessoa = require('../controllers/ControllerPessoa')
+var ControllerRelatorio = require('../controllers/ControllerRelatorio')
 const {Admin} = require("../helpers/Admin")
 /*----------------------------------------------------------------------------*/
 
@@ -15,6 +16,10 @@ router.post("/list-pessoas/editar", Admin, ControllerPessoa.update)
 router.post("/list-pessoas/validar", Admin, ControllerPessoa.validar);
 
 router.get("/list-pessoas/relatorio", Admin, ControllerPessoa.relatorio);
+
+router.post("/list-pessoas/filter", Admin, ControllerPessoa.filter);
+
+router.post("/list-pessoas/gerar-pdf/", Admin, ControllerRelatorio.GerarPdfPessoas)
 
 /*----------------------------------------------------------------------------*/
 

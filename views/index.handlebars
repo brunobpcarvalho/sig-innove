@@ -1,24 +1,3 @@
-<!--
-	totalClientesCadastrados
-	totalFornecedoresCadastrados
-	totalProdutosCadastrados
-	vendasRealizadas
-	recebimentosRealizados
-	pagamentosRealizados
-	valorTotalEmEstoque
-	valorRecebimentosAnual
-	valorPagamentosAnual
-	valorRecebidoNoMes
-	valorAReceberNoMes
-	valorTotalVendas
-	porcentagemRecebido
-	diferencaRecebimento
-	valorPagoNoMes
-	valorAPagarNoMes
-	porcentagemPago
-	diferencaPagamento
-	lucratividade
--->
 <div class="row">
 	<div class="col-md-8">
 		<div class="box box-primary">
@@ -127,7 +106,7 @@
 			<div class="col-4 col-sm-6">
 				<div class="box box-solid">
 					<div class="box-header with-border text-center">
-						<h3 class="box-title">Estoque de Segurança</h3>
+						<h3 class="box-title">Alerta de Estoque</h3>
 					</div>
 					<div class="box-body">
 						<div class="text-center">
@@ -136,15 +115,16 @@
 									<tr>
 										<th>Produto</th>
 										<th>Qtde. Estoque</th>
-										<th>Estq. de Segurança</th>
+										<th>Ponto Pedido</th>
 									</tr>
 								</thead>
 								<tbody>
 									{{#each estoqueDeSeguranca}}
-									<tr>
+
+									<tr {{#ifMenor quantidade pontoDePedido}}class="obrigatorio"{{/ifMenor}}>
 										<td>{{descricao}}</td>
 										<td>{{quantidade}}</td>
-										<td>{{estoqueDeSeguranca}}</td>
+										<td>{{pontoDePedido}}</td>
 									</tr>
 									{{/each}}
 								</tbody>
@@ -152,7 +132,7 @@
 						</div>
 					</div>
 					<div class="box-footer text-center">
-						<a class="small-box-footer" href="/relatorios/estoque-de-segurança">
+						<a class="small-box-footer" href="/relatorios/estoque-de-seguranca">
 							Visualizar todos
 							<i class="fa fa-arrow-circle-right"></i>
 						</a>
@@ -163,7 +143,7 @@
 	</div>
 
 	<div class="col-md-4">
-		<div class="small-box bg-yellow">
+		<div class="small-box bg-aqua">
 			<div class="icon">
 				<ion-icon src="/icons/ios-cart.svg"></ion-icon>
 			</div>
@@ -178,7 +158,7 @@
 			</a>
 		</div>
 
-		<div class="small-box bg-green">
+		<div class="small-box bg-aqua">
 			<div class="icon">
 				<ion-icon src="/icons/ios-people.svg"></ion-icon>
 			</div>
@@ -193,7 +173,7 @@
 			</a>
 		</div>
 
-		<div class="small-box bg-red">
+		<div class="small-box bg-aqua">
 			<div class="icon">
 				<ion-icon src="/icons/ios-archive.svg"></ion-icon>
 			</div>
@@ -223,7 +203,7 @@
 			</a>
 		</div>
 
-		<div class="small-box bg-yellow">
+		<div class="small-box bg-aqua">
 			<div class="icon">
 				<ion-icon src="/icons/ios-trending-down.svg"></ion-icon>
 			</div>

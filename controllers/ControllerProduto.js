@@ -2,7 +2,6 @@ var db = require("../config/conexao")
 const Produto = require("../models/Produto")
 const Modelo = require("../models/Modelo")
 const Fabricante = require("../models/Fabricante")
-const Categoria = require("../models/Categoria")
 const Venda = require("../models/Venda")
 const ItensVenda = require("../models/ItensVenda")
 const Empresa = require("../models/Empresa")
@@ -11,13 +10,12 @@ exports.listAll = (req, res) => {
 	Produto.findAll({
 		include: [
 			{ model: Fabricante, as: 'fabricante' },
-			{ model: Modelo, as: 'modelo' },
-			{ model: Categoria, as: 'categoria' }
+			{ model: Modelo, as: 'modelo' }
 		]
 	}).then((dadosProduto) => {
 		Modelo.findAll({where: {ativo: 'Ativo'}}).then((dadosModelo) => {
 			Fabricante.findAll({where: {ativo: 'Ativo'}}).then((dadosFabricante) => {
-				Categoria.findAll({where: {ativo: 'Ativo'}}).then((dadosCategoria) => {
+
 					//SELECT EXTRACT(DAY FROM "dataVenda") as "diaVenda", EXTRACT(MONTH FROM "dataVenda") as "mesVenda" FROM "vendas"
 					//SELECT "produtoId" AS "id", SUM(quantidade) AS "demanda", EXTRACT(MONTH FROM "createdAt") AS "mes" FROM "itens_vendas" GROUP BY  EXTRACT(MONTH FROM "createdAt"), "produtoId"
 					//SELECT SUM(iv."quantidade") AS "demanda", iv."produtoId" AS "id", p."prazoReposicao" AS "tempoDeEntrega", EXTRACT(MONTH FROM v."dataVenda") AS "mes" FROM "itens_vendas" iv INNER JOIN "produtos" p on p."id" = iv."produtoId" INNER JOIN "vendas" v on v."id" = iv."vendaId" GROUP BY EXTRACT(MONTH FROM v."dataVenda"), iv."produtoId"
@@ -29,9 +27,9 @@ exports.listAll = (req, res) => {
 								id: dado.id,
 								descricao: dado.descricao,
 								quantidade: dado.quantidade,
+								geero: dado.genero,
 								fabricante: dado.fabricante.nome,
 								modelo: dado.modelo.descricao,
-								categoria: dado.categoria.nome,
 								valorUnitario: dado.valorUnitario,
 								valorCusto: dado.valorCusto,
 								prazoReposicao: dado.prazoReposicao,
@@ -57,26 +55,12 @@ exports.listAll = (req, res) => {
 							}
 						})
 					}
-					const contextCategoria = {
-						categorias: dadosCategoria.map(dado => {
-							return {
-								id: dado.id,
-								nome: dado.nome,
-								ativo: dado.ativo,
-							}
-						})
-					}
 
 					res.render("produtos/list-produtos", {
 						produtos: contextProduto.produtos,
 						modelos: contextModelo.modelos,
-						fabricantes: contextFabricante.fabricantes,
-						categorias: contextCategoria.categorias
+						fabricantes: contextFabricante.fabricantes
 					})
-				}).catch((erro) => {
-					req.flash("msg_erro", "Não foi possivel listar as Categorias!" + erro)
-					res.redirect("/index")
-				})
 			}).catch((erro) => {
 				req.flash("msg_erro", "Não foi possivel listar os fabricantes!" + erro)
 				res.redirect("/index")
@@ -94,9 +78,9 @@ exports.listAll = (req, res) => {
 exports.add = async (req, res) => {
 	const novoProduto = await Produto.create({
 		descricao: req.body.descricao,
+		genero: req.body.genero,
 		fabricanteId: req.body.fabricante,
 		modeloId: req.body.modelo,
-		categoriaId: req.body.categoria,
 		valorUnitario: req.body.valorUnitario,
 		valorCusto: req.body.valorCusto,
 		prazoReposicao: req.body.prazoReposicao,
@@ -130,9 +114,9 @@ exports.delete = (req, res) => {
 exports.update = (req, res) => {
 	Produto.findByPk(id = req.body.id).then((produto) =>{
 		produto.descricao = req.body.descricao,
+		produto.genero = req.body.genero,
 		produto.fabricanteId = req.body.fabricante,
 		produto.modeloId = req.body.modelo,
-		produto.categoriaId = req.body.categoria,
 		produto.valorUnitario = req.body.valorUnitario,
 		valorCusto = req.body.valorCusto,
 		prazoReposicao = req.body.prazoReposicao,
@@ -147,6 +131,19 @@ exports.update = (req, res) => {
 		})
 	}).catch((erro) => {
 		req.flash("msg_erro", "Não foi possivel encontrar o produto: " + erro)
+		res.redirect("/produtos/list-produtos")
+	})
+}
+
+exports.validar = (req, res) => {
+	Produto.findAll({where: {descricao: req.body.campo}}).then((produto) => {
+		if(produto.length > 0){
+			res.send(true)
+		} else {
+			res.send(false)
+		}
+	}).catch((erro) => {
+		req.flash("msg_erro", "Houve um erro ao validar!" + erro)
 		res.redirect("/produtos/list-produtos")
 	})
 }

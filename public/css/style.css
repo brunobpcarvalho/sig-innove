@@ -64,3 +64,9 @@
 .knob-span-rec{
 	color: #3E9C31;
 }
+
+.box {
+	border-style: solid;
+	border-color: #DCDCDC;
+	border-width:1px;
+}

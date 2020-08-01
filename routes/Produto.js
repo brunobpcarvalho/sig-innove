@@ -12,5 +12,7 @@ router.post('/list-produtos/deletar', Admin, ControllerProduto.delete);
 
 router.post("/list-produtos/editar", Admin, ControllerProduto.update);
 
+router.post("/list-produtos/validar", Admin, ControllerProduto.validar);
+
 /*----------------------------------------------------------------------------*/
 module.exports = router;
