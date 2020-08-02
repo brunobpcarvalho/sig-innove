@@ -234,16 +234,16 @@ $('.money').mask("###0.00", {reverse: true});
 function validarFormProduto(valor){
 	var formProduto = $("#formProduto");
 	var descricao = $("#descricao").val();
-	var fabricante = $("#fabricante").val();
-	var modelo = $("#modelo").val();
+	var nomeFabricante = $("#nomeFabricante").val();
+	var descricaoModelo = $("#descricaoModelo").val();
 	var valorUnitario = $("#valorUnitario").val();
 	var valorCusto = $("#valorCusto").val();
 	var prazoReposicao = $("#prazoReposicao").val();
 	var erros = [];
 
 	if(!descricao || typeof descricao == undefined || descricao == null){erros.push(" Descrição");}
-	if(!fabricante || typeof fabricante == undefined || fabricante == null){erros.push(" Fabricante");}
-	if(!modelo || typeof modelo == undefined || modelo == null){erros.push(" Modelo");}
+	if(!nomeFabricante || typeof nomeFabricante == undefined || nomeFabricante == null){erros.push(" Fabricante");}
+	if(!descricaoModelo || typeof descricaoModelo == undefined || descricaoModelo == null){erros.push(" Modelo");}
 	if(!valorUnitario || typeof valorUnitario == undefined || valorUnitario == null){erros.push(" Valor Unitario");}
 	if(!valorCusto || typeof valorCusto == undefined || valorCusto == null){erros.push(" Valor de Custo");}
 	if(!prazoReposicao || typeof prazoReposicao == undefined || prazoReposicao == null){erros.push(" Prazo de Reposição");}
@@ -263,10 +263,10 @@ function validarFormProduto(valor){
 		})
 		return false;
 	}
-	var valueModelo = $('#modelo').val();
+	var valueModelo = $('#descricaoModelo').val();
 	var idModelo = $('#listaModelos [value="' + valueModelo + '"]').data('value')
 
-	var valueFabricante = $('#fabricante').val();
+	var valueFabricante = $('#nomeFabricante').val();
 	var idFabricante = $('#listaFabricantes [value="' + valueFabricante + '"]').data('value')
 
 
@@ -293,8 +293,8 @@ $('#modalProduto').on('show.bs.modal', function (event) {
 	modal.find('#id').val(button.data('id'))
 	modal.find('#descricao').val(button.data('descricao'))
 	modal.find('#quantidade').val(button.data('quantidade'))
-	modal.find('#fabricante').val(button.data('fabricante'))
-	modal.find('#modelo').val(button.data('modelo'))
+	modal.find('#nomeFabricante').val(button.data('nomefabricante'))
+	modal.find('#descricaoModelo').val(button.data('descricaomodelo'))
 	modal.find('#genero').val(button.data('genero'))
 	modal.find('#valorUnitario').val(button.data('valor'))
 	modal.find('#valorCusto').val(button.data('valorcusto'))

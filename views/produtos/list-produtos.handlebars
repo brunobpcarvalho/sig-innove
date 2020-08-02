@@ -30,8 +30,8 @@
                     <td>{{id}}</td>
                     <td>{{descricao}}</td>
                     <td>{{quantidade}}</td>
-                    <td>{{fabricante}}</td>
-                    <td>{{modelo}}</td>
+                    <td>{{nomeFabricante}}</td>
+                    <td>{{descricaoModelo}}</td>
                     <td>{{valorUnitario}}</td>
                     <td>{{ativo}}</td>
                     <td class="acao">
@@ -41,8 +41,9 @@
                                 data-id="{{id}}"
                                 data-descricao="{{descricao}}"
                                 data-quantidade="{{quantidade}}"
-                                data-fabricante="{{fabricante}}"
-                                data-modelo="{{modelo}}"
+                                data-genero="{{genero}}"
+                                data-nomefabricante="{{nomeFabricante}}"
+                                data-descricaomodelo="{{descricaoModelo}}"
                                 data-valor="{{valorUnitario}}"
                                 data-valorcusto="{{valorCusto}}"
                                 data-prazo="{{prazoReposicao}}"
@@ -126,7 +127,8 @@
                         <div class="col-xs-4">
                             <span>Fabricante</span><span class="obrigatorio"> *</span>
                             <div class="input-group">
-                                <input class="form-control" type="search" id="fabricante" name="fabricante" list="listaFabricantes" placeholder="Selecione um Fabricante"/>
+                                <input type="hidden" id="fabricante" name="fabricante" value="">
+                                <input class="form-control" type="search" id="nomeFabricante" name="nomeFabricante" list="listaFabricantes" placeholder="Selecione um Fabricante"/>
                                 <span class="input-group-btn">
                                     <a href="/produtos/list-fabricantes"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
                                 </span>
@@ -143,7 +145,8 @@
                         <div class="col-xs-4">
                             <span>Modelo</span><span class="obrigatorio"> *</span>
                             <div class="input-group">
-                                <input class="form-control" type="search" id="modelo" name="modelo" list="listaModelos" placeholder="Selecione um Modelo"/>
+                                <input type="hidden" id="modelo" name="modelo" value="">
+                                <input class="form-control" type="search" id="descricaoModelo" name="descricaoModelo" list="listaModelos" placeholder="Selecione um Modelo"/>
                                 <span class="input-group-btn">
                                     <a href="/produtos/listModelo"><button type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
                                 </span>
