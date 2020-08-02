@@ -88,9 +88,6 @@ exports.destroy = (req, res) => {
 		req.flash("msg_erro", "Não foi possivel encontrar o Usuario! " + erro)
 		res.redirect("/usuarios/index")
 	})
-
-
-
 }
 
 exports.update = (req, res) => {
