@@ -10,6 +10,7 @@ exports.index = (req, res) => {
 			usuarios: dadosUsuarios.map(dado => {
 				return {
 					id: dado.id,
+					nome: dado.nome,
 					usuario: dado.usuario,
 					nivelAcesso: dado.nivelAcesso,
 					dataInclusao: dado.dataInclusao,
@@ -28,6 +29,7 @@ exports.edit = (req, res) => {
 	Usuario.findByPk(req.params.id).then((dadosUsuario) =>{
 		const usuario = {
 			id: dadosUsuario.id,
+			nome: dadosUsuario.nome,
 			usuario: dadosUsuario.usuario,
 			nivelAcesso: dadosUsuario.nivelAcesso,
 			dataInclusao: dadosUsuario.dataInclusao,
@@ -42,6 +44,7 @@ exports.edit = (req, res) => {
 
 exports.create = (req, res) => {
 	const novoUsuario = new Usuario({
+		nome: req.body.nome,
 		usuario: req.body.usuario,
 		senha: req.body.senha,
 		nivelAcesso: req.body.nivelAcesso,
@@ -92,7 +95,7 @@ exports.destroy = (req, res) => {
 
 exports.update = (req, res) => {
 	Usuario.findByPk(req.body.id).then((usuario) =>{
-
+		usuario.nome = req.body.nome,
 		usuario.usuario = req.body.usuario,
 		usuario.nivelAcesso = req.body.nivelAcesso,
 		usuario.dataInclusao = req.body.dataInclusao,
