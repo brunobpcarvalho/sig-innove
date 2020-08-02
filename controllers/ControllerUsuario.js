@@ -1,5 +1,6 @@
 var db = require("../config/conexao")
 const Usuario = require("../models/Usuario")
+const Venda = require("../models/Venda")
 const bcrypt = require("bcryptjs")
 const passport = require("passport")
 
@@ -67,13 +68,26 @@ exports.create = (req, res) => {
 }
 
 exports.destroy = (req, res) => {
-	Usuario.destroy({ where: {id: req.body.id}}).then(() => {
-		req.flash("msg_sucesso", "Usuario deletado com sucesso!")
+	Venda.findAll({where: {usuarioId: req.body.id}}).then((usuario) =>{
+		if(usuario.length < 1){
+			Usuario.destroy({ where: {id: req.body.id}}).then(() => {
+				req.flash("msg_sucesso", "Usuário deletado com sucesso!")
+				res.redirect("/usuarios/index")
+			}).catch((erro) => {
+				req.flash("msg_erro", "Não foi possível excluir este usuario!")
+				res.redirect("/usuarios/index")
+			})
+		}else {
+			req.flash("msg_erro", "Não é possivel excluir esse Usuário, pois está sendo utilizado em uma Venda!")
+			res.redirect("/usuarios/index")
+		}
+	}).catch((erro)=>{
+		req.flash("msg_erro", "Não foi possivel encontrar o Usuario! " + erro)
 		res.redirect("/usuarios/index")
-	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível excluir este usuario!")
-		res.redirect("usuarios/index")
 	})
+
+
+
 }
 
 exports.update = (req, res) => {

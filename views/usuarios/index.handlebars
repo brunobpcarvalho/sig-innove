@@ -1,13 +1,16 @@
 <div class="box">
     <div class="box-header">
         <h1 class="box-title">Usuários</h1>
+        <div class="box-tools pull-right">
+			&nbsp
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUsuario"> Adicionar </button>
+        </div>
     </div>
     <div class="box-body">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUsuario"> Adicionar </button>
-
         <table id="tabelaUsuarios" class="tbl table table-striped text-center">
             <thead>
                 <tr>
+                    <th>Nome</th>
                     <th>Usuario</th>
                     <th>Nivel de Acesso</th>
                     <th>Data de Inclusão</th>
@@ -18,6 +21,7 @@
             <tbody>
                 {{#each usuarios}}
                 <tr>
+                    <td>{{nome}}</td>
                     <td>{{usuario}}</td>
                     <td>{{nivelAcesso}}</td>
                     <td>{{#formatDate createdAt}}{{/formatDate}}</td>
@@ -31,9 +35,9 @@
                             </div>
 
                             <div class="btn-group">
-                                <form action="/usuarios/destroy" method="post">
+                                <form class="deletar" action="/usuarios/destroy" method="post">
                                     <input type="hidden" name="id" value="{{id}}">
-                                    <button type="submit" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                    <button type="button" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -43,6 +47,7 @@
             </tbody>
             <tfoot>
                 <tr>
+                    <th>Nome</th>
                     <th>Usuario</th>
                     <th>Nivel de Acesso</th>
                     <th>Data de Inclusão</th>
@@ -71,8 +76,15 @@
                     <div class="box-body">
                         <div class="row">
                             <div class="col-xs-5">
+                                <span>Nome</span>
+                                <input type="text" class="form-control" name="nome" id="nome" required="true">
+                            </div>
+                            <div class="col-xs-4">
                                 <span>Usuario</span>
                                 <input type="text" class="form-control" name="usuario" id="usuario" required="true">
+
+                                <span>Senha</span>
+                                <input type="password" class="form-control" name="senha" id="senha" required="true">
                             </div>
                             <div class="col-xs-3">
                                 <span>Nivel de Acesso</span>
@@ -80,19 +92,12 @@
                                     <option value='Usuario'> Usuário </option>
                                     <option value='Administrador'> Administrador </option>
                                 </select>
-                            </div>
-                            <div class="col-xs-2">
+
                                 <span>Ativo</span>
                                 <select id="ativo" name="ativo" class="form-control">
                                     <option value='Ativo'> SIM </option>
                                     <option value='Inativo'> NÃO </option>
                                 </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-5">
-                                <span>Senha</span>
-                                <input type="password" class="form-control" name="senha" id="senha" required="true">
                             </div>
                         </div>
                     </div>
