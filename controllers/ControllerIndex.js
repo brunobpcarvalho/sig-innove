@@ -117,10 +117,13 @@ const Querys = {
 														.then(lucratividade => {
 															db.query(Querys.estoqueDeSeguranca, { type: db.QueryTypes.SELECT})
 															.then(estoqueDeSeguranca => {
+																//
+																var listaAlertaDeEstoque = []
 																for (var i = 0; i < estoqueDeSeguranca.length; i++) {
-																	if(estoqueDeSeguranca[i].quantidade >= estoqueDeSeguranca[i].pontoDePedido){
-																		estoqueDeSeguranca.splice(i, 1);
+																	if(estoqueDeSeguranca[i].quantidade < estoqueDeSeguranca[i].pontoDePedido){
+																		listaAlertaDeEstoque.push(estoqueDeSeguranca[i]);
 																	}
+
 																}
 																var valorAPagarNoMes = vlrAPagarNoMes[0].sum
 																ContasPagar.count().then(pagamentosRealizados => {
@@ -165,7 +168,7 @@ const Querys = {
 																			porcentagemPago: porcentagemPago,
 																			diferencaPagamento: diferencaPagamento,
 																			lucratividade: lucratividade,
-																			estoqueDeSeguranca: estoqueDeSeguranca
+																			listaAlertaDeEstoque: listaAlertaDeEstoque
 																		});
 																	}).catch((erro) => {
 																		Erro.erro(req, res, next, 'Não foi possivel buscar valor total das vendas! ' + erro)
