@@ -70,3 +70,15 @@
 	border-color: #DCDCDC;
 	border-width:1px;
 }
+
+#tabelaDeParcelas input{
+	height: 28px;
+	padding: 1px;
+}
+#tabelaDeParcelas select{
+	height: 28px;
+	padding: 1px;
+}
+#tabelaDeParcelas .inputData{
+	width: 125px;
+}
