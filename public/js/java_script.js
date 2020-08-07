@@ -10,6 +10,16 @@ $('.edit').click( function() {
 $('#cnpj').mask('00.000.000/0000-00');
 
 
+$('.situacao').addClass('btn-danger');
+
+$(document).on('change', '.situacao', function(){
+	if(this.value == 'PAGO'){
+		$(this).removeClass('btn-danger').addClass('btn-success');
+	} else {
+		$(this).removeClass('btn-success').addClass('btn-danger');
+	}
+})
+
 /* --------------  FORMULARIO DE PESSOAS --------------------------------------*/
 $('#telefone').mask('(00) 0000-0000');
 $('#celular').mask('(00) 00000-0000');
@@ -229,7 +239,7 @@ $('#modalFabricante').on('show.bs.modal', function (event) {
 })
 
 /* --------------  FORMULARIO DE PRODUTO -----------------------------------*/
-$('.money').mask("###0.00", {reverse: true});
+$('.money').mask("#,##0.00", {reverse: true});
 
 function validarFormProduto(valor){
 	var formProduto = $("#formProduto");
@@ -304,7 +314,7 @@ $('#modalProduto').on('show.bs.modal', function (event) {
 
 /* ----------------------------------- VENDA ------------------------------------------------------*/
 
-$('#addParcelas').on('click', function(){
+/*$('#addParcelas').on('click', function(){
 	var parcelas = $('#parcelas').val();
 	var total = $('#total').val();
 
@@ -337,7 +347,7 @@ $('#addParcelas').on('click', function(){
 		$("#tabelaParcelas").append(newRow);
 		$('.inputData').val(new Date().DataAtual());
 	}
-});
+});*/
 
 $(document).ready(function(){
 	//Remove o botão de excluir do primeiro item ao editar uma venda.
@@ -411,7 +421,6 @@ $(document).ready(function(){
 	var tdTotal = $(".tdTotal").html();
 
 	$(document).on('click', '#addItem', function(){
-
 		var newRow = $('<tr class="linha">');
 		var cols = "";
 		cols += '<td>' + tdItens + '</td>';
@@ -452,7 +461,6 @@ $(document).ready(function(){
 
 	$(document).on(SalvarVenda = function (opcao) {
 		var TabelaItens = $("#tabelaItens");
-		var formaPag = $('.formaPag').val();
 		var inputProduto =  TabelaItens.find("td:nth-child(1) input");
 		var inputQuantidade = TabelaItens.find("td:nth-child(2) input");
 
@@ -516,15 +524,6 @@ $(document).ready(function(){
 			return false;
 		}
 
-		if(!formaPag || typeof formaPag == undefined || formaPag == null){
-			Swal.fire({
-				icon: 'error',
-				title: 'Erro ...',
-				text: "A forma de pagamento não foi preenchida!",
-			})
-			return false;
-		}
-
 		for(var i = 0; i < inputProduto.length; i++) {
 			inputProduto[i].value = ids[i];
 		}
@@ -553,21 +552,51 @@ $(document).ready(function(){
 	});
 });
 
-$(document).on(GerarFinan = function(id){
-	Swal.fire({
-		title: 'Deseja gerar financeiro?',
-		text: "",
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonColor: '#3085d6',
-		cancelButtonColor: '#d33',
-		cancelButtonText: 'Cancelar',
-		confirmButtonText: 'Sim!'
-	}).then((result) => {
-		if (result.value) {
-			location.href = '/vendas/list-vendas/gerar-financeiro/' + id;
-		}
-	})
+var tdParcela = $("#tdParcela").html();
+var tdFormaPagamentp = $("#tdFormaPagamentp").html();
+var tdValorParcela = $("#tdValorParcela").html();
+var tdDataVencimento = $("#tdDataVencimento").html();
+var tdValorPago = $("#tdValorPago").html();
+var tdDataPagamento = $("#tdDataPagamento").html();
+var tdDesconto = $("#tdDesconto").html();
+var tdSituacao = $("#tdSituacao").html();
+
+$('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget)
+	var parcelas = button.data('parcelas')
+	var valorTotal = button.data('valortotal')
+	var valorParcela = (valorTotal / parcelas).toFixed(2)
+	$("#tabelaDeParcelas tbody tr").remove();
+
+	for (var i = 0; i < parcelas; i++) {
+		var newRow = $('<tr id="trParcelas">');
+		var cols = "";
+		cols += '<td id="tdParcela"> <input type="hidden" name="parcela[]"> <span>'+ (i+1) +'° </span></td>';
+		cols += '<td>' + tdFormaPagamentp + '</td>';
+		cols += '<td id="tdValorParcela"><input class="money form-control" type="text" name="valorParcela[]" value="'+ valorParcela +'" size="8"></td>';
+		cols += '<td>' + tdDataVencimento + '</td>';
+		cols += '<td>' + tdValorPago + '</td>';
+		cols += '<td>' + tdDataPagamento + '</td>';
+		cols += '<td>' + tdDesconto + '</td>';
+		cols += '<td>' + tdSituacao + '</td>';
+
+		newRow.append(cols);
+
+		$("#tabelaDeParcelas").append(newRow);
+	}
+
+	var modal = $(this)
+	modal.find('#vendaId').val(button.data('venda'))
+	modal.find('#cliente').val(button.data('cliente'))
+	modal.find('#dataCompetencia').val(button.data('datavenda'))
+	modal.find('#parcelas').val(parcelas)
+	modal.find('#valorTotal').val(valorTotal)
+})
+
+
+
+$(document).on(gerarFinanceiro = function(){
+
 });
 
 $(document).on(EstornarVenda = function(id){
