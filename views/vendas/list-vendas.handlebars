@@ -8,34 +8,34 @@
 
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtroVenda"> <i class="fa fa-filter"></i> Filtrar </button>
             <div class="btn-group">
-				<form action="" method="post">
-					<input type="hidden" name="filterTipo" value="{{values.tipo}}">
-					<input type="hidden" name="filterFuncao" value="{{values.funcao}}">
-					<input type="hidden" name="filterCidade" value="{{values.cidade}}">
-					<input type="hidden" name="filterUf" value="{{values.uf}}">
-					<input type="hidden" name="filterAtivo" value="{{values.ativo}}">
-					<button type="submit" name="button" class="btn btn-primary"> Gerar PDF </button>
-				</form>
-			</div>
+                <form action="" method="post">
+                    <input type="hidden" name="filterTipo" value="{{values.tipo}}">
+                    <input type="hidden" name="filterFuncao" value="{{values.funcao}}">
+                    <input type="hidden" name="filterCidade" value="{{values.cidade}}">
+                    <input type="hidden" name="filterUf" value="{{values.uf}}">
+                    <input type="hidden" name="filterAtivo" value="{{values.ativo}}">
+                    <button type="submit" name="button" class="btn btn-primary"> Gerar PDF </button>
+                </form>
+            </div>
         </div>
         {{#if filters}}
-		<div class="box-tools pull-right">
-			<ol class="breadcrumb">
-				Filtrando por:
-				{{#each filters}}
-				<li>
-					<font _mstmutation="1">{{this}}</font>
-				</li>
-				{{/each}}
-				&nbsp
-				<a href="/vendas/list-vendas">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</a>
-			</ol>
-		</div>
-		{{/if}}
+        <div class="box-tools pull-right">
+            <ol class="breadcrumb">
+                Filtrando por:
+                {{#each filters}}
+                <li>
+                    <font _mstmutation="1">{{this}}</font>
+                </li>
+                {{/each}}
+                &nbsp
+                <a href="/vendas/list-vendas">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </a>
+            </ol>
+        </div>
+        {{/if}}
     </div>
     <div class="box-body">
         <table id="tabelaVenda" class="tbl table table-striped text-center">
@@ -69,7 +69,15 @@
                                     <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
                                 </a>
                                 <a>
-                                    <button title="Gerar Financeiro" onclick="GerarFinan({{../id}})" type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-usd"></i></button>
+                                    <button title="Gerar Financeiro"
+                                    data-venda="{{../id}}"
+                                    data-cliente="{{../pessoa}}"
+                                    data-parcelas="{{../parcelas}}"
+                                    data-valortotal="{{../valorTotal}}"
+                                    data-datavenda="{{../dataVenda}}"
+                                    data-toggle="modal"
+                                    data-target="#modalGerarFinanceiro"
+                                    type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-usd"></i></button>
                                 </a>
                                 {{/ifCond}}
                             </div>
@@ -116,45 +124,141 @@
 <!-- Modal de Filtros-->
 
 <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" id="filtroVenda">
-	<div class="modal-dialog modal-sm modal-dialog-scrollable" role="document">
-		<div class="modal-content">
-			<form name="formFilterVenda" id="formFilterVenda" action="/vendas/list-vendas/filter" method="post">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
+    <div class="modal-dialog modal-sm modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <form name="formFilterVenda" id="formFilterVenda" action="/vendas/list-vendas/filter" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
                         <input type="text" id="filterCliente" name="filterCliente" class="form-control" placeholder="Cliente...">
                         <br>
-						<select class="form-control" name="filterStatus" id="filterStatus">
-							<!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
-							<option value=''> Status da Negociação...</option>
-							<option value="ORCAMENTO"> Orçamento </option>
-							<option value="VENDA"> Venda </option>
-						</select>
-						<br>
+                        <select class="form-control" name="filterStatus" id="filterStatus">
+                            <!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
+                            <option value=''> Status da Negociação...</option>
+                            <option value="ORCAMENTO"> Orçamento </option>
+                            <option value="VENDA"> Venda </option>
+                        </select>
+                        <br>
                         <select class="form-control" name="filterFinanceiro" id="filterFinanceiro">
-							<!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
-							<option value=''>Financeiro gerado...</option>
-							<option value="sim"> SIM </option>
-							<option value="nao"> NÂO </option>
-						</select>
-						<br>
+                            <!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
+                            <option value=''>Financeiro gerado...</option>
+                            <option value="sim"> SIM </option>
+                            <option value="nao"> NÂO </option>
+                        </select>
+                        <br>
                         <span> Data da Venda</span>
                         <span> De: </span>
                         <input class="form-control" type="date" name="filterDataInicio" id="filterDataInicio">
                         <br>
                         <span> Até: </span>
                         <input class="form-control" type="date" name="filterDataFim" id="filterDataFim">
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
-					<button type="submit" class="editar btn btn-primary">Aplicar</button>
-				</div>
-			</form>
-		</div>
-	</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="editar btn btn-primary">Aplicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalGerarFinanceiro">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Gerar Financeiro</h4>
+            </div>
+
+            <div>
+                <div class="box-body">
+                    <form name="formGerarFinanceiro" id="formGerarFinanceiro" method="post">
+                        <input type="hidden" name="vendaId" id="vendaId" value="">
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <span>Cliente: </span>
+                                <input class="form-control" id="cliente" name="pessoaId" disabled/>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span>Data de Competencia: </span><span class="obrigatorio"> *</span>
+                                    <input class="inputData form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="">
+                                </div>
+                            </div>
+                            <div class="col-xs-2">
+                                <div class="input-group">
+                                    <span>Qtde. de Parcelas: </span>
+                                    <input class="form-control" type="text" name="parcelas" id="parcelas" disabled>
+                                </div>
+                            </div>
+                            <div class="col-xs-2">
+                                <div class="input-group">
+                                    <span>Valor Total: </span>
+                                    <input id="valorTotal" name="valor" class="money form-control" type="text" name="valorTotal" value="0.00">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px; background-color: #eeeeee;" class="box box-solid">
+                            <div class="box-header with-border">
+                                <h5 class="modal-title">Parcelas</h5>
+                            </div>
+                            <div class="box-body table-responsive no-padding">
+                                <table id="tabelaDeParcelas" class="table table-hover table-striped text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>N°</th>
+                                            <th>Forma de Pag.</th>
+                                            <th>Valor da Parcela</th>
+                                            <th>Data de Vencimento</th>
+                                            <th>Valor Pago</th>
+                                            <th>Data de Pagamento</th>
+                                            <th>Desconto</th>
+                                            <th>Situação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="trParcelas">
+                                            <td id="tdParcela"> <input type="hidden" name="parcela[]"> <span> 1° </span></td>
+                                            <td id="tdFormaPagamentp">
+                                                <select class="form-control" name="formaPagamento[]">
+                                                    <option value=''> Dinheiro</option>
+                                                    <option value="ORCAMENTO"> Cartão de Crédito </option>
+                                                    <option value="VENDA"> Cartão de Débito </option>
+                                                    <option value="VENDA"> Boleto </option>
+                                                    <option value="VENDA"> Carteira </option>
+                                                </select>
+                                            </td>
+                                            <td id="tdValorParcela"><input class="money form-control" type="text" name="valorParcela[]" value="" size="8"></td>
+                                            <td id="tdDataVencimento"><input class="inputData form-control" type="date" name="dataVencimento[]" value=""></td>
+                                            <td id="tdValorPago"><input class="money form-control" type="text" name="valorPago[]" value="" size="8"></td>
+                                            <td id="tdDataPagamento"><input class="inputData form-control" type="date" name="dataPagamento[]" value=""></td>
+                                            <td id="tdDesconto"><input class="money form-control" type="text" name="desconto[]" value="" size="8"></td>
+                                            <td id="tdSituacao">
+                                                <select class="situacao form-control" name="situacao[]">
+                                                    <option value="PENDENTE"> Pendente </option>
+                                                    <option value="PAGO"> Pago </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div style="position: relative;" class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="gerarFinanceiro()" class="salvar btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+
 </div>
