@@ -5,7 +5,6 @@ const Venda = require("../models/Venda")
 const Usuario = require("../models/Usuario")
 const Pessoa = require("../models/Pessoa")
 const Produto = require("../models/Produto")
-const Parcela = require("../models/Parcela")
 const ItensVenda = require("../models/ItensVenda")
 const ContasReceber = require("../models/ContasReceber")
 const Empresa = require("../models/Empresa")
@@ -22,6 +21,7 @@ exports.listAll = async (req, res) => {
 					usuario: dado.usuario.usuario,
 					dataVenda: dado.dataVenda,
 					valorTotal: dado.valorTotal,
+					parcelas: dado.parcelas,
 					financeiro: dado.financeiro
 				}
 			})
@@ -67,27 +67,12 @@ exports.addVenda = async (req, res) => {
 }
 
 exports.add = async (req, res) => {
-
-	const venda = await Venda.create({ usuarioId, pessoaId, dataVenda, valorTotal, desconto, status } = req.body)
+	const venda = await Venda.create({ usuarioId, pessoaId, dataVenda, valorTotal, desconto, condicaoPagamento, parcelas, status } = req.body)
 
 	const itens = req.body.produtos
 	const quantidade = req.body.quantidade
 	const valorUnit = req.body.valorUnitario
 	const subTotal = req.body.subTotal
-	const parcelas = req.body.parcelas
-
-	const formaPagamento = req.body.formaPagamento
-	const dataParcela = req.body.dataParcela
-	const valorParcela = req.body.valorParcela
-
-	for (var i = 0; i < parcelas; i++) {
-		const parcela = await Parcela.create({
-			formaPagamento: formaPagamento[i],
-			vencimento: dataParcela[i],
-			valor: valorParcela[i],
-			vendaId: venda.id
-		})
-	}
 
 	for (var i = 0; i < itens.length; i++) {
 		const itensVenda = new ItensVenda({
@@ -130,21 +115,16 @@ exports.delete = async (req, res) => {
 	}).catch(erro =>{
 
 	})
-	Parcela.destroy({where: {vendaId: req.body.id}}).then(() => {
-		ItensVenda.destroy({where: {vendaId: req.body.id}}).then(() => {
-			Venda.destroy({where: {id: req.body.id}}).then(() => {
-				req.flash("msg_sucesso", "Venda deletada com sucesso!")
-				res.redirect("/vendas/list-vendas")
-			}).catch((erro) => {
-				req.flash("msg_erro", "Erro: Houve um erro ao deletar a venda")
-				res.redirect("/vendas/list-vendas")
-			})
+	ItensVenda.destroy({where: {vendaId: req.body.id}}).then(() => {
+		Venda.destroy({where: {id: req.body.id}}).then(() => {
+			req.flash("msg_sucesso", "Venda deletada com sucesso!")
+			res.redirect("/vendas/list-vendas")
 		}).catch((erro) => {
-			req.flash("msg_erro", "Erro: Houve um erro ao deletar os itens desta venda")
+			req.flash("msg_erro", "Erro: Houve um erro ao deletar a venda")
 			res.redirect("/vendas/list-vendas")
 		})
 	}).catch((erro) => {
-		req.flash("msg_erro", "Erro: Houve um erro ao deletar as Parcelas desta venda")
+		req.flash("msg_erro", "Erro: Houve um erro ao deletar os itens desta venda")
 		res.redirect("/vendas/list-vendas")
 	})
 }
@@ -152,9 +132,8 @@ exports.delete = async (req, res) => {
 exports.updateVenda = async (req, res) => {
 	Venda.findByPk(req.params.id, {include: [{ model: Pessoa, as: 'pessoa' }, { model: Usuario, as: 'usuario'}]}).then((dadosVenda) =>{
 		ItensVenda.findAll({where: {vendaId: req.params.id}, include: [{ model: Produto, as: 'produto' }]}).then((dadosItensVenda) =>{
-			Parcela.findAll({where: {vendaId: req.params.id}}).then((dadosParcela) =>{
 				Produto.findAll({attributes: ['id', 'quantidade', 'valorUnitario', 'descricao']}).then((dadosProduto) => {
-
+					console.log('dadosItensVenda', dadosItensVenda);
 					const venda = {
 						id: dadosVenda.id,
 						pessoaId: dadosVenda.pessoa.id,
@@ -165,6 +144,8 @@ exports.updateVenda = async (req, res) => {
 						usuario: dadosVenda.usuario.usuario,
 						desconto: dadosVenda.desconto,
 						valorTotal: dadosVenda.valorTotal,
+						condicaoPagamento: dadosVenda.condicaoPagamento,
+						parcelas: dadosVenda.parcelas
 					}
 					const contextItensVenda = {
 						itensVenda: dadosItensVenda.map(dado => {
@@ -173,15 +154,6 @@ exports.updateVenda = async (req, res) => {
 								quantidade: dado.quantidade,
 								valorUnitario: dado.valorUnitario,
 								valorTotal: dado.valorTotal,
-							}
-						})
-					}
-					const contextParcela = {
-						parcelas: dadosParcela.map(dado => {
-							return {
-								formaPagamento: dado.formaPagamento,
-								vencimento: dado.vencimento,
-								valor: dado.valor,
 							}
 						})
 					}
@@ -195,15 +167,11 @@ exports.updateVenda = async (req, res) => {
 							}
 						})
 					}
-					res.render("vendas/edit-venda", {venda: venda, itensVenda: contextItensVenda.itensVenda, parcelas: contextParcela.parcelas, produtos: contextProduto.produtos})
+					res.render("vendas/edit-venda", {venda: venda, itensVenda: contextItensVenda.itensVenda, produtos: contextProduto.produtos})
 				}).catch((erro) => {
 					req.flash("error_msg", "Erro ao listar os produtos!" + erro)
 					res.redirect("/vendas/list-vendas")
 				})
-			}).catch((erro) => {
-				req.flash("error_msg", "Erro ao buscar ou listar as pacelas da venda!")
-				res.redirect("/vendas/list-vendas")
-			})
 		}).catch((erro) => {
 			req.flash("error_msg", "Erro ao buscar ou listar os itens da venda!")
 			res.redirect("/vendas/list-vendas")
@@ -219,30 +187,11 @@ exports.update = async (req, res) => {
 	const quantidade = req.body.quantidade
 	const valorUnit = req.body.valorUnitario
 	const subTotal = req.body.subTotal
-	const parcelas = req.body.parcelas
-
-	const formaPagamento = req.body.formaPagamento
-	const dataParcela = req.body.dataParcela
-	const valorParcela = req.body.valorParcela
 	ItensVenda.destroy({
 		where: {
 			vendaId: req.body.vendaId
 		}
 	});
-	Parcela.destroy({
-		where: {
-			vendaId: req.body.vendaId
-		}
-	});
-
-	for (var i = 0; i < parcelas; i++) {
-		const parcela = await Parcela.create({
-			formaPagamento: formaPagamento[i],
-			vencimento: dataParcela[i],
-			valor: valorParcela[i],
-			vendaId: req.body.vendaId
-		})
-	}
 
 	for (var i = 0; i < itens.length; i++) {
 		const itensVenda = new ItensVenda({
@@ -272,6 +221,7 @@ exports.update = async (req, res) => {
 				venda.valorTotal = req.body.valorTotal,
 				venda.desconto = req.body.desconto,
 				venda.condicaoPagamento = req.body.condicaoPagamento,
+				venda.parcelas = req.body.parcelas,
 				venda.status = req.body.status,
 				venda.pessoaId = req.body.pessoaId,
 				venda.usuarioId = req.body.usuarioId
