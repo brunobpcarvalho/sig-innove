@@ -119,14 +119,15 @@
 <!-- ------------------------         MODAL         ------------------------ -->
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalPessoa">
-	<form name="formPessoa" id="formPessoa" method="post">
-		<input type="hidden" name="id" id="id" value="{{id}}">
-		<div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">Adicionar Pessoa</h4>
-				</div>
-				<div class="modal-body">
+
+	<div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Adicionar Pessoa</h4>
+			</div>
+			<div class="box-body">
+				<form name="formPessoa" id="formPessoa" method="post">
+					<input type="hidden" name="id" id="id" value="{{id}}">
 					<div class="row">
 						<div class="col-xs-3">
 							<span>Física/Jurídica</span>
@@ -295,16 +296,16 @@
 							</div>
 						</div>
 					</div>
-
-				</div>
-				<div style="position: relative;" class="modal-footer">
-					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
-					<button style="position: absolute;" type="button" onclick="return validarFormPessoa('adicionar')" class="salvar btn btn-primary">Salvar</button>
-					<button type="button" onclick="return validarFormPessoa('editar')" class="editar btn btn-primary">Editar</button>
-				</div>
+				</form>
+			</div>
+			<div style="position: relative;" class="modal-footer">
+				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+				<button style="position: absolute;" type="button" onclick="return validarFormPessoa('adicionar')" class="salvar btn btn-primary">Salvar</button>
+				<button type="button" onclick="return validarFormPessoa('editar')" class="editar btn btn-primary">Editar</button>
 			</div>
 		</div>
-	</form>
+	</div>
+
 </div>
 
 <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" id="filtroPessoa">
