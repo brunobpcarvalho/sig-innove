@@ -1,11 +1,15 @@
 <div class="box">
     <div class="box-header">
         <h1 class="box-title">Modelos</h1>
+
+        <div class="box-tools pull-right">
+            &nbsp
+            <button type="button" class="add btn btn-primary"
+            data-ativo="Ativo"
+            data-toggle="modal" data-target="#modalModelo"> Adicionar </button>
+        </div>
     </div>
     <div class="box-body">
-        <button type="button" class="add btn btn-primary"
-        data-ativo="Ativo"
-        data-toggle="modal" data-target="#modalModelo"> Adicionar </button>
         <table id="tabelaModelos" class="tbl table table-striped text-center">
             <thead>
                 <tr>
@@ -52,10 +56,11 @@
 <!-- ------------------------        MODAL         ------------------------ -->
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalModelo">
-    <form name="formModelo" id="formModelo" method="post">
-        <input type="hidden" name="id" id="id" value="{{id}}">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-            <div class="modal-content">
+
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <form name="formModelo" id="formModelo" method="post">
+                <input type="hidden" name="id" id="id" value="{{id}}">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -88,6 +93,6 @@
                     <button type="button" onclick="return validarFormModelo('editar')" class="editar btn btn-primary">Editar</button>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
