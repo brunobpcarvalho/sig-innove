@@ -297,6 +297,7 @@ exports.gerarFinanceiro = async (req, res) => {
 			res.redirect("/vendas/list-vendas")
 		})
 	}
+	venda.financeiro = 'sim'
 	venda.save().then(() => {
 		req.flash("msg_sucesso", "Financeiro gerado com sucesso!")
 		res.redirect("/vendas/list-vendas")
