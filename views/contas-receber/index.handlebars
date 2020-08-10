@@ -1,21 +1,23 @@
 <div class="box">
     <div class="box-header">
         <h1 class="box-title">Recebimentos</h1>
+
+        <div class="box-tools pull-right">
+            &nbsp
+            <button type="button" class="add btn btn-primary" data-toggle="modal" data-target="#modalRecebimento"
+            data-forma-pagamento="Dinheiro"
+            data-pago="false"> Adicionar </button>
+        </div>
     </div>
     <div class="box-body">
-        <button type="button" class="add btn btn-primary" data-toggle="modal" data-target="#modalRecebimento"
-        data-forma-pagamento="Dinheiro"
-        data-pago="false"> Adicionar </button>
         <table id="tabelaRecebimento" class="tbl table table-striped text-center">
             <thead>
                 <tr>
                     <th>Código</th>
                     <th>Pagador</th>
-                    <th>Valor</th>
-                    <th>Valor Pago</th>
-                    <th>Pago</th>
-                    <th>Data de Competencia</th>
-                    <th>Data de Vencimento</th>
+                    <th>Data De Competencia</th>
+                    <th>Qtde. de Parcelas</th>
+                    <th>Valor Total</th>
                     <th></th>
                 </tr>
             </thead>
@@ -24,11 +26,9 @@
                 <tr>
                     <td>{{id}}</td>
                     <td>{{pessoa}}</td>
-                    <td>{{valor}}</td>
-                    <td>{{valorPago}}</td>
-                    <td>{{#ifCond pago true}} SIM {{/ifCond}} {{#ifCond pago false}} NÃO {{/ifCond}}</td>
                     <td>{{#formatDate dataCompetencia}}{{/formatDate}}</td>
-                    <td>{{#formatDate dataVencimento}}{{/formatDate}}</td>
+                    <td>{{quantidadeDeParcelas}}</td>
+                    <td>{{valorTotal}}</td>
 
                     <td class="acao">
                         <div class="toolbar-actions">
@@ -63,11 +63,9 @@
                 <tr>
                     <th>Código</th>
                     <th>Pagador</th>
-                    <th>Valor</th>
-                    <th>Valor Pago</th>
-                    <th>Pago</th>
-                    <th>Data de Competencia</th>
-                    <th>Data de Vencimento</th>
+                    <th>Qtde. de Parcelas</th>
+                    <th>Data De Competencia</th>
+                    <th>Valor Total</th>
                     <th></th>
                 </tr>
             </tfoot>
@@ -78,10 +76,10 @@
 <!-- ------------------------         MODAL         ------------------------ -->
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modalRecebimento">
-    <form name="formRecebimento" id="formRecebimento" method="post">
-        <input type="hidden" name="id" id="id" value="{{id}}">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-            <div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <form name="formRecebimento" id="formRecebimento" method="post">
+                <input type="hidden" name="id" id="id" value="{{id}}">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -89,99 +87,83 @@
                     <h4 class="modal-title">Adicionar Conta a Receber</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="box-body">
-                        <div class="row">
-                            <div class="col-xs-8">
-                                <div class="input-group">
-                                    <input class="form-control" type="search" id="cliente" name="pessoaId" list="listaCliente" placeholder="Selecione um Cliente"/>
-                                    <span class="input-group-btn">
-                                        <a href="/pessoas/list-pessoas"><button title="Adicionar Cliente" type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
-                                    </span>
-                                    <datalist id="listaCliente">
-                                        {{#each clientes}}
-                                        <option data-value="{{id}}" value="{{nome}}"></option>
-                                        {{else}}
-
-                                        {{/each}}
-                                    </datalist>
-                                </div>
-                            </div>
-                            <div class="col-xs-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">Forma de Pagamento</span>
-                                    <select name="formaPagamento" class="formaPag form-control">
-                                        <option value="Dinheiro"> Dinheiro </option>
-                                        <option value="Cheque"> Cheque </option>
-                                        <option value="CartaoC"> Cartão de Crédito </option>
-                                        <option value="CartaoD"> Cartão de Débito </option>
-                                        <option value="Boleto"> Boleto </option>
-                                    </select>
-                                </div>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <span>Cliente: </span>
+                            <input class="form-control" id="cliente" name="pessoaId" readonly/>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="input-group">
+                                <span>Data de Competencia: </span><span class="obrigatorio"> *</span>
+                                <input class="inputData form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="">
                             </div>
                         </div>
-                        <div style="margin-top: 2%;" class="row">
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span>Data de Competencia</span><span class="obrigatorio"> *</span>
-                                    <input class="inputData form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="">
-                                </div>
-                            </div>
-
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span>Data de Vencimento</span><span class="obrigatorio"> *</span>
-                                    <input class="inputData form-control" type="date" name="dataVencimento" id="dataVencimento" value="">
-                                </div>
-                            </div>
-
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span>Valor</span><span class="obrigatorio"> *</span>
-                                    <input id="valor" name="valor" class="money form-control" type="text" name="" value="0.00">
-                                </div>
-                            </div>
-
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span class="input-group">Pago</span>
-                                    <select class="form-control" name="pago" id="pago">
-                                        <option value="false"> NÃO </option>
-                                        <option value="true"> SIM </option>
-                                    </select>
-                                </div>
+                        <div class="col-xs-2">
+                            <div class="input-group">
+                                <span>Qtde. de Parcelas: </span>
+                                <input class="form-control" type="text" name="quantidadeDeParcelas" id="quantidadeDeParcelas" readonly>
                             </div>
                         </div>
-
-                        <div id="pagoTrue" style="margin-top: 2%;" class="row">
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span>Data de Pagamento</span><span class="obrigatorio"> *</span>
-                                    <input class="inputData form-control" type="date" name="dataPagamento" id="dataPagamento" value="">
-                                </div>
-                            </div>
-
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span>Desconto</span>
-                                    <input class="money form-control" type="text" value="0.00" name="descontoRecebimento" id="descontoRecPag">
-                                </div>
-                            </div>
-
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span>Valor Pago</span>
-                                    <input class="money form-control" type="text" value="0.00" name="valorPago" id="valorPago" readonly>
-                                </div>
+                        <div class="col-xs-2">
+                            <div class="input-group">
+                                <span>Valor Total: </span>
+                                <input id="valorTotal" name="valorTotal" class="money form-control" type="text" name="valorTotal" value="" readonly>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
+                    <div style="margin-top:10px; background-color: #eeeeee;" class="box box-solid">
+                        <div class="box-header with-border">
+                            <h5 class="modal-title">Parcelas</h5>
+                        </div>
+                        <div class="box-body table-responsive no-padding">
+                            <table id="tabelaDeParcelas" class="table table-hover table-striped text-center">
+                                <thead>
+                                    <tr>
+                                        <th>N°</th>
+                                        <th>Forma de Pag.</th>
+                                        <th>Valor da Parcela</th>
+                                        <th>Data de Vencimento</th>
+                                        <th>Valor Pago</th>
+                                        <th>Data de Pagamento</th>
+                                        <th>Desconto</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="trParcelas">
+                                        <td id="tdParcela"> <input type="hidden" name="parcela[]"> <span> 1° </span></td>
+                                        <td id="tdFormaPagamento">
+                                            <select class="form-control" name="formaDePagamento[]">
+                                                <option value="Dinheiro"> Dinheiro</option>
+                                                <option value="CartaoC"> Cartão de Crédito </option>
+                                                <option value="CartaoD"> Cartão de Débito </option>
+                                                <option value="Boleto"> Boleto </option>
+                                                <option value="Carteira"> Carteira </option>
+                                            </select>
+                                        </td>
+                                        <td id="tdValorParcela"><input class="money form-control" type="text" name="valorDaParcela[]" value="" size="8"></td>
+                                        <td id="tdDataVencimento"><input class="inputData form-control" type="date" name="dataDeVencimento[]" value=""></td>
+                                        <td id="tdValorPago"><input class="money form-control" type="text" name="valorPago[]" value="0.00" size="8"></td>
+                                        <td id="tdDataPagamento"><input class="inputData form-control" type="date" name="dataDePagamento[]" value=""></td>
+                                        <td id="tdDesconto"><input class="money form-control" type="text" name="desconto[]" value="0.00" size="8"></td>
+                                        <td id="tdStatus">
+                                            <select class="status form-control" name="status[]">
+                                                <option value="PENDENTE"> Pendente </option>
+                                                <option value="PAGO"> Pago </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div style="position: relative;" class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
                     <button style="position: absolute;" type="button" onclick="return validarFormRecebimento('adicionar')" class="salvar btn btn-primary">Salvar</button>
                     <button type="button" onclick="return validarFormRecebimento('editar')" class="editar btn btn-primary">Editar</button>
                 </div>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>

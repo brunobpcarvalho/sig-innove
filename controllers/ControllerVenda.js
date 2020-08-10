@@ -7,6 +7,7 @@ const Pessoa = require("../models/Pessoa")
 const Produto = require("../models/Produto")
 const ItensVenda = require("../models/ItensVenda")
 const ContasReceber = require("../models/ContasReceber")
+const ParcelaContaReceber = require("../models/ParcelaContaReceber")
 const Empresa = require("../models/Empresa")
 const PDFDocument = require("pdfkit")
 
@@ -132,46 +133,45 @@ exports.delete = async (req, res) => {
 exports.updateVenda = async (req, res) => {
 	Venda.findByPk(req.params.id, {include: [{ model: Pessoa, as: 'pessoa' }, { model: Usuario, as: 'usuario'}]}).then((dadosVenda) =>{
 		ItensVenda.findAll({where: {vendaId: req.params.id}, include: [{ model: Produto, as: 'produto' }]}).then((dadosItensVenda) =>{
-				Produto.findAll({attributes: ['id', 'quantidade', 'valorUnitario', 'descricao']}).then((dadosProduto) => {
-					console.log('dadosItensVenda', dadosItensVenda);
-					const venda = {
-						id: dadosVenda.id,
-						pessoaId: dadosVenda.pessoa.id,
-						pessoaNome: dadosVenda.pessoa.nome,
-						status: dadosVenda.status,
-						dataVenda: dadosVenda.dataVenda,
-						usuarioId: dadosVenda.usuario.id,
-						usuario: dadosVenda.usuario.usuario,
-						desconto: dadosVenda.desconto,
-						valorTotal: dadosVenda.valorTotal,
-						condicaoPagamento: dadosVenda.condicaoPagamento,
-						parcelas: dadosVenda.parcelas
-					}
-					const contextItensVenda = {
-						itensVenda: dadosItensVenda.map(dado => {
-							return {
-								descricaoProduto: dado.produto.descricao,
-								quantidade: dado.quantidade,
-								valorUnitario: dado.valorUnitario,
-								valorTotal: dado.valorTotal,
-							}
-						})
-					}
-					const contextProduto = {
-						produtos: dadosProduto.map(dado => {
-							return {
-								id: dado.id,
-								quantidade: dado.quantidade,
-								valorUnitario: dado.valorUnitario,
-								descricao: dado.descricao
-							}
-						})
-					}
-					res.render("vendas/edit-venda", {venda: venda, itensVenda: contextItensVenda.itensVenda, produtos: contextProduto.produtos})
-				}).catch((erro) => {
-					req.flash("error_msg", "Erro ao listar os produtos!" + erro)
-					res.redirect("/vendas/list-vendas")
-				})
+			Produto.findAll({attributes: ['id', 'quantidade', 'valorUnitario', 'descricao']}).then((dadosProduto) => {
+				const venda = {
+					id: dadosVenda.id,
+					pessoaId: dadosVenda.pessoa.id,
+					pessoaNome: dadosVenda.pessoa.nome,
+					status: dadosVenda.status,
+					dataVenda: dadosVenda.dataVenda,
+					usuarioId: dadosVenda.usuario.id,
+					usuario: dadosVenda.usuario.usuario,
+					desconto: dadosVenda.desconto,
+					valorTotal: dadosVenda.valorTotal,
+					condicaoPagamento: dadosVenda.condicaoPagamento,
+					parcelas: dadosVenda.parcelas
+				}
+				const contextItensVenda = {
+					itensVenda: dadosItensVenda.map(dado => {
+						return {
+							descricaoProduto: dado.produto.descricao,
+							quantidade: dado.quantidade,
+							valorUnitario: dado.valorUnitario,
+							valorTotal: dado.valorTotal,
+						}
+					})
+				}
+				const contextProduto = {
+					produtos: dadosProduto.map(dado => {
+						return {
+							id: dado.id,
+							quantidade: dado.quantidade,
+							valorUnitario: dado.valorUnitario,
+							descricao: dado.descricao
+						}
+					})
+				}
+				res.render("vendas/edit-venda", {venda: venda, itensVenda: contextItensVenda.itensVenda, produtos: contextProduto.produtos})
+			}).catch((erro) => {
+				req.flash("error_msg", "Erro ao listar os produtos!" + erro)
+				res.redirect("/vendas/list-vendas")
+			})
 		}).catch((erro) => {
 			req.flash("error_msg", "Erro ao buscar ou listar os itens da venda!")
 			res.redirect("/vendas/list-vendas")
@@ -212,7 +212,8 @@ exports.update = async (req, res) => {
 					res.redirect("/vendas/list-vendas")
 				})
 			}).catch((erro) => {
-				console.log(erro)
+				req.flash("error_msg", "Erro ao salvar essa venda!")
+				res.redirect("/vendas/list-vendas")
 			})
 		}
 		itensVenda.save().then(() => {
@@ -245,37 +246,61 @@ exports.update = async (req, res) => {
 }
 
 exports.gerarFinanceiro = async (req, res) => {
-	Venda.findByPk(req.params.id).then(venda => {
-		Parcela.findAll({ where: {vendaId: venda.id}}).then(parcelas => {
-			for (var i = 0; i < parcelas.length; i++) {
-				const novoRecebimento = new ContasReceber({
-					formaPagamento: parcelas[i].formaPagamento,
-					valor: parcelas[i].valor,
-					dataCompetencia: venda.dataVenda,
-					dataVencimento: parcelas[i].vencimento,
-					venda: venda.id,
-					pessoaId: venda.pessoaId
-				})
+	const venda = await Venda.findByPk(req.body.vendaId)
 
-				novoRecebimento.save().then(() => {
-				}).catch((erro) => {
-					req.flash("msg_erro", "Não foi possível gerar Financeiro" + erro)
-					res.redirect("/vendas/list-vendas")
-				})
-			}
-			venda.financeiro = 'sim'
-			venda.save().then(() => {
-				req.flash("msg_sucesso", "Financeiro gerado com sucesso!")
-				res.redirect("/vendas/list-vendas")
-			}).catch((erro) => {
-				req.flash("msg_erro", "Não foi possível gerar Financeiro" + erro)
-				res.redirect("/vendas/list-vendas")
-			})
-		}).catch(erro => {
+	const contaReceber = await ContasReceber.create({
+		dataCompetencia: req.body.dataCompetencia,
+		quantidadeDeParcelas: req.body.quantidadeDeParcelas,
+		valorTotal: req.body.valorTotal,
+		vendaId: req.body.vendaId,
+		pessoaId: venda.pessoaId
+	})
+	console.log('contaReceber', contaReceber.id);
+
+	var parcela = req.body.parcela
+	var formaDePagamento = req.body.formaDePagamento
+	var valorDaParcela = req.body.valorDaParcela
+	var dataDeVencimento = req.body.dataDeVencimento
+	var valorPago = req.body.valorPago
+	var dataDePagamento = req.body.dataDePagamento
+	var desconto = req.body.desconto
+	var status = req.body.status
+	console.log('parcela', parcela);
+	console.log('formaPagamento', formaDePagamento);
+	console.log('valorDaParcela', valorDaParcela);
+	console.log('dataDeVencimento', dataDeVencimento);
+	console.log('valorPago', valorPago);
+	console.log('dataDePagamento', dataDePagamento);
+	console.log('desconto', desconto);
+	console.log('status', status);
+
+
+	for (var i = 0; i < parcela.length; i++) {
+		if(!dataDePagamento[i] || typeof dataDePagamento[i] == undefined){
+			dataDePagamento[i] = null;
+		}
+		const novaParcela = new ParcelaContaReceber({
+			parcela: parcela[i],
+			formaDePagamento: formaDePagamento[i],
+			valorDaParcela: valorDaParcela[i],
+			dataDeVencimento: dataDeVencimento[i],
+			valorPago: valorPago[i],
+			dataDePagamento: dataDePagamento[i],
+			desconto: desconto[i],
+			status: status[i],
+			recebimentoId: contaReceber.id
+		})
+
+		novaParcela.save().then(() => {
+		}).catch((erro) => {
 			req.flash("msg_erro", "Não foi possível gerar Financeiro" + erro)
 			res.redirect("/vendas/list-vendas")
 		})
-	}).catch(erro => {
+	}
+	venda.save().then(() => {
+		req.flash("msg_sucesso", "Financeiro gerado com sucesso!")
+		res.redirect("/vendas/list-vendas")
+	}).catch((erro) => {
 		req.flash("msg_erro", "Não foi possível gerar Financeiro" + erro)
 		res.redirect("/vendas/list-vendas")
 	})
@@ -299,7 +324,8 @@ exports.estornarVenda = async (req, res) => {
 				})
 			}
 		}).catch((erro) => {
-			console.log('erro3', erro);
+			req.flash("error_msg", "Erro ao estornar essa venda!")
+			res.redirect("/vendas/list-vendas")
 		})
 		req.flash("msg_sucesso", "Venda estornada com sucesso!")
 		res.redirect("/vendas/list-vendas")
@@ -318,7 +344,6 @@ exports.filter = (req, res) => {
 	+ `JOIN "pessoas" AS P ON V."pessoaId" = P."id" `
 	+ `JOIN "usuarios" AS U ON V."usuarioId" = U."id" `
 	+ `WHERE 1=1`;
-	console.log('sql', sql);
 	let filters = [];
 	let values = {
 		cliente: '',
@@ -352,7 +377,6 @@ exports.filter = (req, res) => {
 	}
 
 	db.query(sql, { type: db.QueryTypes.SELECT}).then(vendas => {
-		console.log('vendas', vendas);
 		res.render("vendas/list-vendas", {vendas: vendas, filters: filters, values: values})
 	}).catch((erro) => {
 		req.flash("msg_erro", "Erro ao buscar pessoas: " + erro)

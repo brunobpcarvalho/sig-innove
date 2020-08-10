@@ -17,7 +17,7 @@ router.get("/list-vendas/edit/:id", Admin, ControllerVenda.updateVenda);
 
 router.post("/list-vendas/update", Admin, ControllerVenda.update);
 
-router.get("/list-vendas/gerar-financeiro/:id", Admin, ControllerVenda.gerarFinanceiro);
+router.post("/list-vendas/gerar-financeiro", Admin, ControllerVenda.gerarFinanceiro);
 
 router.get("/list-vendas/estornar-venda/:id", Admin, ControllerVenda.estornarVenda);
 

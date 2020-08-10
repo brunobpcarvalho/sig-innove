@@ -10,9 +10,9 @@ $('.edit').click( function() {
 $('#cnpj').mask('00.000.000/0000-00');
 
 
-$('.situacao').addClass('btn-danger');
+$('.status').addClass('btn-danger');
 
-$(document).on('change', '.situacao', function(){
+$(document).on('change', '.status', function(){
 	if(this.value == 'PAGO'){
 		$(this).removeClass('btn-danger').addClass('btn-success');
 	} else {
@@ -553,32 +553,32 @@ $(document).ready(function(){
 });
 
 var tdParcela = $("#tdParcela").html();
-var tdFormaPagamentp = $("#tdFormaPagamentp").html();
+var tdFormaPagamento = $("#tdFormaPagamento").html();
 var tdValorParcela = $("#tdValorParcela").html();
 var tdDataVencimento = $("#tdDataVencimento").html();
 var tdValorPago = $("#tdValorPago").html();
 var tdDataPagamento = $("#tdDataPagamento").html();
 var tdDesconto = $("#tdDesconto").html();
-var tdSituacao = $("#tdSituacao").html();
+var tdStatus = $("#tdStatus").html();
 
 $('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
-	var parcelas = button.data('parcelas')
+	var quantidadeDeParcelas = button.data('parcelas')
 	var valorTotal = button.data('valortotal')
-	var valorParcela = (valorTotal / parcelas).toFixed(2)
+	var valorParcela = (valorTotal / quantidadeDeParcelas).toFixed(2)
 	$("#tabelaDeParcelas tbody tr").remove();
 
-	for (var i = 0; i < parcelas; i++) {
+	for (var i = 0; i < quantidadeDeParcelas; i++) {
 		var newRow = $('<tr id="trParcelas">');
 		var cols = "";
-		cols += '<td id="tdParcela"> <input type="hidden" name="parcela[]"> <span>'+ (i+1) +'° </span></td>';
-		cols += '<td>' + tdFormaPagamentp + '</td>';
-		cols += '<td id="tdValorParcela"><input class="money form-control" type="text" name="valorParcela[]" value="'+ valorParcela +'" size="8"></td>';
+		cols += '<td id="tdParcela"> <input type="hidden" name="parcela[]" value="'+ (i+1) +'"> <span>'+ (i+1) +'° </span></td>';
+		cols += '<td>' + tdFormaPagamento + '</td>';
+		cols += '<td id="tdValorParcela"><input class="money form-control" type="text" name="valorDaParcela[]" value="'+ valorParcela +'" size="8"></td>';
 		cols += '<td>' + tdDataVencimento + '</td>';
 		cols += '<td>' + tdValorPago + '</td>';
 		cols += '<td>' + tdDataPagamento + '</td>';
 		cols += '<td>' + tdDesconto + '</td>';
-		cols += '<td>' + tdSituacao + '</td>';
+		cols += '<td>' + tdStatus + '</td>';
 
 		newRow.append(cols);
 
@@ -588,15 +588,14 @@ $('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
 	var modal = $(this)
 	modal.find('#vendaId').val(button.data('venda'))
 	modal.find('#cliente').val(button.data('cliente'))
-	modal.find('#dataCompetencia').val(button.data('datavenda'))
-	modal.find('#parcelas').val(parcelas)
+	modal.find('#dataDeCompetencia').val(button.data('datavenda'))
+	modal.find('#quantidadeDeParcelas').val(quantidadeDeParcelas)
 	modal.find('#valorTotal').val(valorTotal)
 })
 
-
-
 $(document).on(gerarFinanceiro = function(){
-
+	document.formGerarFinanceiro.action = '/vendas/list-vendas/gerar-financeiro';
+	document.formGerarFinanceiro.submit();
 });
 
 $(document).on(EstornarVenda = function(id){
