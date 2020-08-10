@@ -66,7 +66,7 @@
                             <div class="btn-group">
                                 {{#ifCond status "VENDA"}}
                                 <a>
-                                    <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} readonly {{/ifCond}}><i class="fa fa-reply"></i></button>
+                                    <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
                                 </a>
                                 <a>
                                     <button title="Gerar Financeiro"
@@ -77,7 +77,7 @@
                                     data-datavenda="{{../dataVenda}}"
                                     data-toggle="modal"
                                     data-target="#modalGerarFinanceiro"
-                                    type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} readonly {{/ifCond}}><i class="fa fa-usd"></i></button>
+                                    type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-usd"></i></button>
                                 </a>
                                 {{/ifCond}}
                             </div>
@@ -97,7 +97,7 @@
                             <div class="btn-group">
                                 <form class="deletar" method="post" action="/vendas/list-vendas/deletar">
                                     <input type="hidden" name="id" value="{{id}}">
-                                    <button title="Excluir" type="button" class="btn btn-danger" {{#ifCond status "VENDA"}} readonly {{/ifCond}}><i class="fa fa-trash-o"></i></button>
+                                    <button title="Excluir" type="button" class="btn btn-danger" {{#ifCond status "VENDA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
                                 </form>
                             </div>
                         </div>

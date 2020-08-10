@@ -594,6 +594,21 @@ $('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
 })
 
 $(document).on(gerarFinanceiro = function(){
+	var tabelaDeParcelas = $("#tabelaDeParcelas")
+	var dataDeVencimento = tabelaDeParcelas.find("td:nth-child(4) input")
+	var erros = []
+	for (var i = 0; i < dataDeVencimento.length; i++) {
+		if(!dataDeVencimento[i].value || typeof dataDeVencimento[i].value == undefined || dataDeVencimento[i].value == null){erros.push(i);}
+	}
+	if(erros.length > 0){
+		Swal.fire({
+			icon: 'warning',
+			title: 'Atenção',
+			text: 'Preencha todos os campos de "Data de Vencimento"!',
+		})
+		return false;
+	}
+
 	document.formGerarFinanceiro.action = '/vendas/list-vendas/gerar-financeiro';
 	document.formGerarFinanceiro.submit();
 });
