@@ -12,14 +12,10 @@ exports.index = (req, res) => {
 				contasReceber: dadosContaReceber.map(dado => {
 					return {
 						id: dado.id,
-						formaPagamento: dado.formaPagamento,
-						valor: dado.valor,
-						valorPago: dado.valorPago,
-						desconto: dado.desconto,
 						dataCompetencia: dado.dataCompetencia,
-						dataVencimento: dado.dataVencimento,
-						dataPagamento: dado.dataPagamento,
-						pago: dado.pago,
+						quantidadeDeParcelas: dado.quantidadeDeParcelas,
+						valorTotal: dado.valorTotal,
+						desconto: dado.desconto,
 						venda: dado.venda,
 						pessoa: dado.pessoa.nome
 					}
@@ -39,7 +35,6 @@ exports.index = (req, res) => {
 			req.flash("error_msg", "Erro ao buscar ou listar Clientes!: " + erro)
 			res.redirect("/index")
 		})
-
 	}).catch((erro) => {
 		req.flash("error_msg", "Erro ao buscar ou listar Contas a Receber!: " + erro)
 		res.redirect("/index")
