@@ -13,7 +13,7 @@ $('#cnpj').mask('00.000.000/0000-00');
 $('.status').addClass('btn-danger');
 
 $(document).on('change', '.status', function(){
-	if(this.value == 'PAGO'){
+	if(this.value == 'true'){
 		$(this).removeClass('btn-danger').addClass('btn-success');
 	} else {
 		$(this).removeClass('btn-success').addClass('btn-danger');

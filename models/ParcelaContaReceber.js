@@ -25,7 +25,7 @@ const ParcelaContaReceber = db.define('parcela_recebimento', {
         type: Sequelize.DECIMAL(10, 2)
     },
     status: {
-        type: Sequelize.STRING(8)
+        type: Sequelize.BOOLEAN
     },
 })
 ParcelaContaReceber.belongsTo(ContasReceber);
