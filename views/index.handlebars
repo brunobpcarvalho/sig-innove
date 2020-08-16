@@ -180,40 +180,10 @@
 			<div class="inner">
 				<span class="info-box-text">Produtos</span>
 				<span class="info-box-text">Total Cadastrado: {{totalProdutosCadastrados}}</span>
-				<span class="info-box-text">Valor Total em Estoque: R${{#each valorTotalEmEstoque}} {{valorTotalEmEstoque}} {{/each}}</span>
+				<span class="info-box-text">Valor Total em Estoque: R${{#each valorTotalEmEstoque}} {{vlrTotEmEstoque}} {{/each}}</span>
 			</div>
 			<a class="small-box-footer" href="/produtos/list-produtos">
 				Acessar Produtos
-				<i class="fa fa-arrow-circle-right"></i>
-			</a>
-		</div>
-
-		<div class="small-box bg-aqua">
-			<div class="icon">
-				<ion-icon src="/icons/ios-trending-up.svg"></ion-icon>
-			</div>
-			<div class="inner">
-				<span class="info-box-text">Contas a Receber</span>
-				<span class="info-box-number">{{recebimentosRealizados}}</span>
-				<span class="info-box-text">Total: R${{somaVenda}}</span>
-			</div>
-			<a class="small-box-footer" href="/contas-receber/index">
-				Acessar Contas a Receber
-				<i class="fa fa-arrow-circle-right"></i>
-			</a>
-		</div>
-
-		<div class="small-box bg-aqua">
-			<div class="icon">
-				<ion-icon src="/icons/ios-trending-down.svg"></ion-icon>
-			</div>
-			<div class="inner">
-				<span class="info-box-text">Contas a Pagar</span>
-				<span class="info-box-number">{{pagamentosRealizados}}</span>
-				<span class="info-box-text">Total: R${{somaVenda}}</span>
-			</div>
-			<a class="small-box-footer" href="/produtos/list-produtos">
-				Acessar Contas a Pagar
 				<i class="fa fa-arrow-circle-right"></i>
 			</a>
 		</div>
