@@ -1,0 +1,103 @@
+<div style="background: white;">
+    <div class="modal-content">
+        <form name="formRecebimento" id="formRecebimento" method="post">
+            <input type="hidden" name="id" id="id" value="{{recebimento.id}}">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Alterar Recebimento{{#if recebimento.vendaId}} - VENDA {{recebimento.vendaId}}{{/if}}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <input type="hidden" name="pessoaId" value="{{recebimento.pessoaId}}"/>
+                        <span>Cliente: </span>
+                        <input class="form-control" id="cliente" name="pessoaId" value="{{recebimento.pessoaNome}}" readonly/>
+                    </div>
+                    <div class="col-xs-3">
+                        <div class="input-group">
+                            <span>Data de Competencia: </span><span class="obrigatorio"> *</span>
+                            <input class="form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="{{recebimento.dataCompetencia}}" >
+                        </div>
+                    </div>
+                    <div class="col-xs-2">
+                        <div class="input-group">
+                            <div class="input-group">
+                                <span>Qtde. de Parcelas: </span>
+                                <select class="form-control" name="quantidadeDeParcelas" id="quantidadeDeParcelas">
+                                    <option value=""> Selecione... </option>
+                                    <option value="1" {{#ifCond recebimento.quantidadeDeParcelas 1}} selected {{/ifCond}}> 1x </option>
+                                    <option value="2" {{#ifCond recebimento.quantidadeDeParcelas 2}} selected {{/ifCond}}> 2x </option>
+                                    <option value="3" {{#ifCond recebimento.quantidadeDeParcelas 3}} selected {{/ifCond}}> 3x </option>
+                                    <option value="4" {{#ifCond recebimento.quantidadeDeParcelas 4}} selected {{/ifCond}}> 4x </option>
+                                    <option value="5" {{#ifCond recebimento.quantidadeDeParcelas 5}} selected {{/ifCond}}> 5x </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2">
+                        <div class="input-group">
+                            <span>Valor Total: </span>
+                            <input id="valorTotal" name="valorTotal" class="money form-control" type="text" name="valorTotal" value="{{recebimento.valorTotal}}">
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; background-color: #eeeeee;" class="box box-solid">
+                    <div class="box-header with-border">
+                        <h5 class="modal-title">Parcelas</h5>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table id="tabelaDeParcelas" class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Forma de Pag.</th>
+                                    <th>Valor da Parcela</th>
+                                    <th>Data de Vencimento</th>
+                                    <th>Valor Pago</th>
+                                    <th>Data de Pagamento</th>
+                                    <th>Desconto</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each parcelaContaReceber}}
+                                <tr id="trParcelas">
+                                    <td id="tdParcela"> <input type="hidden" name="parcela[]" value="{{parcela}}"><span> {{parcela}}°</span></td>
+                                    <td id="tdFormaPagamento">
+                                        <select class="form-control" name="formaDePagamento[]">
+                                            <option value="Dinheiro"{{#ifCond formaDePagamento "Dinheiro"}} selected {{/ifCond}}> Dinheiro</option>
+                                            <option value="CartaoC"{{#ifCond formaDePagamento "CartaoC"}} selected {{/ifCond}}> Cartão de Crédito </option>
+                                            <option value="CartaoD"{{#ifCond formaDePagamento "CartaoD"}} selected {{/ifCond}}> Cartão de Débito </option>
+                                            <option value="Boleto"{{#ifCond formaDePagamento "Boleto"}} selected {{/ifCond}}> Boleto </option>
+                                            <option value="Carteira"{{#ifCond formaDePagamento "Carteira"}} selected {{/ifCond}}> Carteira </option>
+                                        </select>
+                                    </td>
+                                    <td id="tdValorParcela"><input class="money form-control" type="text" name="valorDaParcela[]" value="{{valorDaParcela}}" size="8"></td>
+                                    <td id="tdDataVencimento"><input class="form-control" type="date" name="dataDeVencimento[]" value="{{dataDeVencimento}}"></td>
+                                    <td id="tdValorPago"><input class="money form-control" type="text" name="valorPago[]" value="{{valorPago}}" size="8"></td>
+                                    <td id="tdDataPagamento"><input class="form-control" type="date" name="dataDePagamento[]" value="{{dataDePagamento}}"></td>
+                                    <td id="tdDesconto"><input class="money form-control" type="text" name="desconto[]" value="{{desconto}}" size="8"></td>
+                                    <td id="tdStatus">
+                                        <select class="status form-control" name="status[]">
+                                            <option value="false" {{#ifCond status false}} selected {{/ifCond}}> Pendente </option>
+                                            <option value="true" {{#ifCond status true}} selected {{/ifCond}}> Pago </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div style="position: relative;" class="modal-footer">
+                <a href="/contas-receber/index">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                </a>
+                <button type="button" onclick="return validarFormRecebimento('editar')" class="editar btn btn-primary">Editar</button>
+            </div>
+        </form>
+    </div>
+</div>
