@@ -151,38 +151,6 @@ exports.validar = (req, res) => {
 	})
 }
 
-exports.relatorio = (req, res) => {
-	Empresa.findByPk(1).then(empresa => {
-		Pessoa.findAll({ order: [ ['id', 'ASC']]}, {attributes: ['id', 'nome', 'cpf_cnpj', 'tipo', 'funcao', 'ativo']}).then(pessoas => {
-			const doc = new PDFDocument({
-				size: "A4",
-				margins: {
-					top: 50,
-					bottom: 50,
-					left: 50,
-					right: 50
-				}
-			})
-
-			generateHeader(doc, empresa);
-			generateCustomerInformation(doc);
-			generateInvoiceTable(doc, pessoas);
-			res.setHeader(
-				"Content-disposition",
-				'filename="Relatorio-Pessoas.pdf"'
-			)
-			doc.pipe(res)
-			doc.end()
-		}).catch(erro => {
-			req.flash("error_msg", "Erro ao buscar itens da venda!")
-			res.redirect("/pessoas/list-pessoas")
-		})
-	}).catch(erro => {
-		req.flash("error_msg", "Erro ao buscar dados da venda!")
-		res.redirect("/pessoas/list-pessoas")
-	})
-}
-
 exports.filter = (req, res) => {
 	const { filterTipo, filterFuncao, filterCidade, filterUf, filterAtivo } = req.body
 	let sql = 'select * from "pessoas" where 1 = 1';

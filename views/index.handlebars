@@ -80,6 +80,7 @@
 										<th></th>
 										<th>Produto</th>
 										<th>Lucratividade</th>
+										<th>Margem de Lucro</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -88,6 +89,7 @@
 										<td>{{#index @index}}{{/index}}º</td>
 										<td>{{descricao}}</td>
 										<td>{{lucratividade}}</td>
+										<td>{{margemDeLucro}}%</td>
 									</tr>
 									{{/each}}
 								</tbody>
@@ -119,7 +121,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									{{#each listaAlertaDeEstoque}}
+									{{#each estoqueDeSeguranca}}
 
 									<tr {{#ifMenor quantidade pontoDePedido}}class="obrigatorio"{{/ifMenor}}>
 										<td>{{descricao}}</td>
