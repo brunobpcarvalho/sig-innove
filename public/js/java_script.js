@@ -6,24 +6,13 @@ $('.edit').click( function() {
 	$('.editar').css("visibility","visible");
 	$('.salvar').css("visibility","hidden");
 })
-
+$('.money').mask("###0.00", {reverse: true});
 $('#cnpj').mask('00.000.000/0000-00');
-
-
-$('.status').addClass('btn-danger');
-
-$(document).on('change', '.status', function(){
-	if(this.value == 'true'){
-		$(this).removeClass('btn-danger').addClass('btn-success');
-	} else {
-		$(this).removeClass('btn-success').addClass('btn-danger');
-	}
-})
-
-/* --------------  FORMULARIO DE PESSOAS --------------------------------------*/
 $('#telefone').mask('(00) 0000-0000');
 $('#celular').mask('(00) 00000-0000');
 $('#cpf_cnpj').mask('000.000.000-00');
+
+/* --------------  FORMULARIO DE PESSOAS --------------------------------------*/
 
 function Fisica(){
 	$('#Fisica').css("visibility","visible");
@@ -49,21 +38,17 @@ $( "#tipo" ).change(function(){
 	}
 });
 
-$(document).on('blur', '#dataNascimento', function () {
+$(document).on('blur', '#data_nascimento', function () {
 	hoje = new Date;
-	nascimento = new Date($("#dataNascimento").val());
+	nascimento = new Date($("#data_nascimento").val());
 	var diferencaAnos = hoje.getFullYear() - nascimento.getFullYear();
 	if (new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) <
 	new Date(hoje.getFullYear(), nascimento.getMonth(), nascimento.getDate()))
 	diferencaAnos--;
 
 	if(diferencaAnos < 16) {
-		Swal.fire({
-			icon: 'warning',
-			title: 'Atenção',
-			text: "A idade minima para cadastro é de 16 anos!",
-		})
-		$("#dataNascimento").val('')
+		sweetAlert('warning', 'Atenção...', "A idade minima para cadastro é de 16 anos!")
+		$("#data_nascimento").val('')
 	}
 });
 
@@ -71,22 +56,18 @@ function validarFormPessoa(valor){
 	var formPessoa = $("#formPessoa");
 	var nome = $('#nome').val();
 	var cpf_cnpj = $('#cpf_cnpj').val();
-	var dataNascimento = $('#dataNascimento').val();
+	var data_nascimento = $('#data_nascimento').val();
 	var tipo = $('#tipo').val();
 	var erros = [];
 
 	if(!nome || typeof nome == undefined || nome == null){erros.push(" Nome");}
 	if(!cpf_cnpj || typeof cpf_cnpj == undefined || cpf_cnpj == null){erros.push(" CPF/CNPJ");}
 	if(tipo === 'Fisica'){
-		if(!dataNascimento || typeof dataNascimento == undefined || dataNascimento == null){erros.push(" Data de Nascimento");}
+		if(!data_nascimento || typeof data_nascimento == undefined || data_nascimento == null){erros.push(" Data de Nascimento");}
 	}
 
 	if(erros.length > 0 ){
-		Swal.fire({
-			icon: 'warning',
-			title: 'Atenção!',
-			text: "Preencha o(s) campo(s) a seguir:" + erros,
-		})
+		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir:" + erros)
 		return false;
 	}
 
@@ -103,33 +84,18 @@ function validarFormPessoa(valor){
 
 $('#modalPessoa').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
+	var modal = $(this)
+	var campos = ['id', 'nome', 'tipo', 'funcao', 'cpf_cnpj', 'ie', 'razao_social', 'nome_mae',
+	'data_nascimento', 'cep', 'rua', 'numero', 'bairro', 'cidade', 'uf', 'complemento',
+	'telefone', 'celular', 'email', 'ativo']
 
 	if(button.data('tipo') === "Fisica"){
 		Fisica();
 	}else if(button.data('tipo') === "Juridica"){
 		Juridica();
 	}
-	var modal = $(this)
-	modal.find('#id').val(button.data('id'))
-	modal.find('#nome').val(button.data('nome'))
-	modal.find('#tipo').val(button.data('tipo'))
-	modal.find('#funcao').val(button.data('funcao'))
-	modal.find('#cpf_cnpj').val(button.data('cpf_cnpj'))
-	modal.find('#ie').val(button.data('ie'))
-	modal.find('#razao_social').val(button.data('razao_social'))
-	modal.find('#nome_mae').val(button.data('nome_mae'))
-	modal.find('#dataNascimento').val(button.data('data-nascimento'))
-	modal.find('#cep').val(button.data('cep'))
-	modal.find('#rua').val(button.data('rua'))
-	modal.find('#numero').val(button.data('numero'))
-	modal.find('#bairro').val(button.data('bairro'))
-	modal.find('#cidade').val(button.data('cidade'))
-	modal.find('#uf').val(button.data('uf'))
-	modal.find('#complemento').val(button.data('complemento'))
-	modal.find('#telefone').val(button.data('telefone'))
-	modal.find('#celualar').val(button.data('celular'))
-	modal.find('#email').val(button.data('email'))
-	modal.find('#ativo').val(button.data('ativo'))
+
+	passarDadosParaModal(modal, button, campos)
 })
 
 /* --------------  FORMULARIO DE USUARIOS --------------------------------------*/
@@ -138,11 +104,7 @@ function validarFormUsuario(){
 	var usuario = $('#usuario').val();
 
 	if(!usuario || typeof usuario == undefined || usuario == null){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "O campo usuario não foi preenchido!",
-		})
+		sweetAlert('warning', 'Atenção...', "O campo usuario não foi preenchido!")
 		return false;
 	}
 
@@ -154,11 +116,7 @@ function validarFormUsuario(){
 		}
 	}
 	if(usuarioResult){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "Já existe um funcionario cadastrado(a) com este Usuario",
-		})
+		sweetAlert('warning', 'Atenção...', "Já existe um funcionario cadastrado(a) com este Usuario")
 		return false;
 	}
 	document.formUsuario.action = '/usuarios/create';
@@ -169,16 +127,9 @@ function validarFormUsuario(){
 $(document).on(validarFormModelo = function (valor) {
 	var formModelo = $("#formModelo");
 	var descricao = $("#descricao").val();
-	var erros = [];
 
-	if(!descricao || typeof descricao == undefined || descricao == null){erros.push("Nome");}
-
-	if(erros.length > 0){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "O campo " + erros + " não foi preenchido!",
-		})
+	if(!descricao || typeof descricao == undefined || descricao == null){
+		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
 		return false;
 	}
 
@@ -196,9 +147,8 @@ $(document).on(validarFormModelo = function (valor) {
 $('#modalModelo').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
 	var modal = $(this)
-	modal.find('#id').val(button.data('id'))
-	modal.find('#descricao').val(button.data('descricao'))
-	modal.find('#ativo').val(button.data('ativo'))
+	var campos = ['id', 'descricao', 'ativo']
+	passarDadosParaModal(modal, button, campos)
 })
 
 /* --------------  FORMULARIO DE FABRICANTE -----------------------------------*/
@@ -206,16 +156,9 @@ $('#modalModelo').on('show.bs.modal', function (event) {
 function validarFormFabricante(valor){
 	var formFabricante = $("#formFabricante");
 	var nome = $('#nome').val();
-	var erros = [];
 
-	if(!nome || typeof nome == undefined || nome == null){erros.push("Nome");}
-
-	if(erros.length > 0){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "Preencha a descricao do Modelo!",
-		})
+	if(!nome || typeof nome == undefined || nome == null){
+		sweetAlert('warning', 'Atenção...', "Preencha a descrição do Modelo")
 		return false;
 	}
 
@@ -233,22 +176,20 @@ function validarFormFabricante(valor){
 $('#modalFabricante').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
 	var modal = $(this)
-	modal.find('#id').val(button.data('id'))
-	modal.find('#nome').val(button.data('nome'))
-	modal.find('#ativo').val(button.data('ativo'))
+	var campos = ['id', 'nome', 'ativo']
+	passarDadosParaModal(modal, button, campos)
 })
 
 /* --------------  FORMULARIO DE PRODUTO -----------------------------------*/
-$('.money').mask("#,##0.00", {reverse: true});
 
 function validarFormProduto(valor){
 	var formProduto = $("#formProduto");
 	var descricao = $("#descricao").val();
-	var nomeFabricante = $("#nomeFabricante").val();
-	var descricaoModelo = $("#descricaoModelo").val();
-	var valorUnitario = $("#valorUnitario").val();
-	var valorCusto = $("#valorCusto").val();
-	var prazoReposicao = $("#prazoReposicao").val();
+	var nomeFabricante = $("#nome_fabricante").val();
+	var descricaoModelo = $("#descricao_modelo").val();
+	var valorUnitario = $("#valor_unitario").val();
+	var valorCusto = $("#valor_custo").val();
+	var prazoReposicao = $("#prazo_reposicao").val();
 	var erros = [];
 
 	if(!descricao || typeof descricao == undefined || descricao == null){erros.push(" Descrição");}
@@ -258,30 +199,13 @@ function validarFormProduto(valor){
 	if(!valorCusto || typeof valorCusto == undefined || valorCusto == null){erros.push(" Valor de Custo");}
 	if(!prazoReposicao || typeof prazoReposicao == undefined || prazoReposicao == null){erros.push(" Prazo de Reposição");}
 
-	if(erros.length > 0 && erros.length == 1){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "O campo " + erros + " não foi preenchido!",
-		})
-		return false;
-	}else if(erros.length > 1){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "Os campos " + erros + " não foram preenchidos!",
-		})
+	if(erros.length > 0){
+		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
 		return false;
 	}
-	var valueModelo = $('#descricaoModelo').val();
-	var idModelo = $('#listaModelos [value="' + valueModelo + '"]').data('value')
 
-	var valueFabricante = $('#nomeFabricante').val();
-	var idFabricante = $('#listaFabricantes [value="' + valueFabricante + '"]').data('value')
-
-
-	//Tem que achar uma solução para o dataList, pois da erro ao encontrar registro que ja existe
-
+	var idModelo = $('#listaModelos [value="' + descricaoModelo + '"]').data('value')
+	var idFabricante = $('#listaFabricantes [value="' + nomeFabricante + '"]').data('value')
 
 	$('#fabricante').val(idFabricante);
 	$('#modelo').val(idModelo);
@@ -298,56 +222,13 @@ function validarFormProduto(valor){
 
 $('#modalProduto').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
-
 	var modal = $(this)
-	modal.find('#id').val(button.data('id'))
-	modal.find('#descricao').val(button.data('descricao'))
-	modal.find('#quantidade').val(button.data('quantidade'))
-	modal.find('#nomeFabricante').val(button.data('nomefabricante'))
-	modal.find('#descricaoModelo').val(button.data('descricaomodelo'))
-	modal.find('#genero').val(button.data('genero'))
-	modal.find('#valorUnitario').val(button.data('valor'))
-	modal.find('#valorCusto').val(button.data('valorcusto'))
-	modal.find('#prazoReposicao').val(button.data('prazo'))
-	modal.find('#ativo').val(button.data('ativo'))
+	var campos = ['id', 'descricao', 'quantidade', 'nome_fabricante', 'descricao_modelo',
+	'genero', 'valor_unitario', 'valor_custo', 'prazo_reposicao', 'ativo']
+	passarDadosParaModal(modal, button, campos)
 })
 
 /* ----------------------------------- VENDA ------------------------------------------------------*/
-
-/*$('#addParcelas').on('click', function(){
-	var parcelas = $('#parcelas').val();
-	var total = $('#total').val();
-
-	var valorParcela = (total / parcelas).toFixed(2);
-
-	for(var x = 0; x < parcelas; x++){
-		var newRow = $('<tr>');
-		var cols = "";
-		cols += '<td>'
-		+ '<select name="formaPagamento[]" class="formaPag form-control">'
-		+ '<option value="Dinheiro"> Dinheiro </option>'
-		+ '<option value="Cheque"> Cheque </option>'
-		+ '<option value="CartaoC"> Cartão de Crédito </option>'
-		+ '<option value="CartaoD"> Cartão de Débito </option>'
-		+ '<option value="Boleto"> Boleto </option></select>'
-		'</td>';
-
-		cols += '<td>'
-		+ '<input class="inputData form-control" type="date" name="dataParcela[]" value="">'
-		+ '</td>';
-
-		cols += '<td>'
-		+ '<input class="money form-control" type="text" name="valorParcela[]" value="'+ valorParcela +'">'
-		+ '</td>';
-
-		cols += '<td>' + '<button type="button" onclick="RemoveTableRow(this)" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>' + '</td>';
-
-		newRow.append(cols);
-
-		$("#tabelaParcelas").append(newRow);
-		$('.inputData').val(new Date().DataAtual());
-	}
-});*/
 
 $(document).ready(function(){
 	//Remove o botão de excluir do primeiro item ao editar uma venda.
@@ -355,9 +236,9 @@ $(document).ready(function(){
 
 	//Verifica se o Status é  igual a VENDA, e desabilita os inputs e botões.
 	if($("#status").val() == 'VENDA'){
-		var FormVenda = $("#formVenda");
-		FormVenda.find("input").attr("disabled", true)
-		FormVenda.find("select").attr("disabled", true)
+		var formVenda = $("#formVenda");
+		formVenda.find("input").attr("disabled", true)
+		formVenda.find("select").attr("disabled", true)
 		$(".desativado").attr("disabled", true)
 	}
 
@@ -404,11 +285,7 @@ $(document).ready(function(){
 		}
 		if(desconto > total){
 			$('#desconto').val('0.00');
-			Swal.fire({
-				icon: 'warning',
-				title: 'Atenção',
-				text: "O valor do desconto é maior que o Total da Venda!",
-			})
+			sweetAlert('warning', 'Atenção...', "O valor do desconto é maior que o Total da Venda!")
 		}else {
 			total -= desconto;
 		}
@@ -452,13 +329,6 @@ $(document).ready(function(){
 		return false;
 	});
 
-	RemoveTableRow = function (handler) {
-		var tr = $(handler).closest('tr');
-		tr.remove();
-		$('#total').val(Total());
-		return false;
-	};
-
 	$(document).on(SalvarVenda = function (opcao) {
 		var TabelaItens = $("#tabelaItens");
 		var inputProduto =  TabelaItens.find("td:nth-child(1) input");
@@ -468,25 +338,14 @@ $(document).ready(function(){
 		var ids = [];
 
 		var produto = inputProduto[0].value;
-		var cliente = formVenda.cliente.value;
+		var cliente = $("#cliente").val();
 		var erros = [];
 
 		if(!cliente || typeof cliente == undefined || cliente == null){erros.push("Cliente");}
 		if(!produto || typeof produto == undefined || produto == null){erros.push("Produto");}
 
-		if(erros.length > 0 && erros.length == 1){
-			Swal.fire({
-				icon: 'error',
-				title: 'Erro ...',
-				text: "O campo " + erros + " não foi preenchido!",
-			})
-			return false;
-		}else if(erros.length > 1){
-			Swal.fire({
-				icon: 'error',
-				title: 'Erro ...',
-				text: "Os campos " + erros + " não foram preenchidos!",
-			})
+		if(erros.length > 0){
+			sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
 			return false;
 		}
 		var produtoNaoExistente = [];
@@ -507,20 +366,12 @@ $(document).ready(function(){
 		}
 
 		if(produtoNaoExistente.length > 0){
-			Swal.fire({
-				icon: 'warning',
-				title: 'Atenção',
-				text: "Produto não cadastrado!" + produtoNaoExistente,
-			})
+			sweetAlert('warning', 'Atenção...', "Produto não cadastrado!" + produtoNaoExistente)
 			return false;
 		}
 
 		if(quantidade.length > 0){
-			Swal.fire({
-				icon: 'warning',
-				title: 'Atenção',
-				text: "Produtos com estoque insuficiente:" + quantidade,
-			})
+			sweetAlert('warning', 'Atenção...', "Produtos com estoque insuficiente:" + quantidade)
 			return false;
 		}
 
@@ -533,11 +384,7 @@ $(document).ready(function(){
 			var id = $('#listaCliente [value="' + value + '"]').data('value')
 
 			if(id == undefined){
-				Swal.fire({
-					icon: 'warning',
-					title: 'Atenção',
-					text: "Cliente não cadastrado!",
-				})
+				sweetAlert('warning', 'Atenção...', "Cliente não cadastrado!")
 				return false;
 			}
 			$('#cliente').val(id);
@@ -552,45 +399,15 @@ $(document).ready(function(){
 	});
 });
 
-var tdParcela = $("#tdParcela").html();
-var tdFormaPagamento = $("#tdFormaPagamento").html();
-var tdValorParcela = $("#tdValorParcela").html();
-var tdDataVencimento = $("#tdDataVencimento").html();
-var tdValorPago = $("#tdValorPago").html();
-var tdDataPagamento = $("#tdDataPagamento").html();
-var tdDesconto = $("#tdDesconto").html();
-var tdStatus = $("#tdStatus").html();
-
 $('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget)
-	var quantidadeDeParcelas = button.data('parcelas')
-	var valorTotal = button.data('valortotal')
-	var valorParcela = (valorTotal / quantidadeDeParcelas).toFixed(2)
-	$("#tabelaDeParcelas tbody tr").remove();
-
-	for (var i = 0; i < quantidadeDeParcelas; i++) {
-		var newRow = $('<tr id="trParcelas">');
-		var cols = "";
-		cols += '<td id="tdParcela"> <input type="hidden" name="parcela[]" value="'+ (i+1) +'"> <span>'+ (i+1) +'° </span></td>';
-		cols += '<td>' + tdFormaPagamento + '</td>';
-		cols += '<td id="tdValorParcela"><input class="money form-control" type="text" name="valorDaParcela[]" value="'+ valorParcela +'" size="8"></td>';
-		cols += '<td>' + tdDataVencimento + '</td>';
-		cols += '<td>' + tdValorPago + '</td>';
-		cols += '<td>' + tdDataPagamento + '</td>';
-		cols += '<td>' + tdDesconto + '</td>';
-		cols += '<td>' + tdStatus + '</td>';
-
-		newRow.append(cols);
-
-		$("#tabelaDeParcelas").append(newRow);
-	}
-
+	var quantidadeDeParcelas = button.data('quantidade_de_parcelas')
+	var valorTotal = button.data('valor_total')
 	var modal = $(this)
-	modal.find('#vendaId').val(button.data('venda'))
-	modal.find('#cliente').val(button.data('cliente'))
-	modal.find('#dataDeCompetencia').val(button.data('datavenda'))
-	modal.find('#quantidadeDeParcelas').val(quantidadeDeParcelas)
-	modal.find('#valorTotal').val(valorTotal)
+	var campos = ['venda', 'cliente', 'data_de_competencia', 'quantidade_de_parcelas', 'valor_total']
+
+	adicionarParcelas(quantidadeDeParcelas, valorTotal)
+	passarDadosParaModal(modal, button, campos)
 })
 
 $(document).on(gerarFinanceiro = function(){
@@ -601,11 +418,7 @@ $(document).on(gerarFinanceiro = function(){
 		if(!dataDeVencimento[i].value || typeof dataDeVencimento[i].value == undefined || dataDeVencimento[i].value == null){erros.push(i);}
 	}
 	if(erros.length > 0){
-		Swal.fire({
-			icon: 'warning',
-			title: 'Atenção',
-			text: 'Preencha todos os campos de "Data de Vencimento"!',
-		})
+		sweetAlert('warning', 'Atenção...', "Preencha todos os campos de Data de Vencimento!")
 		return false;
 	}
 
@@ -629,111 +442,103 @@ $(document).on(EstornarVenda = function(id){
 	})
 });
 
-
-
 /* --------------  FORMULARIO DE RECEBIMENTO --------------------------------------*/
-$('#pagoTrue').css("visibility","hidden");
-
-$( "#pago" ).change(function(){
-	if(this.value === 'true') {
-		CalcValorPago();
-		$("#descontoRecPag").val('0.00')
-		$('#pagoTrue').css("visibility","visible");
-	} else if(this.value === 'false'){
-		$('#pagoTrue').css("visibility","hidden");
-	}
-});
-$("#valor").change(()=> {
-	CalcValorPago();
-})
-
-$("#descontoRecPag").change(()=> {
-	CalcValorPago();
-	var input = $("#descontoRecPag")
-	if(!input.val() || typeof input.val() == undefined || input.val() == null){
-		input.val(0.00)
-	}
-})
-function CalcValorPago(){
-	var valor = $("#valor").val()
-	var desconto = $("#descontoRecPag").val()
-	var valorPago = (valor - desconto).toFixed(2);
-	$("#valorPago").val(valorPago)
-}
 
 $(document).on(validarFormRecebimento = function(opcao){
-	var cliente = $('#cliente').val();
-	var dataVencimento = $('#dataVencimento').val();
-	var dataCompetencia = $('#dataCompetencia').val();
-	var pago = $('#pago').val();
-	var valor = $('#valor').val();
-	var erros = [];
-	console.log(pago)
+	var valorParcelas = $("#tabelaDeParcelas").find("td:nth-child(3) input")
+	var dataDeVencimentos = $("#tabelaDeParcelas").find("td:nth-child(4) input")
+
+	var cliente = $('#cliente').val()
+	var dataCompetencia = $('#dataCompetencia').val()
+	var valorTotal = $('#valorTotal').val()
+	var quantidadeDeParcelas = $('#quantidadeDeParcelas').val()
+	var erros = []
+
+	for (var i = 0; i < valorParcelas.length; i++) {
+		if(!valorParcelas[i].value || typeof valorParcelas[i].value == undefined || valorParcelas[i].value == null){erros.push(" Valor da Parcela");}
+		if(!dataDeVencimentos[i].value || typeof dataDeVencimentos[i].value == undefined || dataDeVencimentos[i].value == null){erros.push(" Data de Vencimento");}
+	}
 
 	if(!cliente || typeof cliente == undefined || cliente == null){erros.push(" Pagador")}
-	if(!dataVencimento || typeof dataVencimento == undefined || dataVencimento == null){erros.push(" Data de Vencimento")}
 	if(!dataCompetencia || typeof dataCompetencia == undefined || dataCompetencia == null){erros.push(" Data de Competencia")}
-	if(!valor || typeof valor == undefined || valor == null || valor == 0){erros.push(" Valor")}
+	if(!valorTotal || typeof valorTotal == undefined || valorTotal == null || valorTotal == 0){erros.push(" Valor Total")}
+	if(!quantidadeDeParcelas || typeof quantidadeDeParcelas == undefined || quantidadeDeParcelas == null || quantidadeDeParcelas == 0){erros.push(" Quantidade de Parcelas")}
 
-	if(pago === "true"){
-		var dataPagamento = $("#dataPagamento").val()
-		if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-			erros.push(" Data de Pagamento")
-		}
-	}
-
-	if(erros.length > 0 && erros.length == 1){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "O campo " + erros + " não foi preenchido!",
-		})
-		return false;
-	}else if(erros.length > 1){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "Os campos " + erros + " não foram preenchidos!",
-		})
+	if(erros.length > 0){
+		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
 		return false;
 	}
-
-	var id = $('#listaCliente [value="' + cliente + '"]').data('value')
-	$('#cliente').val(id);
 
 	if(opcao === 'adicionar'){
-		document.formRecebimento.action = '/contas-receber/store';
-		document.formRecebimento.submit();
+		var id = $('#listaCliente [value="' + cliente + '"]').data('value')
+		$('#cliente').val(id)
+
+		document.formRecebimento.action = '/contas-receber/store'
+		document.formRecebimento.submit()
 	}else if(opcao === 'editar'){
-		document.formRecebimento.action = '/contas-receber/update';
-		document.formRecebimento.submit();
+		document.formRecebimento.action = '/contas-receber/update'
+		document.formRecebimento.submit()
 	}
 })
 
-$('#modalRecebimento').on('show.bs.modal', function (event) {
-	var button = $(event.relatedTarget)
-	var pago = button.data('pago')
 
-	if(pago == true){
-		$('#pagoTrue').css("visibility","visible");
-		pago = "true"
-	}else if(button.data('pago') == false){
-		$('#pagoTrue').css("visibility","hidden");
-		pago = "false"
+function adicionarParcelas(qtdeParcelas, valorTotal) {
+	var tdFormaPagamento = $("#tdFormaPagamento").html()
+	var tdDataVencimento = $("#tdDataVencimento").html()
+	var tdValorPago = $("#tdValorPago").html()
+	var tdDataPagamento = $("#tdDataPagamento").html()
+	var tdDesconto = $("#tdDesconto").html()
+	var tdStatus = $("#tdStatus").html()
+
+	var valorParcela = (valorTotal / qtdeParcelas).toFixed(2)
+	$("#tabelaDeParcelas tbody tr").remove()
+
+	for (var i = 0; i < qtdeParcelas; i++) {
+		var newRow = $('<tr id="trParcelas">')
+		var cols = ""
+		cols += '<td id="tdParcela"> <input type="hidden" name="parcela[]" value="'+ (i+1) +'"> <span>'+ (i+1) +'° </span></td>'
+		cols += '<td id="tdFormaPagamento">' + tdFormaPagamento + '</td>'
+		cols += '<td id="tdValorParcela"><input class="money form-control" type="text" name="valorDaParcela[]" value="'+ valorParcela +'" size="8"></td>'
+		cols += '<td id="tdDataVencimento">' + tdDataVencimento + '</td>'
+		cols += '<td id="tdValorPago">' + tdValorPago + '</td>'
+		cols += '<td id="tdDataPagamento">' + tdDataPagamento + '</td>'
+		cols += '<td id="tdDesconto">' + tdDesconto + '</td>'
+		cols += '<td id="tdStatus">' + tdStatus + '</td>'
+
+		newRow.append(cols);
+
+		$("#tabelaDeParcelas").append(newRow)
+		$('#tabelaDeParcelas .inputData').val(new Date().DataAtual())
+		$('#tabelaDeParcelas .money').mask("###0.00", {reverse: true});
+	}
+}
+
+$('.status').on('change', function(){
+	var dataDePagamento = $(this).closest('tr').find("#tdDataPagamento input")
+
+	if($(this).val() == 'false'){
+		dataDePagamento.val('')
+	} else {
+		if(!dataDePagamento.val() || typeof dataDePagamento.val() == undefined || dataDePagamento.val() == null){
+			sweetAlert('warning', 'Atenção...', "Preencha o campo de Data De Pagamento!")
+			$(this).val('false')
+		}
+	}
+})
+
+$('#quantidadeDeParcelas').on('change', function(){
+	var parcelas = $(this).val()
+	var valorTotal = $('#valorTotal').val()
+
+	if(!valorTotal || typeof valorTotal == undefined || valorTotal == null || valorTotal == 0){
+		sweetAlert('warning', 'Atenção...', "Preencha o campo de Valor Total!")
+		return false;
 	}
 
-	var modal = $(this)
-	modal.find('#id').val(button.data('id'))
-	modal.find('#cliente').val(button.data('cliente'))
-	modal.find('#formaPagamento').val(button.data('forma-pagamento'))
-	modal.find('#valor').val(button.data('valor'))
-	modal.find('#valorPago').val(button.data('valor-pago'))
-	modal.find('#descontoRecPag').val(button.data('desconto'))
-	modal.find('#dataCompetencia').val(button.data('data-competencia'))
-	modal.find('#dataVencimento').val(button.data('data-vencimento'))
-	modal.find('#dataPagamento').val(button.data('data-pagamento'))
-	modal.find('#pago').val(pago)
+	adicionarParcelas(parcelas, valorTotal)
 })
+
+/*----------------------------------------------------------------------------*/
 
 $(document).on(validarFormPagamento = function(opcao){
 	var fornecedor = $('#fornecedor').val();
@@ -755,19 +560,8 @@ $(document).on(validarFormPagamento = function(opcao){
 		}
 	}
 
-	if(erros.length > 0 && erros.length == 1){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "O campo " + erros + " não foi preenchido!",
-		})
-		return false;
-	}else if(erros.length > 1){
-		Swal.fire({
-			icon: 'error',
-			title: 'Erro ...',
-			text: "Os campos " + erros + " não foram preenchidos!",
-		})
+	if(erros.length > 0){
+		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
 		return false;
 	}
 
@@ -781,31 +575,6 @@ $(document).on(validarFormPagamento = function(opcao){
 		document.formPagamento.action = '/contas-pagar/update';
 		document.formPagamento.submit();
 	}
-})
-
-$('#modalPagamento').on('show.bs.modal', function (event) {
-	var button = $(event.relatedTarget)
-	var pago = button.data('pago')
-
-	if(pago == true){
-		$('#pagoTrue').css("visibility","visible");
-		pago = "true"
-	}else if(button.data('pago') == false){
-		$('#pagoTrue').css("visibility","hidden");
-		pago = "false"
-	}
-
-	var modal = $(this)
-	modal.find('#id').val(button.data('id'))
-	modal.find('#fornecedor').val(button.data('fornecedor'))
-	modal.find('#formaPagamento').val(button.data('forma-pagamento'))
-	modal.find('#valor').val(button.data('valor'))
-	modal.find('#valorPago').val(button.data('valor-pago'))
-	modal.find('#descontoRecPag').val(button.data('desconto'))
-	modal.find('#dataCompetencia').val(button.data('data-competencia'))
-	modal.find('#dataVencimento').val(button.data('data-vencimento'))
-	modal.find('#dataPagamento').val(button.data('data-pagamento'))
-	modal.find('#pago').val(pago)
 })
 
 /* -------------------------  Dados Empresariais -------------------------*/
@@ -823,6 +592,11 @@ $(function(){
 })
 
 /*---------------------------------------------------------------------------*/
+function passarDadosParaModal(modal, button, campos){
+	for (var i = 0; i < campos.length; i++) {
+		modal.find('#' + campos[i]).val(button.data('' + campos[i]))
+	}
+}
 
 $( ".deletar" ).click(function(){
 	Swal.fire({
@@ -865,3 +639,18 @@ $(document).on(verificaSeExiste = function(url, campo, msg, formulario, actionEd
 		}
 	});
 })
+
+function sweetAlert(icon, title, text){
+	Swal.fire({
+		icon: icon,
+		title: title,
+		text: text,
+	})
+}
+
+function RemoveTableRow(handler) {
+	var tr = $(handler).closest('tr');
+	tr.remove();
+	$('#total').val(Total());
+	return false;
+};
