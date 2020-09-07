@@ -13,13 +13,13 @@ const ParcelaContaReceber = db.define('parcela_recebimento', {
         type: Sequelize.DECIMAL(10, 2)
     },
     dataDeVencimento: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
     },
     valorPago: {
         type: Sequelize.DECIMAL(10, 2)
     },
     dataDePagamento: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
     },
     desconto: {
         type: Sequelize.DECIMAL(10, 2)
