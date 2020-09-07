@@ -43,7 +43,8 @@ const Querys = {
 	'FROM pagamentos ' +
 	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month,
 
-	lucratividade: 'SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade" ' +
+	lucratividade: 'SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade", ' +
+	'CAST((("valorUnitario" - "valorCusto") / "valorUnitario") * 100 AS DECIMAL(10,2)) AS "margemDeLucro" ' +
 	'FROM "produtos" ORDER BY "lucratividade" DESC LIMIT 5',
 
 	estoqueDeSeguranca:
@@ -117,14 +118,7 @@ const Querys = {
 													.then(lucratividade => {
 														db.query(Querys.estoqueDeSeguranca, { type: db.QueryTypes.SELECT})
 														.then(estoqueDeSeguranca => {
-															//
-															var listaAlertaDeEstoque = []
-															for (var i = 0; i < estoqueDeSeguranca.length; i++) {
-																if(estoqueDeSeguranca[i].quantidade <= estoqueDeSeguranca[i].pontoDePedido){
-																	listaAlertaDeEstoque.push(estoqueDeSeguranca[i]);
-																}
 
-															}
 															var valorAPagarNoMes = vlrAPagarNoMes[0].sum
 
 															if(valorRecebidoNoMes == null) {
@@ -165,7 +159,7 @@ const Querys = {
 																	porcentagemPago: porcentagemPago,
 																	diferencaPagamento: diferencaPagamento,
 																	lucratividade: lucratividade,
-																	listaAlertaDeEstoque: listaAlertaDeEstoque
+																	estoqueDeSeguranca: estoqueDeSeguranca
 																});
 															}).catch((erro) => {
 																Erro.erro(req, res, next, 'Não foi possivel buscar valor total das vendas! ' + erro)

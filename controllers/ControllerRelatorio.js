@@ -8,7 +8,8 @@ const Querys = {
 	'"descricao", ' +
 	'"valorUnitario", ' +
 	'"valorCusto", ' +
-	'("valorUnitario" - "valorCusto") AS "lucratividade" ' +
+	'("valorUnitario" - "valorCusto") AS "lucratividade", ' +
+	'CAST((("valorUnitario" - "valorCusto") / "valorUnitario") * 100 AS DECIMAL(10,2)) AS "margemDeLucro" ' +
 	'FROM "produtos" ' +
 	'ORDER BY "lucratividade" DESC',
 
@@ -120,7 +121,8 @@ exports.GerarPdfEstoqueDeSeguranca = (req, res) => {
 			var top = 158;
 			var contador = 0;
 			var y;
-			generateTableTop(doc, x, columns, largura)
+			var yTop = [158, 158, 158, 158, 158]
+			generateTableTop(doc, x, yTop, columns, largura)
 
 			for (let i = 0; i < estoqueDeSeguranca.length; i++) {
 				if (y == 758) {
@@ -129,6 +131,7 @@ exports.GerarPdfEstoqueDeSeguranca = (req, res) => {
 					contador = 0;
 				}
 				y = top + (contador + 1) * 17;
+				var y2 = [y, y, y, y, y, y]
 				const estoqueDeSegurancaColumns = [
 					estoqueDeSeguranca[i].id,
 					estoqueDeSeguranca[i].descricao,
@@ -136,7 +139,7 @@ exports.GerarPdfEstoqueDeSeguranca = (req, res) => {
 					estoqueDeSeguranca[i].prazoReposicao,
 					estoqueDeSeguranca[i].pontoDePedido
 				]
-				generateTableRow( doc, x, y, estoqueDeSegurancaColumns, largura );
+				generateTableRow( doc, x, y2, estoqueDeSegurancaColumns, largura );
 				generateHr(doc, 45, 545, y + 10);
 				contador ++;
 			}
@@ -175,23 +178,26 @@ exports.GerarPdfLucroProduto = (req, res) => {
 				"DESCRIÇÃO",
 				"VALOR UNITÁRIO",
 				"VALOR DE CUSTO",
-				"LUCRO"
+				"LUCRO",
+				"MARGEM DE LUCRO",
 			]
 			const largura = [
 				{ width: 30, align: "center" },
 				'',
 				{ width: 90, align: "center" },
 				{ width: 90, align: "center" },
+				{ width: 100, align: "center" },
 				{ width: 100, align: "center" }
 			]
 			generateHeader(doc, empresa);
 			generateCustomerInformation(doc, "RELATORIO DE LUCRO POR PRODUTO");
 
-			const x = [50, 90, 245, 325, 425]
+			const x = [50, 90, 240, 320, 380, 450]
 			var top = 158;
 			var contador = 0;
 			var y;
-			generateTableTop(doc, x, columns, largura)
+			var yTop = [158, 158, 158, 158, 158, 158]
+			generateTableTop(doc, x, yTop, columns, largura)
 
 			for (let i = 0; i < lucratividade.length; i++) {
 				if (y == 758) {
@@ -200,14 +206,16 @@ exports.GerarPdfLucroProduto = (req, res) => {
 					contador = 0;
 				}
 				y = top + (contador + 1) * 17;
+				var y2 = [y, y, y, y, y, y]
 				const lucratividadeColumns = [
 					lucratividade[i].id,
 					lucratividade[i].descricao,
 					lucratividade[i].valorUnitario,
 					lucratividade[i].valorCusto,
-					lucratividade[i].lucratividade
+					lucratividade[i].lucratividade,
+					lucratividade[i].margemDeLucro +'%'
 				]
-				generateTableRow( doc, x, y, lucratividadeColumns, largura );
+				generateTableRow( doc, x, y2, lucratividadeColumns, largura );
 				generateHr(doc, 45, 545, y + 10);
 				contador ++;
 			}

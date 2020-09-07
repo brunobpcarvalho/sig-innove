@@ -1,14 +1,14 @@
 <div class="box">
-    <div class="box-header text-center">
+    <div class="box-header">
         <h1 class="box-title">Relatorio de Lucratividade por Produto</h1>
+
+        <div class="box-tools pull-right">
+			&nbsp
+			<a href="/relatorios/lucro-por-produto/gerar-pdf" target="_blank"><button type="button" class="btn btn-primary"> Gerar PDF </button></a>
+		</div>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        <a href="/relatorios/lucro-por-produto/gerar-pdf" target="_blank"><button type="button" class="btn btn-primary"
-            {{#if lucratividade}}
-            {{else}}
-            disabled
-            {{/if}}> Gerar PDF </button></a>
             <table class="tbl table table-striped text-center">
                 <thead>
                     <tr>
@@ -17,6 +17,7 @@
                         <th>Valor Unitário</th>
                         <th>Valor de Custo</th>
                         <th>Lucratividade</th>
+                        <th>Margem de Lucro</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,6 +28,7 @@
                         <td>{{valorUnitario}}</td>
                         <td>{{valorCusto}}</td>
                         <td>{{lucratividade}}</td>
+                        <td>{{margemDeLucro}}%</td>
                     </tr>
                     {{/each}}
                 </tbody>
@@ -37,6 +39,7 @@
                         <th>Valor Unitário</th>
                         <th>Valor de Custo</th>
                         <th>Lucratividade</th>
+                        <th>Margem de Lucro</th>
                     </tr>
                 </tfoot>
             </table>
