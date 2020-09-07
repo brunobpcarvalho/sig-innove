@@ -27,30 +27,21 @@
                     <td>{{id}}</td>
                     <td>{{pessoa}}</td>
                     <td>{{#formatDate dataCompetencia}}{{/formatDate}}</td>
-                    <td>{{quantidadeDeParcelas}}</td>
-                    <td>{{valorTotal}}</td>
+                    <td>{{quantidadeDeParcelas}}X</td>
+                    <td>R${{valorTotal}}</td>
 
                     <td class="acao">
                         <div class="toolbar-actions">
                             <div class="btn-group">
-                                <button type="button" name="button" class="edit btn btn-primary" data-toggle="modal" data-target="#modalRecebimento"
-                                data-id="{{id}}"
-                                data-cliente="{{pessoa}}"
-                                data-forma-pagamento="{{formaPagamento}}"
-                                data-valor="{{valor}}"
-                                data-valor-pago="{{valorPago}}"
-                                data-desconto="{{desconto}}"
-                                data-data-competencia="{{dataCompetencia}}"
-                                data-data-vencimento="{{dataVencimento}}"
-                                data-data-pagamento="{{dataPagamento}}"
-                                data-pago="{{pago}}">
-                                <i class="fa fa-edit"></i></button>
+                                <a href="/contas-receber/edit/{{id}}">
+                                    <button title="Editar" type="button" class="edit btn btn-primary"><i class="fa fa-edit"></i></button>
+                                </a>
                             </div>
 
                             <div class="btn-group">
                                 <form class="deletar" action="/contas-receber/destroy" method="post">
                                     <input type="hidden" name="id" value="{{id}}">
-                                    <input type="hidden" name="venda" value="{{venda}}">
+                                    <input type="hidden" name="venda" value="{{vendaId}}">
                                     <button title="Excluir" type="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
                                 </form>
                             </div>
@@ -63,8 +54,8 @@
                 <tr>
                     <th>Código</th>
                     <th>Pagador</th>
-                    <th>Qtde. de Parcelas</th>
                     <th>Data De Competencia</th>
+                    <th>Qtde. de Parcelas</th>
                     <th>Valor Total</th>
                     <th></th>
                 </tr>
@@ -88,26 +79,40 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-xs-5">
+                        <div class="col-xs-4">
                             <span>Cliente: </span>
-                            <input class="form-control" id="cliente" name="pessoaId" readonly/>
+                            <input class="form-control" type="search" id="cliente" name="pessoaId" list="listaCliente" placeholder="Selecione um Cliente"/>
+                            <datalist id="listaCliente">
+                                {{#each clientes}}
+                                <option data-value="{{id}}" value="{{nome}}"></option>
+                                {{else}}
+
+                                {{/each}}
+                            </datalist>
                         </div>
                         <div class="col-xs-3">
                             <div class="input-group">
-                                <span>Data de Competencia: </span><span class="obrigatorio"> *</span>
+                                <span>Data Competência: </span><span class="obrigatorio"> *</span>
                                 <input class="inputData form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="">
                             </div>
                         </div>
                         <div class="col-xs-2">
                             <div class="input-group">
-                                <span>Qtde. de Parcelas: </span>
-                                <input class="form-control" type="text" name="quantidadeDeParcelas" id="quantidadeDeParcelas" readonly>
+                                <span>Valor Total: </span>
+                                <input id="valorTotal" name="valorTotal" class="money form-control" type="text" value="">
                             </div>
                         </div>
-                        <div class="col-xs-2">
+                        <div class="col-xs-3">
                             <div class="input-group">
-                                <span>Valor Total: </span>
-                                <input id="valorTotal" name="valorTotal" class="money form-control" type="text" name="valorTotal" value="" readonly>
+                                <span>Qtde. de Parcelas: </span>
+                                <select class="form-control" name="quantidadeDeParcelas" id="quantidadeDeParcelas">
+                                    <option value=""> Selecione... </option>
+                                    <option value="1"> 1x </option>
+                                    <option value="2"> 2x </option>
+                                    <option value="3"> 3x </option>
+                                    <option value="4"> 4x </option>
+                                    <option value="5"> 5x </option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -144,12 +149,12 @@
                                         <td id="tdValorParcela"><input class="money form-control" type="text" name="valorDaParcela[]" value="" size="8"></td>
                                         <td id="tdDataVencimento"><input class="inputData form-control" type="date" name="dataDeVencimento[]" value=""></td>
                                         <td id="tdValorPago"><input class="money form-control" type="text" name="valorPago[]" value="0.00" size="8"></td>
-                                        <td id="tdDataPagamento"><input class="inputData form-control" type="date" name="dataDePagamento[]" value=""></td>
+                                        <td id="tdDataPagamento"><input class="form-control" type="date" name="dataDePagamento[]" value=""></td>
                                         <td id="tdDesconto"><input class="money form-control" type="text" name="desconto[]" value="0.00" size="8"></td>
                                         <td id="tdStatus">
                                             <select class="status form-control" name="status[]">
-                                                <option value="PENDENTE"> Pendente </option>
-                                                <option value="PAGO"> Pago </option>
+                                                <option value="false"> Pendente </option>
+                                                <option value="true"> Pago </option>
                                             </select>
                                         </td>
                                     </tr>
