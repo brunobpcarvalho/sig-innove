@@ -217,32 +217,32 @@ exports.update = async (req, res) => {
 			})
 		}
 		itensVenda.save().then(() => {
-			Venda.findByPk(id = req.body.vendaId).then((venda) =>{
-				venda.dataVenda = req.body.dataVenda,
-				venda.valorTotal = req.body.valorTotal,
-				venda.desconto = req.body.desconto,
-				venda.condicaoPagamento = req.body.condicaoPagamento,
-				venda.parcelas = req.body.parcelas,
-				venda.status = req.body.status,
-				venda.pessoaId = req.body.pessoaId,
-				venda.usuarioId = req.body.usuarioId
-
-				venda.save().then(() => {
-					req.flash("msg_sucesso", "Venda alterada com sucesso!")
-					res.redirect("/vendas/list-vendas")
-				}).catch((erro) => {
-					req.flash("msg_erro", "Não foi possivel salvar a alteração: " + erro)
-					res.redirect("/vendas/list-vendas")
-				})
-			}).catch((erro) => {
-				req.flash("msg_erro", "Não foi possivel encontrar a venda: " + erro)
-				res.redirect("/vendas/list-vendas")
-			})
 		}).catch((erro) => {
 			req.flash("msg_erro", "Erro: Não foi possível salvar itens da venda!" + erro)
 			res.redirect("/vendas/list-vendas")
 		})
 	}
+	Venda.findByPk(id = req.body.vendaId).then((venda) =>{
+		venda.dataVenda = req.body.dataVenda,
+		venda.valorTotal = req.body.valorTotal,
+		venda.desconto = req.body.desconto,
+		venda.condicaoPagamento = req.body.condicaoPagamento,
+		venda.parcelas = req.body.parcelas,
+		venda.status = req.body.status,
+		venda.pessoaId = req.body.pessoaId,
+		venda.usuarioId = req.body.usuarioId
+
+		venda.save().then(() => {
+			req.flash("msg_sucesso", "Venda alterada com sucesso!")
+			res.redirect("/vendas/list-vendas")
+		}).catch((erro) => {
+			req.flash("msg_erro", "Não foi possivel salvar a alteração: " + erro)
+			res.redirect("/vendas/list-vendas")
+		})
+	}).catch((erro) => {
+		req.flash("msg_erro", "Não foi possivel encontrar a venda: " + erro)
+		res.redirect("/vendas/list-vendas")
+	})
 }
 
 exports.gerarFinanceiro = async (req, res) => {
