@@ -13,12 +13,12 @@ var year = date.getFullYear();
 const Querys = {
 	valorTotalEmEstoque: 'SELECT Sum("quantidade" * "valorUnitario") as "vlrTotEmEstoque" FROM "produtos"',
 
-	valorRecebimentosAnual: 'SELECT EXTRACT(MONTH FROM "dataDePagamento") AS "mes", ' +
-	'Sum("valorPago") as "vlrRecebAnual"' +
+	valorRecebimentosAnual: 'SELECT EXTRACT(MONTH FROM "dataDeVencimento") AS "mes", ' +
+	'Sum("valorDaParcela") as "vlrRecebAnual"' +
 	'FROM "parcela_recebimentos" '+
-	'WHERE EXTRACT(YEAR FROM "dataDeVencimento") = ' + year + ' AND "status" = true ' +
-	'GROUP BY EXTRACT(MONTH FROM"dataDePagamento") ' +
-	'ORDER BY EXTRACT(MONTH FROM"dataDePagamento") ASC',
+	'WHERE EXTRACT(YEAR FROM "dataDeVencimento") = ' + year +
+	' GROUP BY EXTRACT(MONTH FROM "dataDeVencimento") ' +
+	'ORDER BY EXTRACT(MONTH FROM "dataDeVencimento") ASC',
 
 	valorPagamentosAnual: 'SELECT EXTRACT(MONTH FROM "dataVencimento") AS "mes", ' +
 	'Sum("valor") as "vlrPagaAnual" ' +
