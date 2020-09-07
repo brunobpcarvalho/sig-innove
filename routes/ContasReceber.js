@@ -10,6 +10,8 @@ router.post('/store', Admin, ControllerContasReceber.store);
 
 router.post('/destroy', Admin, ControllerContasReceber.destroy);
 
+router.get("/edit/:id", Admin, ControllerContasReceber.edit);
+
 router.post("/update", Admin, ControllerContasReceber.update);
 
 /*----------------------------------------------------------------------------*/
