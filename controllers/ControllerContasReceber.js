@@ -154,32 +154,52 @@ exports.edit = (req, res) => {
 }
 
 exports.update = (req, res) => {
-	var dataPagamento = req.body.dataPagamento
-	if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-		dataPagamento = null;
-	}
-	ContasReceber.findByPk(req.body.id).then((contasReceber) =>{
-		contasReceber.formaPagamento = req.body.formaPagamento,
-		contasReceber.valor = req.body.valor,
-		contasReceber.valorPago = req.body.valorPago,
-		contasReceber.desconto = req.body.descontoRecebimento,
-		contasReceber.dataCompetencia = req.body.dataCompetencia,
-		contasReceber.dataVencimento = req.body.dataVencimento,
-		contasReceber.dataPagamento = dataPagamento,
-		contasReceber.pago = req.body.pago,
-		contasReceber.venda = req.body.venda,
-		contasReceber.pessoaId = req.body.pessoaId
+	const parcela = req.body.parcela
+	const formaDePagamento = req.body.formaDePagamento
+	const valorDaParcela = req.body.valorDaParcela
+	const dataDeVencimento = req.body.dataDeVencimento
+	const valorPago = req.body.valorPago
+	const dataDePagamento = req.body.dataDePagamento
+	const desconto = req.body.desconto
+	const status = req.body.status
 
-		contasReceber.save().then(() => {
-			req.flash("msg_sucesso", "Recebimento editado com sucesso!")
-			res.redirect("/contas-receber/index")
+	ParcelaContaReceber.destroy({where: {recebimentoId: req.body.id}});
+
+	for (var i = 0; i < parcela.length; i++) {
+		if(!dataDePagamento[i] || typeof dataDePagamento[i] == undefined){
+			dataDePagamento[i] = null;
+		}
+		const parcelaContaReceber = new ParcelaContaReceber({
+			parcela: parcela[i],
+			formaDePagamento: formaDePagamento[i],
+			valorDaParcela: valorDaParcela[i],
+			dataDeVencimento: dataDeVencimento[i],
+			valorPago: valorPago[i],
+			dataDePagamento: dataDePagamento[i],
+			desconto: desconto[i],
+			status: status[i],
+			recebimentoId: req.body.id
+		})
+		parcelaContaReceber.save().then(() => {
 		}).catch((erro) => {
-			req.flash("msg_erro", "Não foi possível editar este Recebimento!" + erro)
+			req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
 			res.redirect("/contas-receber/index")
 		})
+	}
+	ContasReceber.findByPk(id = req.body.id).then((recebimento) =>{
+		recebimento.dataCompetencia = req.body.dataCompetencia,
+		recebimento.quantidadeDeParcelas = req.body.quantidadeDeParcelas,
+		recebimento.valorTotal = req.body.valorTotal,
 
+		recebimento.save().then(() => {
+			req.flash("msg_sucesso", "Recebimento alterado com sucesso!")
+			res.redirect("/contas-receber/index")
+		}).catch((erro) => {
+			req.flash("msg_erro", "Não foi possivel salvar a alteração: " + erro)
+			res.redirect("/contas-receber/index")
+		})
 	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível localizar o Recebimento!")
+		req.flash("msg_erro", "Não foi possivel encontrar o recebimento: " + erro)
 		res.redirect("/contas-receber/index")
 	})
 }
