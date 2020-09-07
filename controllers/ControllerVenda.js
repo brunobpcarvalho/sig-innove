@@ -246,6 +246,7 @@ exports.update = async (req, res) => {
 }
 
 exports.gerarFinanceiro = async (req, res) => {
+	console.log('req.body', req.body);
 	const venda = await Venda.findByPk(req.body.vendaId)
 
 	const contaReceber = await ContasReceber.create({
@@ -255,7 +256,6 @@ exports.gerarFinanceiro = async (req, res) => {
 		vendaId: req.body.vendaId,
 		pessoaId: venda.pessoaId
 	})
-	console.log('contaReceber', contaReceber.id);
 
 	var parcela = req.body.parcela
 	var formaDePagamento = req.body.formaDePagamento
@@ -265,15 +265,6 @@ exports.gerarFinanceiro = async (req, res) => {
 	var dataDePagamento = req.body.dataDePagamento
 	var desconto = req.body.desconto
 	var status = req.body.status
-	console.log('parcela', parcela);
-	console.log('formaPagamento', formaDePagamento);
-	console.log('valorDaParcela', valorDaParcela);
-	console.log('dataDeVencimento', dataDeVencimento);
-	console.log('valorPago', valorPago);
-	console.log('dataDePagamento', dataDePagamento);
-	console.log('desconto', desconto);
-	console.log('status', status);
-
 
 	for (var i = 0; i < parcela.length; i++) {
 		if(!dataDePagamento[i] || typeof dataDePagamento[i] == undefined){

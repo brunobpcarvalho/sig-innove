@@ -4,6 +4,7 @@ const Op = Sequelize.Op
 const ContasReceber = require("../models/ContasReceber")
 const Venda = require("../models/Venda")
 const Pessoa = require("../models/Pessoa")
+const ParcelaContaReceber = require("../models/ParcelaContaReceber")
 
 exports.index = (req, res) => {
 	ContasReceber.findAll({include: [{ model: Pessoa, as: 'pessoa' }]}).then((dadosContaReceber) => {
@@ -16,7 +17,7 @@ exports.index = (req, res) => {
 						quantidadeDeParcelas: dado.quantidadeDeParcelas,
 						valorTotal: dado.valorTotal,
 						desconto: dado.desconto,
-						venda: dado.venda,
+						vendaId: dado.vendaId,
 						pessoa: dado.pessoa.nome
 					}
 				})
@@ -41,85 +42,115 @@ exports.index = (req, res) => {
 	})
 }
 
-exports.store = (req, res) => {
-	var dataPagamento = req.body.dataPagamento
-	var desconto = req.body.descontoRecebimento
+exports.store = async (req, res) => {
+	const recebimento = await ContasReceber.create({ dataCompetencia, quantidadeDeParcelas, valorTotal, pessoaId } = req.body)
 
-	if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-		dataPagamento = null;
+	const parcela = req.body.parcela
+	const formaDePagamento = req.body.formaDePagamento
+	const valorDaParcela = req.body.valorDaParcela
+	const dataDeVencimento = req.body.dataDeVencimento
+	const valorPago = req.body.valorPago
+	const dataDePagamento = req.body.dataDePagamento
+	const desconto = req.body.desconto
+	const status = req.body.status
+
+	for (var i = 0; i < parcela.length; i++) {
+		if(!dataDePagamento[i] || typeof dataDePagamento[i] == undefined){
+			dataDePagamento[i] = null;
+		}
+		const parcelaContaReceber = new ParcelaContaReceber({
+			parcela: parcela[i],
+			formaDePagamento: formaDePagamento[i],
+			valorDaParcela: valorDaParcela[i],
+			dataDeVencimento: dataDeVencimento[i],
+			valorPago: valorPago[i],
+			dataDePagamento: dataDePagamento[i],
+			desconto: desconto[i],
+			status: status[i],
+			recebimentoId: recebimento.id
+		})
+		parcelaContaReceber.save().then(() => {
+		}).catch((erro) => {
+			req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
+			res.redirect("/contas-receber/index")
+		})
 	}
-	if(!desconto || typeof desconto == undefined || desconto == null || desconto == ''){
-		desconto = 0;
-	}
+	req.flash("msg_sucesso", "Recebimento salvo com sucesso!")
+	res.redirect("/contas-receber/index")
+}
 
-	const novoRecebimento = new ContasReceber({
-		formaPagamento: req.body.formaPagamento,
-		valor: req.body.valor,
-		valorPago: req.body.valorPago,
-		desconto: desconto,
-		dataCompetencia: req.body.dataCompetencia,
-		dataVencimento: req.body.dataVencimento,
-		dataPagamento: dataPagamento,
-		pago: req.body.pago,
-		venda: req.body.venda,
-		pessoaId: req.body.pessoaId
-	})
-
-	novoRecebimento.save().then(() => {
-		req.flash("msg_sucesso", "Recebimento cadastrado com sucesso!")
-		res.redirect("/contas-receber/index")
+exports.destroy = (req, res) => {
+	ParcelaContaReceber.destroy({where: {recebimentoId: req.body.id}}).then(() => {
+		if(!req.body.venda || typeof req.body.venda == undefined || req.body.venda == null || req.body.venda == ''){
+			ContasReceber.destroy({where: {id: req.body.id}}).then(() => {
+				req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
+				res.redirect("/contas-receber/index")
+			}).catch((erro) => {
+				req.flash("msg_erro", "Não foi possível excluir este Recebimento!6" + erro)
+				res.redirect("/contas-receber/index")
+			})
+		} else {
+			Venda.findByPk(req.body.venda).then(venda => {
+				venda.financeiro = 'nao';
+				venda.save().then(() => {
+					ContasReceber.destroy({ where: {id: req.body.id}}).then(() => {
+						req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
+						res.redirect("/contas-receber/index")
+					}).catch((erro) => {
+						req.flash("msg_erro", "Não foi possível excluir este Recebimento!2" + erro)
+						res.redirect("/contas-receber/index")
+					})
+				}).catch((erro) => {
+					req.flash("msg_erro", "Não foi possível excluir este Recebimento!3" + erro)
+					res.redirect("/contas-receber/index")
+				})
+			}).catch(erro => {
+				req.flash("msg_erro", "Não foi possível excluir este Recebimento!4" + erro)
+				res.redirect("/contas-receber/index")
+			})
+		}
 	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível salvar Recebimento!"+ erro)
+		req.flash("msg_erro", "Não foi possível excluir este Recebimento!4" + erro)
 		res.redirect("/contas-receber/index")
 	})
 }
 
-exports.destroy = (req, res) => {
-	if(!req.body.venda || typeof req.body.venda == undefined || req.body.venda == null || req.body.venda == ''){
-		ContasReceber.destroy({where: {id: req.body.id}}).then(() => {
-			req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
-			res.redirect("/contas-receber/index")
-		}).catch((erro) => {
-			req.flash("msg_erro", "Não foi possível excluir este Recebimento!6" + erro)
-			res.redirect("/contas-receber/index")
-		})
-	} else {
-		ContasReceber.findAll({where: {venda: req.body.venda}}).then(recebimentos => {
-			if(recebimentos.length > 1){
-				ContasReceber.destroy({where: {id: req.body.id}}).then(() => {
-					req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
-					res.redirect("/contas-receber/index")
-				}).catch((erro) => {
-					req.flash("msg_erro", "Não foi possível excluir este Recebimento!1" + erro)
-					res.redirect("/contas-receber/index")
-				})
-			} else {
-				Venda.findByPk(req.body.venda).then(venda => {
-					venda.financeiro = 'nao';
-					venda.save().then(() => {
-						ContasReceber.destroy({ where: {id: req.body.id}}).then(() => {
-							req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
-							res.redirect("/contas-receber/index")
-						}).catch((erro) => {
-							req.flash("msg_erro", "Não foi possível excluir este Recebimento!2" + erro)
-							res.redirect("/contas-receber/index")
-						})
-					}).catch((erro) => {
-						req.flash("msg_erro", "Não foi possível excluir este Recebimento!3" + erro)
-						res.redirect("/contas-receber/index")
-					})
-				}).catch(erro => {
-					req.flash("msg_erro", "Não foi possível excluir este Recebimento!4" + erro)
-					res.redirect("/contas-receber/index")
+exports.edit = (req, res) => {
+	ContasReceber.findByPk(req.params.id, {include: [{ model: Pessoa, as: 'pessoa' }]}).then((dadosContaReceber) =>{
+		ParcelaContaReceber.findAll({where: {recebimentoId: req.params.id}}).then((dadosParcelaContaReceber) =>{
+			const recebimento = {
+				id: dadosContaReceber.id,
+				pessoaId: dadosContaReceber.pessoa.id,
+				pessoaNome: dadosContaReceber.pessoa.nome,
+				dataCompetencia: dadosContaReceber.dataCompetencia,
+				quantidadeDeParcelas: dadosContaReceber.quantidadeDeParcelas,
+				valorTotal: dadosContaReceber.valorTotal,
+				vendaId: dadosContaReceber.vendaId
+			}
+			const contextParcelaContaReceber = {
+				parcelas: dadosParcelaContaReceber.map(dado => {
+					return {
+						id: dado.id,
+						parcela: dado.parcela,
+						formaDePagamento: dado.formaDePagamento,
+						valorDaParcela: dado.valorDaParcela,
+						dataDeVencimento: dado.dataDeVencimento,
+						valorPago: dado.valorPago,
+						dataDePagamento: dado.dataDePagamento,
+						desconto: dado.desconto,
+						status: dado.status
+					}
 				})
 			}
-
+			res.render("contas-receber/edit", {recebimento: recebimento, parcelaContaReceber: contextParcelaContaReceber.parcelas})
 		}).catch((erro) => {
-			req.flash("msg_erro", "Não foi possível excluir este Recebimento!5" + erro)
+			req.flash("error_msg", "Erro ao buscar as parcelas do recebimento!")
 			res.redirect("/contas-receber/index")
 		})
-	}
-
+	}).catch((erro) => {
+		req.flash("error_msg", "Erro ao buscar o recebimento!")
+		res.redirect("/contas-receber/index")
+	})
 }
 
 exports.update = (req, res) => {
