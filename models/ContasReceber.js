@@ -18,5 +18,5 @@ const ContasReceber = db.define('recebimento', {
 })
 
 ContasReceber.belongsTo(Pessoa);
-ContasReceber.sync()
+ContasReceber.sync({force:true})
 module.exports = ContasReceber;
