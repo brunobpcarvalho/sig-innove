@@ -167,8 +167,8 @@ function validarFormFabricante(valor){
 		nome,
 		"Já existe um Fabricante registrado com esse nome!",
 		formFabricante,
-		'/produtos/list-fabricante/editar',
-		'/produtos/list-fabricante/nova',
+		'/produtos/list-fabricantes/editar',
+		'/produtos/list-fabricantes/nova',
 		valor
 	);
 }
