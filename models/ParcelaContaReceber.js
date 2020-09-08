@@ -29,5 +29,5 @@ const ParcelaContaReceber = db.define('parcela_recebimento', {
     },
 })
 ParcelaContaReceber.belongsTo(ContasReceber);
-ParcelaContaReceber.sync()
+ParcelaContaReceber.sync({force:true})
 module.exports = ParcelaContaReceber;
