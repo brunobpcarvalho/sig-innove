@@ -30,6 +30,6 @@ const Produto = db.define('produtos', {
 Produto.belongsTo(Modelo);
 Produto.belongsTo(Fabricante);
 
-Produto.sync({force:true})
+Produto.sync()
 
 module.exports = Produto;
