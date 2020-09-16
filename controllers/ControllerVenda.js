@@ -187,6 +187,7 @@ exports.update = async (req, res) => {
 	const quantidade = req.body.quantidade
 	const valorUnit = req.body.valorUnitario
 	const subTotal = req.body.subTotal
+
 	ItensVenda.destroy({
 		where: {
 			vendaId: req.body.vendaId
@@ -208,17 +209,17 @@ exports.update = async (req, res) => {
 				produto.quantidade -= quantidadeVenda
 				produto.save().then(() => {
 				}).catch((erro) => {
-					req.flash("msg_erro", "Erro: Não foi possível salvar itens da venda!")
+					req.flash("msg_erro", "Erro1: Não foi possível salvar itens da venda!")
 					res.redirect("/vendas/list-vendas")
 				})
 			}).catch((erro) => {
-				req.flash("error_msg", "Erro ao salvar essa venda!")
+				req.flash("error_msg", "Erro2 ao salvar essa venda!")
 				res.redirect("/vendas/list-vendas")
 			})
 		}
 		itensVenda.save().then(() => {
 		}).catch((erro) => {
-			req.flash("msg_erro", "Erro: Não foi possível salvar itens da venda!" + erro)
+			req.flash("msg_erro", "Erro3: Não foi possível salvar itens da venda!" + erro)
 			res.redirect("/vendas/list-vendas")
 		})
 	}
@@ -236,11 +237,11 @@ exports.update = async (req, res) => {
 			req.flash("msg_sucesso", "Venda alterada com sucesso!")
 			res.redirect("/vendas/list-vendas")
 		}).catch((erro) => {
-			req.flash("msg_erro", "Não foi possivel salvar a alteração: " + erro)
+			req.flash("msg_erro", "4Não foi possivel salvar a alteração: " + erro)
 			res.redirect("/vendas/list-vendas")
 		})
 	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possivel encontrar a venda: " + erro)
+		req.flash("msg_erro", "5Não foi possivel encontrar a venda: " + erro)
 		res.redirect("/vendas/list-vendas")
 	})
 }
@@ -330,7 +331,7 @@ exports.estornarVenda = async (req, res) => {
 /*---------------- Filtros ---------------------------------------------------------------------------------------*/
 
 exports.filter = (req, res) => {
-	const { filterCliente, filterDataInicio, filterDataFim, filterStatus, filterFinanceiro } = req.body
+	const { filterCliente, filterDataInicio, filterDataFim, filterStatus, filterFinanceiro, filterValorInicio, filterValorFim } = req.body
 	let sql = `select V."id", P."nome" AS pessoa, V."status", V."financeiro", U."usuario", V."dataVenda", V."valorTotal" `
 	+ `FROM "vendas" AS V `
 	+ `JOIN "pessoas" AS P ON V."pessoaId" = P."id" `
@@ -342,7 +343,9 @@ exports.filter = (req, res) => {
 		status: '',
 		financeiro: '',
 		dataInicio: '',
-		dataFim: ''
+		dataFim: '',
+		valorInicio: '',
+		valorFim: ''
 	}
 
 	if (filterCliente !== '') {
@@ -366,6 +369,13 @@ exports.filter = (req, res) => {
 		filters.push('Periodo de: ' + filterDataInicio + ' Até: ' + filterDataFim)
 		values.dataInicio = filterDataInicio
 		values.dataFim = filterDataFim
+	}
+
+	if (filterValorInicio !== '' || filterValorFim !== '') {
+		sql += ` AND (V."valorTotal" BETWEEN '` + filterValorInicio + `' AND '` + filterValorFim + `')`;
+		filters.push('Valor de: ' + filterValorInicio + ' Até: ' + filterValorFim)
+		values.valorInicio = filterValorInicio
+		values.valorFim = filterValorFim
 	}
 
 	db.query(sql, { type: db.QueryTypes.SELECT}).then(vendas => {
