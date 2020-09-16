@@ -44,14 +44,14 @@
 }
 
 #logo {
-	 position: absolute;
-	 top: 0
+	position: absolute;
+	top: 0
 }
 
 #btnLogo {
-	 display: block;
-	 height: 100%;
-	 width: 100%;
+	display: block;
+	height: 100%;
+	width: 100%;
 }
 
 #navTabsEmpresa{
@@ -81,4 +81,12 @@
 }
 #tabelaDeParcelas .inputData{
 	width: 125px;
+}
+
+.disabled {
+	pointer-events: none;
+	cursor: default;
+	text-decoration: none;
+	color: black;
+	background-color: #E7E7E7;
 }

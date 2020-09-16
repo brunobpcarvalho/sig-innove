@@ -1,13 +1,13 @@
 <ul class="sidebar-menu" data-widget="tree">
-    <li>
+    <li class="{{#ifCond user.usuario "Innove"}}disabled{{/ifCond}}">
         <a href="/vendas/list-vendas"><ion-icon src="/icons/ios-cart.svg"></ion-icon> <span> Vendas </span> </a>
     </li>
 
-    <li>
+    <li class="{{#ifCond user.usuario "Innove"}}disabled{{/ifCond}}">
         <a href="#"><i class="fa fa-cart-arrow-down"></i> <span> Compras </span> </a>
     </li>
 
-    <li class="treeview">
+    <li class="treeview {{#ifCond user.usuario "Innove"}}disabled{{/ifCond}}">
         <a href="#">
             <i class="fa fa-briefcase"></i> <span>Cadastros</span>
             <span class="pull-right-container">
@@ -22,7 +22,7 @@
         </ul>
     </li>
 
-    <li class="treeview">
+    <li class="treeview {{#ifCond user.usuario "Innove"}}disabled{{/ifCond}}">
         <a href="#">
             <i class="fa fa-bar-chart"></i> <span> Financeiro </span>
             <span class="pull-right-container">
@@ -35,7 +35,7 @@
         </ul>
     </li>
 
-    <li class="treeview">
+    <li class="treeview {{#ifCond user.usuario "Innove"}}disabled{{/ifCond}}">
         <a href="#">
             <i class="fa fa-file-text"></i> <span> Relatorios </span>
             <span class="pull-right-container">
