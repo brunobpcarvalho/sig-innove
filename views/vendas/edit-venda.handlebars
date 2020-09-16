@@ -133,11 +133,11 @@
                                                         <span>Qtde. de Parcelas: </span>
                                                         <select class="form-control" name="parcelas" id="parcelas">
                                                             <option value=""> Selecione... </option>
-                                                            <option value="1"> 1x </option>
-                                                            <option value="2"> 2x </option>
-                                                            <option value="3"> 3x </option>
-                                                            <option value="4"> 4x </option>
-                                                            <option value="5"> 5x </option>
+                                                            <option value="1" {{#ifCond venda.parcelas 1}} selected {{/ifCond}}> 1x </option>
+                                                            <option value="2" {{#ifCond venda.parcelas 2}} selected {{/ifCond}}> 2x </option>
+                                                            <option value="3" {{#ifCond venda.parcelas 3}} selected {{/ifCond}}> 3x </option>
+                                                            <option value="4" {{#ifCond venda.parcelas 4}} selected {{/ifCond}}> 4x </option>
+                                                            <option value="5" {{#ifCond venda.parcelas 5}} selected {{/ifCond}}> 5x </option>
                                                         </select>
                                                     </div>
                                                 </div>
