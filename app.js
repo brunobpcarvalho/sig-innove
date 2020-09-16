@@ -14,6 +14,7 @@ const Usuario = require("./routes/Usuario");
 const Fabricante = require("./routes/Fabricante");
 const Modelo = require("./routes/Modelo");
 const Venda = require("./routes/Venda");
+const Compra = require("./routes/Compra");
 const Produto = require("./routes/Produto");
 
 const ContasReceber = require("./routes/ContasReceber");
@@ -101,6 +102,7 @@ app.use('/produtos', Fabricante);
 app.use('/produtos', Modelo);
 app.use('/produtos', Produto);
 app.use('/vendas', Venda);
+app.use('/compras', Compra);
 app.use('/contas-receber', ContasReceber);
 app.use('/contas-pagar', ContasPagar);
 app.use('/relatorios', Relatorios);
