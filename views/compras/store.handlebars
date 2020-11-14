@@ -1,20 +1,20 @@
 <div style="background: white;">
-    <form name="formVenda" id="formVenda" method="post">
+    <form name="formCompra" id="formCompra" method="post">
         <div class="">
             <div class="modal-header">
-                <h4 class="modal-title">Adicionar Venda</h4>
+                <h4 class="modal-title">Adicionar Compra</h4>
             </div>
             <div class="modal-body">
                 <div class="box-body">
                     <div class="row">
                         <div class="col-xs-4">
                             <div class="input-group">
-                                <input class="form-control" type="search" id="cliente" name="pessoaId" list="listaCliente" placeholder="Selecione um Cliente"/>
+                                <input class="form-control" type="search" id="fornecedor" name="pessoaId" list="listaFornecedor" placeholder="Selecione um Fornecedor"/>
                                 <span class="input-group-btn">
                                     <a href="/pessoas/list-pessoas"><button title="Adicionar Cliente" type="button" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i></button></a>
                                 </span>
-                                <datalist id="listaCliente">
-                                    {{#each clientes}}
+                                <datalist id="listaFornecedor">
+                                    {{#each fornecedores}}
                                     <option data-value="{{id}}" value="{{nome}}"></option>
                                     {{else}}
 
@@ -26,15 +26,15 @@
                             <div class="input-group">
                                 <span class="input-group-addon">Situação: </span>
                                 <select id="status" name="status" class="form-control">
-                                    <option value='ORCAMENTO'> ORÇAMENTO </option>
-                                    <option value='VENDA'> VENDA </option>
+                                    <option value='PEDIDO'> PEDIDO </option>
+                                    <option value='COMPRA'> COMPRA </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-xs-3">
                             <div class="input-group">
                                 <span class="input-group-addon">Data</span>
-                                <input class="inputData form-control" type="date" name="dataVenda" id="dataVenda" value="">
+                                <input class="inputData form-control" type="date" name="dataCompra" id="dataCompra" value="">
                             </div>
                         </div>
                         <div class="col-xs-3">
@@ -78,7 +78,7 @@
                                                             </span>
                                                             <datalist id="listaProdutos">
                                                                 {{#each produtos}}
-                                                                <option data-quantidade="{{quantidade}}" data-valor="{{valorUnitario}}" data-id="{{id}}" value="{{descricao}}"></option>
+                                                                <option data-valor="{{valorCusto}}" data-id="{{id}}" value="{{descricao}}"></option>
                                                                 {{else}}
 
                                                                 {{/each}}
@@ -152,10 +152,10 @@
                 </div>
             </div>
             <div style="position: relative;" class="modal-footer">
-                <a href="/vendas/list-vendas">
+                <a href="/compras/index">
                     <button type="button" class="btn btn-default pull-left">Cancelar</button>
                 </a>
-                <button type="button" onclick="SalvarVenda('adicionar')" class="btn btn-primary">Salvar</button>
+                <button type="button" onclick="SalvarCompra('adicionar')" class="btn btn-primary">Salvar</button>
             </div>
         </div>
     </form>

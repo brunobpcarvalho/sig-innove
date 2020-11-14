@@ -1,24 +1,24 @@
 <div style="background: white;">
     <div class="modal-content">
-        <form name="formRecebimento" id="formRecebimento" method="post">
-            <input type="hidden" name="id" id="id" value="{{recebimento.id}}">
+        <form name="formPagamento" id="formPagamento" method="post">
+            <input type="hidden" name="id" id="id" value="{{pagamento.id}}">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">Alterar Recebimento{{#if recebimento.vendaId}} - VENDA {{recebimento.vendaId}}{{/if}}</h4>
+                <h4 class="modal-title">Alterar Pagamento{{#if pagamento.compraId}} - COMPRA {{pagamento.compraId}}{{/if}}</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-5">
-                        <input type="hidden" name="pessoaId" value="{{recebimento.pessoaId}}"/>
-                        <span>Cliente: </span>
-                        <input class="form-control" id="pessoa" value="{{recebimento.pessoaNome}}" readonly/>
+                        <input type="hidden" name="pessoaId" value="{{pagamento.pessoaId}}"/>
+                        <span>Fornecedor: </span>
+                        <input class="form-control" id="pessoa" value="{{pagamento.pessoaNome}}" readonly/>
                     </div>
                     <div class="col-xs-3">
                         <div class="input-group">
                             <span>Data de Competencia: </span><span class="obrigatorio"> *</span>
-                            <input class="form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="{{recebimento.dataCompetencia}}" >
+                            <input class="form-control" type="date" name="dataCompetencia" id="dataCompetencia" value="{{pagamento.dataCompetencia}}" >
                         </div>
                     </div>
                     <div class="col-xs-2">
@@ -27,11 +27,11 @@
                                 <span>Qtde. de Parcelas: </span>
                                 <select class="form-control" name="quantidadeDeParcelas" id="quantidadeDeParcelas">
                                     <option value=""> Selecione... </option>
-                                    <option value="1" {{#ifCond recebimento.quantidadeDeParcelas 1}} selected {{/ifCond}}> 1x </option>
-                                    <option value="2" {{#ifCond recebimento.quantidadeDeParcelas 2}} selected {{/ifCond}}> 2x </option>
-                                    <option value="3" {{#ifCond recebimento.quantidadeDeParcelas 3}} selected {{/ifCond}}> 3x </option>
-                                    <option value="4" {{#ifCond recebimento.quantidadeDeParcelas 4}} selected {{/ifCond}}> 4x </option>
-                                    <option value="5" {{#ifCond recebimento.quantidadeDeParcelas 5}} selected {{/ifCond}}> 5x </option>
+                                    <option value="1" {{#ifCond pagamento.quantidadeDeParcelas 1}} selected {{/ifCond}}> 1x </option>
+                                    <option value="2" {{#ifCond pagamento.quantidadeDeParcelas 2}} selected {{/ifCond}}> 2x </option>
+                                    <option value="3" {{#ifCond pagamento.quantidadeDeParcelas 3}} selected {{/ifCond}}> 3x </option>
+                                    <option value="4" {{#ifCond pagamento.quantidadeDeParcelas 4}} selected {{/ifCond}}> 4x </option>
+                                    <option value="5" {{#ifCond pagamento.quantidadeDeParcelas 5}} selected {{/ifCond}}> 5x </option>
                                 </select>
                             </div>
                         </div>
@@ -39,7 +39,7 @@
                     <div class="col-xs-2">
                         <div class="input-group">
                             <span>Valor Total: </span>
-                            <input id="valorTotal" name="valorTotal" class="money form-control" type="text" name="valorTotal" value="{{recebimento.valorTotal}}">
+                            <input id="valorTotal" name="valorTotal" class="money form-control" type="text" name="valorTotal" value="{{pagamento.valorTotal}}">
                         </div>
                     </div>
                 </div>
@@ -93,10 +93,10 @@
                 </div>
             </div>
             <div style="position: relative;" class="modal-footer">
-                <a href="/contas-receber/index">
+                <a href="/contas-pagar/index">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
                 </a>
-                <button type="button" onclick="return validarFormRecebimentoPagamento('editar', 'recebimento')" class="editar btn btn-primary">Editar</button>
+                <button type="button" onclick="return validarFormRecebimentoPagamento('editar', 'pagamento')" class="editar btn btn-primary">Editar</button>
             </div>
         </form>
     </div>

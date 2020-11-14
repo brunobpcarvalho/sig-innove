@@ -109,13 +109,6 @@ exports.add = async (req, res) => {
 }
 
 exports.delete = async (req, res) => {
-	Venda.findOne({where: {id: req.body.id}}).then(venda => {
-		if(venda.financeiro === 'sim' || venda.status === "VENDA"){
-
-		}
-	}).catch(erro =>{
-
-	})
 	ItensVenda.destroy({where: {vendaId: req.body.id}}).then(() => {
 		Venda.destroy({where: {id: req.body.id}}).then(() => {
 			req.flash("msg_sucesso", "Venda deletada com sucesso!")
@@ -169,15 +162,15 @@ exports.updateVenda = async (req, res) => {
 				}
 				res.render("vendas/edit-venda", {venda: venda, itensVenda: contextItensVenda.itensVenda, produtos: contextProduto.produtos})
 			}).catch((erro) => {
-				req.flash("error_msg", "Erro ao listar os produtos!" + erro)
+				req.flash("msg_erro", "Erro ao listar os produtos!" + erro)
 				res.redirect("/vendas/list-vendas")
 			})
 		}).catch((erro) => {
-			req.flash("error_msg", "Erro ao buscar ou listar os itens da venda!")
+			req.flash("msg_erro", "Erro ao buscar ou listar os itens da venda!")
 			res.redirect("/vendas/list-vendas")
 		})
 	}).catch((erro) => {
-		req.flash("error_msg", "Erro ao buscar ou listar essa venda!")
+		req.flash("msg_erro", "Erro ao buscar ou listar essa venda!")
 		res.redirect("/vendas/list-vendas")
 	})
 }
@@ -213,7 +206,7 @@ exports.update = async (req, res) => {
 					res.redirect("/vendas/list-vendas")
 				})
 			}).catch((erro) => {
-				req.flash("error_msg", "Erro2 ao salvar essa venda!")
+				req.flash("msg_erro", "Erro2 ao salvar essa venda!")
 				res.redirect("/vendas/list-vendas")
 			})
 		}
@@ -308,22 +301,22 @@ exports.estornarVenda = async (req, res) => {
 					produto.quantidade += quantidadeItensVenda
 					produto.save().then(() => {
 					}).catch((erro) => {
-						req.flash("error_msg", "Erro ao estornar essa venda!")
+						req.flash("msg_erro", "Erro ao estornar essa venda!")
 						res.redirect("/vendas/list-vendas")
 					})
 				}).catch((erro) => {
-					req.flash("error_msg", "Erro ao estornar essa venda!")
+					req.flash("msg_erro", "Erro ao estornar essa venda!")
 					res.redirect("/vendas/list-vendas")
 				})
 			}
 		}).catch((erro) => {
-			req.flash("error_msg", "Erro ao estornar essa venda!")
+			req.flash("msg_erro", "Erro ao estornar essa venda!")
 			res.redirect("/vendas/list-vendas")
 		})
 		req.flash("msg_sucesso", "Venda estornada com sucesso!")
 		res.redirect("/vendas/list-vendas")
 	}).catch((erro) => {
-		req.flash("error_msg", "Erro ao estornar essa venda!")
+		req.flash("msg_erro", "Erro ao estornar essa venda!")
 		res.redirect("/vendas/list-vendas")
 	})
 }
@@ -410,15 +403,15 @@ exports.generatePdf = async (req, res) => {
 				doc.pipe(res)
 				doc.end()
 			}).catch(erro => {
-				req.flash("error_msg", "Erro ao buscar itens da venda!")
+				req.flash("msg_erro", "Erro ao buscar itens da venda!")
 				res.redirect("/vendas/list-vendas")
 			})
 		}).catch(erro => {
-			req.flash("error_msg", "Erro ao buscar dados da venda!")
+			req.flash("msg_erro", "Erro ao buscar dados da venda!")
 			res.redirect("/vendas/list-vendas")
 		})
 	}).catch(erro => {
-		req.flash("error_msg", "Erro ao buscar dados da empresa!")
+		req.flash("msg_erro", "Erro ao buscar dados da empresa!")
 		res.redirect("/vendas/list-vendas")
 	})
 }

@@ -69,13 +69,17 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
 	<!-- pesquisa cep -->
 	<script src="/js/busca_cep.js"></script>
+	<!-- Verifica força da senha -->
+	<script src="/js/forcaSenha.js"></script>
+
 	<script type="text/javascript" src="/js/java_script.js"></script>
 	<script type="text/javascript">
 	$('.knob').knob();
 
 	$(function () {
 		$('.tbl').DataTable({
-			'paging': false
+			'paging': false,
+			'order': [[ 0, "desc" ]]
 		})
 	});
 
@@ -84,6 +88,14 @@
 		local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
 		return local.toJSON().slice(0,10);
 	});
+
+	Date.prototype.DataHoraAtual = (function() {
+		var local = new Date(this);
+		local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+		return local.toJSON().slice(0,19);
+	});
+
+	$('.inputData').val(new Date().DataAtual());
 
 	var meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 	var recebimentos = [];
@@ -124,10 +136,8 @@
 
 	var ctx = document.getElementById('myChart').getContext('2d');
 	var chart = new Chart(ctx, {
-		// The type of chart we want to create
 		type: 'bar',
 
-		// The data for our dataset
 		data: {
 			labels: meses,
 			datasets: [
@@ -150,7 +160,6 @@
 				}]
 			},
 
-			// Configuration options go here
 			options: {
 				scales: {
 					yAxes: [{

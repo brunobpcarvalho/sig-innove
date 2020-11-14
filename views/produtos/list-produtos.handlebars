@@ -3,8 +3,9 @@
         <h1 class="box-title">Produtos</h1>
 
         <div class="box-tools pull-right">
-			&nbsp
+            &nbsp
             <button type="button" class="add btn btn-primary"
+            data-acao="adicionar"
             data-ativo="Ativo"
             data-genero=""
             data-toggle="modal" data-target="#modalProduto"> Adicionar </button>
@@ -180,6 +181,25 @@
                                 <option value='Ativo'> SIM </option>
                                 <option value='Inativo'> NÃO </option>
                             </select>
+                        </div>
+                    </div>
+                    <div id="divHistorico" style="margin-top:10px; background-color: #eeeeee;" class="box box-solid">
+                        <div class="box-header with-border">
+                            <h5 class="modal-title">Histórico de Compra</h5>
+                        </div>
+                        <div style="height:150px; overflow-y: scroll;" class="box-body table-responsive no-padding">
+                            <table id="tabelaDeHistorico" class="table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Cód. Compra</th>
+                                        <th>Fornecedor</th>
+                                        <th>Data de Compra</th>
+                                        <th>Valor Pago</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

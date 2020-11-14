@@ -1,27 +1,31 @@
-const express = require("express");
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
 const ControllerCompra = require('../controllers/ControllerCompra')
 const {Admin} = require("../helpers/Admin")
 const {User} = require("../helpers/User")
 /*----------------------------------------------------------------------------*/
 
-router.get('/index', User, ControllerCompra.index);
+router.get('/index', User, ControllerCompra.index)
 
-/*router.get('/add-venda', Admin, ControllerVenda.addVenda);
+router.get('/store', Admin, ControllerCompra.store)
 
-router.post('/add-venda/nova', Admin, ControllerVenda.add);
+router.post('/create', Admin, ControllerCompra.create)
 
-router.post('/list-vendas/deletar', Admin, ControllerVenda.delete);
+router.get('/edit/:id', Admin, ControllerCompra.edit)
 
-router.get("/list-vendas/edit/:id", Admin, ControllerVenda.updateVenda);
+router.post('/update', Admin, ControllerCompra.update)
 
-router.post("/list-vendas/update", Admin, ControllerVenda.update);
+router.post('/delete', Admin, ControllerCompra.delete)
 
-router.post("/list-vendas/gerar-financeiro", Admin, ControllerVenda.gerarFinanceiro);
+router.get('/estornar/:id', Admin, ControllerCompra.estornar)
 
-router.get("/list-vendas/estornar-venda/:id", Admin, ControllerVenda.estornarVenda);
+router.get('/historico/:id', Admin, ControllerCompra.historico)
 
-router.post("/list-vendas/filter", Admin, ControllerVenda.filter);
+router.post("/filter", Admin, ControllerCompra.filter)
+
+router.post("/gerar-financeiro", Admin, ControllerCompra.gerarFinanceiro)
+
+/*router.post("/list-vendas/estornar-venda/:id", Admin, ControllerVenda.estornarVenda);
 
 router.get("/generate-pdf/:id", Admin, ControllerVenda.generatePdf);*/
 

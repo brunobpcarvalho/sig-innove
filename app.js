@@ -22,6 +22,8 @@ const ContasPagar = require("./routes/ContasPagar");
 
 const Relatorios = require("./routes/Relatorio");
 
+const Caixa = require("./routes/Caixa");
+
 const path = require("path");
 const session = require('cookie-session');
 const flash = require('connect-flash');
@@ -62,6 +64,9 @@ app.engine('handlebars', handlebars({
 	helpers: {
 		formatDate: (date) => {
 			return moment(date).format('DD/MM/YYYY')
+		},
+		formatDateHour: (date) => {
+			return moment(date).format('DD/MM/YYYY - hh:mm:ss')
 		},
 		ifCond: (v1, v2, options) => {
 			if(v1 === v2) {
@@ -106,6 +111,7 @@ app.use('/compras', Compra);
 app.use('/contas-receber', ContasReceber);
 app.use('/contas-pagar', ContasPagar);
 app.use('/relatorios', Relatorios);
+app.use('/caixa', Caixa)
 
 
 app.use((req, res, next) => {

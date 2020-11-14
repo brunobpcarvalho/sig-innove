@@ -1,41 +1,41 @@
 <div style="background: white;">
-    <form name="formVenda" id="formVenda" method="post">
+    <form name="formCompra" id="formCompra" method="post">
         <div class="">
             <div class="modal-header">
-                <input type="hidden" name="vendaId" value="{{venda.id}}">
-                <h4 class="modal-title">Venda</h4>
+                <input type="hidden" name="compraId" value="{{compra.id}}">
+                <h4 class="modal-title">Editar Compra</h4>
             </div>
             <div class="modal-body">
                 <div class="box-body">
                     <div class="row">
                         <div class="col-xs-4">
                             <div class="input-group">
-                                <span class="input-group-addon">Cliente</span>
+                                <span class="input-group-addon">Fornecedor</span>
                                 <!-- Verificação de status -->
-                                <input type="hidden" name="pessoaId" value="{{venda.pessoaId}}">
-                                <input class="form-control" type="search" id="cliente" list="listaCliente" value="{{venda.pessoaNome}}" disabled/>
+                                <input type="hidden" name="pessoaId" value="{{compra.pessoaId}}">
+                                <input class="form-control" type="search" id="fornecedor" value="{{compra.pessoaNome}}" readonly/>
                             </div>
                         </div>
                         <div class="col-xs-3">
                             <div class="input-group">
                                 <span class="input-group-addon">Situação: </span>
-                                <select id="status" name="status" class="form-control">
-                                    <option value='ORCAMENTO' {{#ifCond venda.status "ORCAMENTO"}} selected {{/ifCond}}> ORÇAMENTO </option>
-                                    <option value='VENDA' {{#ifCond venda.status "VENDA"}} selected {{/ifCond}}> VENDA </option>
+                                <select id="status" name="status" class="form-control" {{#ifCond compra.status "COMPRA"}} readonly {{/ifCond}}>
+                                    <option value='PEDIDO' {{#ifCond compra.status "PEDIDO"}} selected {{/ifCond}}> PEDIDO </option>
+                                    <option value='COMPRA' {{#ifCond compra.status "COMPRA"}} selected {{/ifCond}}> COMPRA </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-xs-3">
                             <div class="input-group">
                                 <span class="input-group-addon">Data</span>
-                                <input class="form-control" type="date" name="dataVenda" id="dataVenda" value="{{venda.dataVenda}}" >
+                                <input class="form-control" type="date" name="dataCompra" id="dataCompra" value="{{compra.dataCompra}}" {{#ifCond compra.status "Compra"}} readonly {{/ifCond}}>
                             </div>
                         </div>
                         <div class="col-xs-2">
                             <div class="input-group">
-                                <input type="hidden" name="usuarioId" value="{{venda.usuarioId}}">
+                                <input type="hidden" name="usuarioId" value="{{compra.usuarioId}}">
                                 <span class="input-group-addon">Usuário: </span>
-                                <input class="form-control" type="text" name="usuario" id="usuario" value="{{venda.usuario}}" >
+                                <input class="form-control" type="text" name="usuario" id="usuario" value="{{compra.usuario}}" disabled>
                             </div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="tab_itens">
-                                        <button id="addItem" type="button" class="desativado btn bg-olive">ADICIONAR ITEM</button>
+                                        <button id="addItem" type="button" class="desativado btn bg-olive" {{#ifCond compra.status "COMPRA"}} disabled {{/ifCond}}>ADICIONAR ITEM</button>
                                         <table id="tabelaItens" class="table table-striped">
                                             <thead>
                                                 <tr>
@@ -63,11 +63,11 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {{#each itensVenda}}
+                                                {{#each itensCompra}}
                                                 <tr class="linha">
                                                     <td id="tdItens" class="tdItens col-xs-5">
                                                         <div class="input-group">
-                                                            <input class="item form-control" type="search" name="produtos[]" list="listaProdutos" placeholder="Selecione um Produto" value="{{descricaoProduto}}"/>
+                                                            <input class="item form-control" type="search" name="produtos[]" list="listaProdutos" placeholder="Selecione um Produto" {{#ifCond compra.status "COMPRA"}} readonly {{/ifCond}} value="{{descricaoProduto}}"/>
                                                             <span class="input-group-btn">
                                                                 <a href="/produtos/list-produtos"><button title="Adicionar Produto" type="button" class="desativado btn btn-primary btn-flat">Novo Produto</button></a>
                                                             </span>
@@ -82,23 +82,23 @@
                                                     </td>
                                                     <td id="tdQuant" class="tdQuant col-xs-2">
                                                         <div class="input-group">
-                                                            <input type="number" class="quantidade form-control" name="quantidade[]" min="1" value="{{quantidade}}">
+                                                            <input type="number" class="quantidade form-control" name="quantidade[]" min="1" value="{{quantidade}}" {{#ifCond ../compra.status "COMPRA"}} disabled {{/ifCond}}>
                                                         </div>
                                                     </td>
                                                     <td id="tdValor" class="tdValor col-xs-3">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input class="money valorUnitario form-control" type="text" name="valorUnitario[]" value="{{valorUnitario}}" >
+                                                            <input class="money valorUnitario form-control" type="text" name="valorUnitario[]" value="{{valorUnitario}}" {{#ifCond ../compra.status "COMPRA"}} disabled {{/ifCond}}>
                                                         </div>
                                                     </td>
                                                     <td id="tdTotal" class="tdTotal col-xs-3">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input class="money subTotal form-control" type="text" name="subTotal[]" value="{{valorTotal}}" >
+                                                            <input class="money subTotal form-control" type="text" name="subTotal[]" value="{{valorTotal}}" readonly>
                                                         </div>
                                                     </td>
                                                     <td id="tdAcao" class="tdAcao">
-                                                        <button type="button" onclick="RemoveTableRow(this)" name="button" class="desativado btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                                        <button type="button" onclick="RemoveTableRow(this)" name="button" class="desativado btn btn-danger" {{#ifCond ../compra.status "COMPRA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
                                                     </td>
                                                 </tr>
                                                 {{/each}}
@@ -109,11 +109,11 @@
 
                                                 <div class="input-group">
                                                     <span style="background: #367FA9; color: white;" class="input-group-addon">Desconto: R$</span>
-                                                    <input class="money form-control" type="text" name="desconto" id="desconto" value="{{venda.desconto}}" size="5" >
+                                                    <input class="money form-control" type="text" name="desconto" id="desconto" value="{{compra.desconto}}" size="5" {{#ifCond compra.status "COMPRA"}} readonly {{/ifCond}}>
                                                 </div>
                                                 <div class="input-group">
                                                     <span style="background: #367FA9; color: white;" class="input-group-addon">Total: R$</span>
-                                                    <input class="money form-control" type="text" name="valorTotal" id="total" value="{{venda.valorTotal}}" size="5" >
+                                                    <input class="money form-control" type="text" name="valorTotal" id="total" value="{{compra.valorTotal}}" size="5" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,21 +123,21 @@
                                             <div class="row">
                                                 <div class="col-xs-3">
                                                     <span>Condição de Pagamento</span>
-                                                    <select id="condicaoPagamento" name="condicaoPagamento" class="form-control" >
-                                                        <option value='Vista'{{#ifCond venda.condicaoPagamento "Vista"}} selected {{/ifCond}}> À Vista </option>
-                                                        <option value='Prazo'{{#ifCond venda.condicaoPagamento "Prazo"}} selected {{/ifCond}}> A Prazo </option>
+                                                    <select id="condicaoPagamento" name="condicaoPagamento" class="form-control" {{#ifCond compra.status "COMPRA"}} disabled {{/ifCond}}>
+                                                        <option value='Vista'{{#ifCond compra.condicaoPagamento "Vista"}} selected {{/ifCond}}> À Vista </option>
+                                                        <option value='Prazo'{{#ifCond compra.condicaoPagamento "Prazo"}} selected {{/ifCond}}> A Prazo </option>
                                                     </select>
                                                 </div>
                                                 <div class="col-xs-3">
                                                     <div class="input-group">
                                                         <span>Qtde. de Parcelas: </span>
-                                                        <select class="form-control" name="parcelas" id="parcelas">
+                                                        <select class="form-control" name="parcelas" id="parcelas" {{#ifCond compra.status "COMPRA"}} disabled {{/ifCond}}>>
                                                             <option value=""> Selecione... </option>
-                                                            <option value="1" {{#ifCond venda.parcelas 1}} selected {{/ifCond}}> 1x </option>
-                                                            <option value="2" {{#ifCond venda.parcelas 2}} selected {{/ifCond}}> 2x </option>
-                                                            <option value="3" {{#ifCond venda.parcelas 3}} selected {{/ifCond}}> 3x </option>
-                                                            <option value="4" {{#ifCond venda.parcelas 4}} selected {{/ifCond}}> 4x </option>
-                                                            <option value="5" {{#ifCond venda.parcelas 5}} selected {{/ifCond}}> 5x </option>
+                                                            <option value="1" {{#ifCond compra.parcelas 1}} selected {{/ifCond}}> 1x </option>
+                                                            <option value="2" {{#ifCond compra.parcelas 2}} selected {{/ifCond}}> 2x </option>
+                                                            <option value="3" {{#ifCond compra.parcelas 3}} selected {{/ifCond}}> 3x </option>
+                                                            <option value="4" {{#ifCond compra.parcelas 4}} selected {{/ifCond}}> 4x </option>
+                                                            <option value="5" {{#ifCond compra.parcelas 5}} selected {{/ifCond}}> 5x </option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -151,10 +151,10 @@
                 </div>
             </div>
             <div style="position: relative;" class="modal-footer">
-                <a href="/vendas/list-vendas">
+                <a href="/compras/index">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
                 </a>
-                <button type="button" onclick="SalvarVenda('editar')" class="desativado btn btn-primary">Salvar</button>
+                <button type="button" onclick="SalvarCompra('editar')" class="desativado btn btn-primary" {{#ifCond compra.status "COMPRA"}} disabled {{/ifCond}}>Salvar</button>
             </div>
         </div>
     </form>

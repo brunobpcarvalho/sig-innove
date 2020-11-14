@@ -19,7 +19,7 @@
                         <div class="col-xs-3">
                             <div class="input-group">
                                 <span class="input-group-addon">Situação: </span>
-                                <select id="status" name="status" class="form-control">
+                                <select id="status" name="status" class="form-control" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>
                                     <option value='ORCAMENTO' {{#ifCond venda.status "ORCAMENTO"}} selected {{/ifCond}}> ORÇAMENTO </option>
                                     <option value='VENDA' {{#ifCond venda.status "VENDA"}} selected {{/ifCond}}> VENDA </option>
                                 </select>
@@ -28,14 +28,14 @@
                         <div class="col-xs-3">
                             <div class="input-group">
                                 <span class="input-group-addon">Data</span>
-                                <input class="form-control" type="date" name="dataVenda" id="dataVenda" value="{{venda.dataVenda}}" >
+                                <input class="form-control" type="date" name="dataVenda" id="dataVenda" value="{{venda.dataVenda}}" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>
                             </div>
                         </div>
                         <div class="col-xs-2">
                             <div class="input-group">
                                 <input type="hidden" name="usuarioId" value="{{venda.usuarioId}}">
                                 <span class="input-group-addon">Usuário: </span>
-                                <input class="form-control" type="text" name="usuario" id="usuario" value="{{venda.usuario}}" >
+                                <input class="form-control" type="text" name="usuario" id="usuario" value="{{venda.usuario}}" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>
                             </div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="tab_itens">
-                                        <button id="addItem" type="button" class="desativado btn bg-olive">ADICIONAR ITEM</button>
+                                        <button id="addItem" type="button" class="vado btn bg-olive" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>ADICIONAR ITEM</button>
                                         <table id="tabelaItens" class="table table-striped">
                                             <thead>
                                                 <tr>
@@ -67,9 +67,9 @@
                                                 <tr class="linha">
                                                     <td id="tdItens" class="tdItens col-xs-5">
                                                         <div class="input-group">
-                                                            <input class="item form-control" type="search" name="produtos[]" list="listaProdutos" placeholder="Selecione um Produto" value="{{descricaoProduto}}"/>
+                                                            <input class="item form-control" type="search" name="produtos[]" list="listaProdutos" placeholder="Selecione um Produto" value="{{descricaoProduto}}" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}/>
                                                             <span class="input-group-btn">
-                                                                <a href="/produtos/list-produtos"><button title="Adicionar Produto" type="button" class="desativado btn btn-primary btn-flat">Novo Produto</button></a>
+                                                                <a href="/produtos/list-produtos"><button title="Adicionar Produto" type="button" class="vado btn btn-primary btn-flat">Novo Produto</button></a>
                                                             </span>
                                                             <datalist id="listaProdutos">
                                                                 {{#each ../produtos}}
@@ -82,23 +82,23 @@
                                                     </td>
                                                     <td id="tdQuant" class="tdQuant col-xs-2">
                                                         <div class="input-group">
-                                                            <input type="number" class="quantidade form-control" name="quantidade[]" min="1" value="{{quantidade}}">
+                                                            <input type="number" class="quantidade form-control" name="quantidade[]" min="1" value="{{quantidade}}" {{#ifCond ../venda.status "VENDA"}} disabled {{/ifCond}}>
                                                         </div>
                                                     </td>
                                                     <td id="tdValor" class="tdValor col-xs-3">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input class="money valorUnitario form-control" type="text" name="valorUnitario[]" value="{{valorUnitario}}" >
+                                                            <input class="money valorUnitario form-control" type="text" name="valorUnitario[]" value="{{valorUnitario}}" {{#ifCond ../venda.status "VENDA"}} disabled {{/ifCond}}>
                                                         </div>
                                                     </td>
                                                     <td id="tdTotal" class="tdTotal col-xs-3">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input class="money subTotal form-control" type="text" name="subTotal[]" value="{{valorTotal}}" >
+                                                            <input class="money subTotal form-control" type="text" name="subTotal[]" value="{{valorTotal}}" readonly>
                                                         </div>
                                                     </td>
                                                     <td id="tdAcao" class="tdAcao">
-                                                        <button type="button" onclick="RemoveTableRow(this)" name="button" class="desativado btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                                                        <button type="button" onclick="RemoveTableRow(this)" name="button" class="vado btn btn-danger" {{#ifCond ../venda.status "VENDA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
                                                     </td>
                                                 </tr>
                                                 {{/each}}
@@ -109,11 +109,11 @@
 
                                                 <div class="input-group">
                                                     <span style="background: #367FA9; color: white;" class="input-group-addon">Desconto: R$</span>
-                                                    <input class="money form-control" type="text" name="desconto" id="desconto" value="{{venda.desconto}}" size="5" >
+                                                    <input class="money form-control" type="text" name="desconto" id="desconto" value="{{venda.desconto}}" size="5" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>
                                                 </div>
                                                 <div class="input-group">
                                                     <span style="background: #367FA9; color: white;" class="input-group-addon">Total: R$</span>
-                                                    <input class="money form-control" type="text" name="valorTotal" id="total" value="{{venda.valorTotal}}" size="5" >
+                                                    <input class="money form-control" type="text" name="valorTotal" id="total" value="{{venda.valorTotal}}" size="5" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,7 +123,7 @@
                                             <div class="row">
                                                 <div class="col-xs-3">
                                                     <span>Condição de Pagamento</span>
-                                                    <select id="condicaoPagamento" name="condicaoPagamento" class="form-control" >
+                                                    <select id="condicaoPagamento" name="condicaoPagamento" class="form-control" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>
                                                         <option value='Vista'{{#ifCond venda.condicaoPagamento "Vista"}} selected {{/ifCond}}> À Vista </option>
                                                         <option value='Prazo'{{#ifCond venda.condicaoPagamento "Prazo"}} selected {{/ifCond}}> A Prazo </option>
                                                     </select>
@@ -131,7 +131,7 @@
                                                 <div class="col-xs-3">
                                                     <div class="input-group">
                                                         <span>Qtde. de Parcelas: </span>
-                                                        <select class="form-control" name="parcelas" id="parcelas">
+                                                        <select class="form-control" name="parcelas" id="parcelas" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>
                                                             <option value=""> Selecione... </option>
                                                             <option value="1" {{#ifCond venda.parcelas 1}} selected {{/ifCond}}> 1x </option>
                                                             <option value="2" {{#ifCond venda.parcelas 2}} selected {{/ifCond}}> 2x </option>
@@ -154,7 +154,7 @@
                 <a href="/vendas/list-vendas">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
                 </a>
-                <button type="button" onclick="SalvarVenda('editar')" class="desativado btn btn-primary">Salvar</button>
+                <button type="button" onclick="SalvarVenda('editar')" class="vado btn btn-primary" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>Salvar</button>
             </div>
         </div>
     </form>

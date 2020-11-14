@@ -2,7 +2,7 @@
     <div class="box-header">
         <h1 class="box-title">Usuários</h1>
         <div class="box-tools pull-right">
-			&nbsp
+            &nbsp
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUsuario"> Adicionar </button>
         </div>
     </div>
@@ -84,7 +84,11 @@
                                 <input type="text" class="form-control" name="usuario" id="usuario" required="true">
 
                                 <span>Senha</span>
-                                <input type="password" class="form-control" name="senha" id="senha" required="true">
+                                <input type="password" class="form-control" name="senha" id="senha" required="requerid">
+                                <div id="senhaBarra" class="progress" style="display: none;">
+                                    <div id="senhaForca" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-xs-3">
                                 <span>Nivel de Acesso</span>

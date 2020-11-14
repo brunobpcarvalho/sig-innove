@@ -1,48 +1,47 @@
-<div style="background: white;">
+<div class="box">
     <form method="post" action="/usuarios/update">
         <input type="hidden" name="id" id="id" value="{{usuario.id}}">
-        <div class="">
-            <div class="modal-header">
-                <h4 class="modal-title">Editar Usuario</h4>
-            </div>
-            <div class="modal-body">
-                <div class="box-body">
-                    <div style="margin-top: 2%;" class="row">
-                        <div class="col-xs-5">
-                            <span>Nome</span>
-                            <input type="text" class="form-control" name="nome" id="nome" value="{{usuario.nome}}">
-                        </div>
-                        <div class="col-xs-5">
-                            <span>Usuario</span>
-                            <input type="text" class="form-control" name="usuario" id="usuario" value="{{usuario.usuario}}">
-                        </div>
-                        <div class="col-xs-3">
-                            <span>Nivel de Acesso</span>
-                            <select id="nivelAcesso" name="nivelAcesso" class="form-control">
-                                <option value="{{usuario.nivelAcesso}}"> {{usuario.nivelAcesso}} </option>
-                                <option value='Usuario'> Usuário </option>
-                                <option value='Administrador'> Administrador </option>
-                            </select>
-                        </div>
-                        <div class="col-xs-2">
-                            <span>Ativo</span>
-                            <select id="ativo" name="ativo" class="form-control" value="{{usuario.ativo}}">
-                                <option value='Ativo'> SIM </option>
-                                <option value='Inativo'> NÃO </option>
-                            </select>
-                        </div>
-                        <div class="col-xs-5">
-                            <span> Senha </span>
-                            <input type="password" class="form-control" name="senha" id="senha">
-                        </div>
+        <div class="modal-header">
+            <h4 class="modal-title">Editar Usuario</h4>
+        </div>
+        <div class="modal-body">
+            <div class="box-body">
+                <div style="margin-top: 2%;" class="row">
+                    <div class="col-xs-5">
+                        <span>Nome</span>
+                        <input type="text" class="form-control" name="nome" id="nome" value="{{usuario.nome}}">
+                    </div>
+                    <div class="col-xs-5">
+                        <span>Usuario</span>
+                        <input type="text" class="form-control" name="usuario" id="usuario" value="{{usuario.usuario}}">
+                    </div>
+                    <div class="col-xs-3">
+                        <span>Nivel de Acesso</span>
+                        <select id="nivelAcesso" name="nivelAcesso" class="form-control">
+                            <option value="{{usuario.nivelAcesso}}"> {{usuario.nivelAcesso}} </option>
+                            <option value='Usuario'> Usuário </option>
+                            <option value='Administrador'> Administrador </option>
+                        </select>
+                    </div>
+                    <div class="col-xs-2">
+                        <span>Ativo</span>
+                        <select id="ativo" name="ativo" class="form-control" value="{{usuario.ativo}}">
+                            <option value='Ativo'> SIM </option>
+                            <option value='Inativo'> NÃO </option>
+                        </select>
+                    </div>
+                    <div class="col-xs-5">
+                        <span> Senha </span>
+                        <input type="password" class="form-control" name="senha" id="senha">
                     </div>
                 </div>
-                <div style="position: relative;" class="modal-footer">
-                    <a href="/usuarios/index">
-                        <button type="button" class="btn btn-default pull-left">Cancelar</button>
-                    </a>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                </div>
             </div>
-        </form>
-    </div>
+            <div style="position: relative;" class="modal-footer">
+                <a href="/usuarios/index">
+                    <button type="button" class="btn btn-default pull-left">Cancelar</button>
+                </a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>

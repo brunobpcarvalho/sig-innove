@@ -1,22 +1,12 @@
 <div class="box">
     <div class="box-header">
-        <h1 class="box-title">Vendas</h1>
+        <h1 class="box-title"> Compras</h1>
 
         <div class="box-tools pull-right">
             &nbsp
-            <a href="/vendas/add-venda"><button type="button" class="btn btn-primary"> Nova Venda </button></a>
+            <a href="/compras/store"><button type="button" class="btn btn-primary"> Nova Compra </button></a>
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtroVenda"> <i class="fa fa-filter"></i> Filtrar </button>
-            <div class="btn-group">
-                <form action="" method="post">
-                    <input type="hidden" name="filterTipo" value="{{values.tipo}}">
-                    <input type="hidden" name="filterFuncao" value="{{values.funcao}}">
-                    <input type="hidden" name="filterCidade" value="{{values.cidade}}">
-                    <input type="hidden" name="filterUf" value="{{values.uf}}">
-                    <input type="hidden" name="filterAtivo" value="{{values.ativo}}">
-                    <button type="submit" name="button" class="btn btn-primary"> Gerar PDF </button>
-                </form>
-            </div>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtroCompra"> <i class="fa fa-filter"></i> Filtrar </button>
         </div>
         {{#if filters}}
         <div class="box-tools pull-right">
@@ -28,7 +18,7 @@
                 </li>
                 {{/each}}
                 &nbsp
-                <a href="/vendas/list-vendas">
+                <a href="/compras/index">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -38,11 +28,11 @@
         {{/if}}
     </div>
     <div class="box-body">
-        <table id="tabelaVenda" class="tbl table table-striped text-center">
+        <table id="tabelaCompra" class="tbl table table-striped text-center">
             <thead>
                 <tr>
                     <th>Código</th>
-                    <th>Cliente</th>
+                    <th>Fornecedor</th>
                     <th>Status</th>
                     <th>Financeiro</th>
                     <th>Usuario</th>
@@ -52,29 +42,29 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each vendas}}
+                {{#each compras}}
                 <tr>
                     <td>{{id}}</td>
                     <td>{{pessoa}}</td>
                     <td>{{status}}</td>
                     <td>{{#ifCond financeiro "sim"}} Gerado {{/ifCond}}{{#ifCond financeiro "nao"}} Não Gerado {{/ifCond}}</td>
                     <td>{{usuario}}</td>
-                    <td>{{#formatDate dataVenda}}{{/formatDate}}</td>
+                    <td>{{#formatDate dataCompra}}{{/formatDate}}</td>
                     <td>{{valorTotal}}</td>
                     <td class="acao">
                         <div class="toolbar-actions">
                             <div class="btn-group">
-                                {{#ifCond status "VENDA"}}
+                                {{#ifCond status "COMPRA"}}
                                 <a>
-                                    <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
+                                    <button title="Estornar Compra" type="button" onclick="estornar('Compra', '/compras/estornar/{{../id}}')" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
                                 </a>
                                 <a>
                                     <button title="Gerar Financeiro"
-                                    data-venda="{{../id}}"
-                                    data-cliente="{{../pessoa}}"
+                                    data-id="{{../id}}"
+                                    data-pessoa="{{../pessoa}}"
                                     data-quantidade_de_parcelas="{{../parcelas}}"
                                     data-valor_total="{{../valorTotal}}"
-                                    data-data_de_competencia="{{../dataVenda}}"
+                                    data-data_de_competencia="{{../dataCompra}}"
                                     data-toggle="modal"
                                     data-target="#modalGerarFinanceiro"
                                     type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-usd"></i></button>
@@ -89,15 +79,15 @@
                             </div>
 
                             <div class="btn-group">
-                                <a href="/vendas/list-vendas/edit/{{id}}">
+                                <a href="/compras/edit/{{id}}">
                                     <button title="Editar" type="button" class="edit btn btn-primary"><i class="fa fa-edit"></i></button>
                                 </a>
                             </div>
 
                             <div class="btn-group">
-                                <form class="deletar" method="post" action="/vendas/list-vendas/deletar">
+                                <form class="deletar" method="post" action="/compras/delete">
                                     <input type="hidden" name="id" value="{{id}}">
-                                    <button title="Excluir" type="button" class="btn btn-danger" {{#ifCond status "VENDA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
+                                    <button title="Excluir" type="button" class="btn btn-danger" {{#ifCond status "COMPRA"}} disabled {{/ifCond}}><i class="fa fa-trash-o"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -108,7 +98,7 @@
             <tfoot>
                 <tr>
                     <th>Código</th>
-                    <th>Cliente</th>
+                    <th>Fornecedor</th>
                     <th>Status</th>
                     <th>Financeiro</th>
                     <th>Usuario</th>
@@ -123,10 +113,10 @@
 
 <!-- Modal de Filtros-->
 
-<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" id="filtroVenda">
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true" id="filtroCompra">
     <div class="modal-dialog modal-sm modal-dialog-scrollable" role="document">
         <div class="modal-content">
-            <form name="formFilterVenda" id="formFilterVenda" action="/vendas/list-vendas/filter" method="post">
+            <form name="formFilterCompra" id="formFilterCompra" action="/compras/filter" method="post">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -134,24 +124,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type="text" id="filterCliente" name="filterCliente" class="form-control" placeholder="Cliente...">
+                        <input type="text" id="filterFornecedor" name="filterFornecedor" class="form-control" placeholder="Fornecedor...">
                         <br>
                         <select class="form-control" name="filterStatus" id="filterStatus">
-                            <!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
                             <option value=''> Status da Negociação...</option>
-                            <option value="ORCAMENTO"> Orçamento </option>
-                            <option value="VENDA"> Venda </option>
+                            <option value="PEDIDO"> PEDIDO </option>
+                            <option value="COMPRA"> COMPRA </option>
                         </select>
                         <br>
                         <select class="form-control" name="filterFinanceiro" id="filterFinanceiro">
-                            <!--{{#if values.tipo}} <option value='{{values.tipo}}'> {{values.tipo}} </option> {{/if}}-->
                             <option value=''>Financeiro gerado...</option>
                             <option value="sim"> SIM </option>
                             <option value="nao"> NÂO </option>
                         </select>
 
                         <br>
-                        <span> Data da Venda</span>
+                        <span> Data da Compra</span>
                         <span> De: </span>
                         <input class="form-control" type="date" name="filterDataInicio" id="filterDataInicio">
                         <br>
@@ -189,11 +177,11 @@
             <div>
                 <div class="box-body">
                     <form name="formGerarFinanceiro" id="formGerarFinanceiro" method="post">
-                        <input type="hidden" name="vendaId" id="venda">
+                        <input type="hidden" name="compraId" id="id">
                         <div class="row">
                             <div class="col-xs-5">
-                                <span>Cliente: </span>
-                                <input class="form-control" id="cliente" name="pessoaId" readonly/>
+                                <span>Fornecedor: </span>
+                                <input class="form-control" id="pessoa" name="pessoaId" readonly/>
                             </div>
                             <div class="col-xs-3">
                                 <div class="input-group">
@@ -210,7 +198,7 @@
                             <div class="col-xs-2">
                                 <div class="input-group">
                                     <span>Valor Total: </span>
-                                    <input id="valor_total" name="valorTotal" class="money form-control" type="text" name="valorTotal" value="" readonly>
+                                    <input id="valor_total" name="valorTotal" class="money form-control" type="text" value="" readonly>
                                 </div>
                             </div>
                         </div>
@@ -265,7 +253,7 @@
             </div>
             <div style="position: relative;" class="modal-footer">
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
-                <button type="button" onclick="gerarFinanceiro()" class="salvar btn btn-primary">Salvar</button>
+                <button type="button" onclick="gerarFinanceiro('compra')" class="salvar btn btn-primary">Salvar</button>
             </div>
         </div>
     </div>

@@ -3,32 +3,16 @@ var db = require("../config/conexao");
 const Pessoa = require("./Pessoa");
 
 const ContasPagar = db.define('pagamento', {
-  formaPagamento: {
-    type: Sequelize.STRING
-  },
-  valor: {
-    type: Sequelize.DECIMAL(10, 2)
-  },
-  valorPago: {
-    type: Sequelize.DECIMAL(10, 2)
-  },
-  desconto: {
-    type: Sequelize.DECIMAL(10, 2)
-  },
   dataCompetencia: {
     type: Sequelize.DATEONLY
   },
-  dataVencimento: {
-    type: Sequelize.DATEONLY
+  quantidadeDeParcelas: {
+    type: Sequelize.INTEGER
   },
-  dataPagamento: {
-    type: Sequelize.DATEONLY
+  valorTotal: {
+    type: Sequelize.DECIMAL(10, 2)
   },
-  pago: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
-  },
-  compra: {
+  compraId: {
     type: Sequelize.INTEGER
   }
 })

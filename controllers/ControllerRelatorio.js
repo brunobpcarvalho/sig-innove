@@ -151,11 +151,11 @@ exports.GerarPdfEstoqueDeSeguranca = (req, res) => {
 			doc.pipe(res)
 			doc.end()
 		}).catch(erro => {
-			req.flash("error_msg", "Erro ao buscar produtos!")
+			req.flash("msg_erro", "Erro ao buscar produtos!")
 			res.redirect("/relatorios/estoque-de-seguranca")
 		})
 	}).catch(erro => {
-		req.flash("error_msg", "Erro ao buscar dados da Empresa!")
+		req.flash("msg_erro", "Erro ao buscar dados da Empresa!")
 		res.redirect("/relatorios/estoque-de-seguranca")
 	})
 }
@@ -227,11 +227,11 @@ exports.GerarPdfLucroProduto = (req, res) => {
 			doc.pipe(res)
 			doc.end()
 		}).catch(erro => {
-			req.flash("error_msg", "Erro ao buscar produtos! - " + erro)
+			req.flash("msg_erro", "Erro ao buscar produtos! - " + erro)
 			res.redirect("/relatorios/lucro-por-produto")
 		})
 	}).catch(erro => {
-		req.flash("error_msg", "Erro ao buscar dados da Empresa! - " + erro)
+		req.flash("msg_erro", "Erro ao buscar dados da Empresa! - " + erro)
 		res.redirect("/relatorios/lucro-por-produto")
 	})
 }
@@ -337,7 +337,7 @@ exports.GerarPdfPessoas = (req, res) => {
 			res.redirect("/pessoas/list-pessoas")
 		})
 	}).catch(erro => {
-		req.flash("error_msg", "Erro ao buscar dados da Empresa! - " + erro)
+		req.flash("msg_erro", "Erro ao buscar dados da Empresa! - " + erro)
 		res.redirect("/pessoas/list-pessoas")
 	})
 }

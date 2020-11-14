@@ -1,0 +1,275 @@
+<div class="box">
+    <div class="box-header">
+        <h1 class="box-title">{{#ifCond caixa.status "aberto"}}Editar Caixa - Caixa aberto! {{/ifCond}}{{#ifCond caixa.status "fechado"}} Editar Caixa - Caixa Fechado!{{/ifCond}}</h1>
+
+        <div class="box-tools pull-right">
+            {{#ifCond caixa.status "aberto"}}
+            &nbsp
+            <button data-toggle="modal" data-target="#modalAdicionarDinheiro" type="button" class="btn btn-success"> Adicionar Dinheiro </button>
+            <button data-toggle="modal" data-target="#modalRetirarDinheiro" type="button" class="btn btn-danger"> Retirar Dinheiro </button>
+            <button type="button" name="button" class="btn btn-primary" data-toggle="modal" data-target="#modalFecharCaixa"
+            data-totals="{{../caixa.totalSaidas}}"
+            data-totale="{{../caixa.totalEntradas}}"
+            data-saldo="{{../caixa.saldoAtual}}"
+            data-troco="{{../caixa.troco}}"> Fechar Caixa</button>
+            {{/ifCond}}
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="box-body">
+            <div class="col-xs-5">
+                <h3>Informações do Caixa</h3>
+                <span>Usuário: {{caixa.usuario}}</span>
+                <br>
+                <span>Data de Abertura: {{#formatDateHour caixa.dataAbertura}}{{/formatDateHour}}</span>
+                <br>
+                <span>Data de Fechamento: {{#ifCond caixa.status "aberto"}} Caixa aberto! {{/ifCond}}{{#ifCond caixa.status "fechado"}} {{#formatDateHour caixa.dataFechamento}}{{/formatDateHour}} {{/ifCond}}</span>
+                <br>
+                <span>Troco: R${{caixa.troco}}</span>
+                <br>
+                <span>Total de Entradas: R${{caixa.totalEntradas}}</span>
+                <br>
+                <span>Total de Saidas: R${{caixa.totalSaidas}}</span>
+                <br>
+                <span>Saldo Atual: R${{caixa.saldoAtual}}</span>
+                <br>
+                <span>Saldo Final do Sistema: R${{caixa.saldoFinaldoSistema}}</span>
+                <br>
+                <span>Saldo Final em Caixa: R${{caixa.saldoFinaldoCaixa}}</span>
+                {{#ifCond caixa.status "fechado"}}
+                <br>
+                <span>Observação: {{../caixa.observacao}}</span>
+                {{/ifCond}}
+            </div>
+        </div>
+        <div style="margin-top:10px; background-color: #eeeeee;" class="box box-solid">
+            <div class="box-header with-border">
+                <h4 class="modal-title">Transações</h4>
+            </div>
+            <div class="box-body table-responsive no-padding">
+                <table id="tabelaDeTransacoes" class="table text-center">
+                    <thead>
+                        <tr>
+                            <th>Hora da Movimentação</th>
+                            <th>Origem</th>
+                            <th>Tipo de Recebimento</th>
+                            <th>Tipo de Movimento</th>
+                            <th>Valor</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each movCaixa}}
+                        <tr {{#ifCond tipoDeMovimento "Entrada"}} class="success" {{/ifCond}} {{#ifCond tipoDeMovimento "Saida"}} class="danger" {{/ifCond}}>
+                            <td>{{#formatDateHour horaDaMovimentacao}}{{/formatDateHour}}</td>
+                            <td>{{origem}}</td>
+                            <td>{{tipoDeRecebimento}}</td>
+                            <td>{{tipoDeMovimento}}</td>
+                            <td>R${{valor}}</td>
+                            <td>{{usuario}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div style="position: relative;" class="modal-footer">
+            <a href="/caixa/index">
+                <button type="button" class="btn btn-default pull-left"> Voltar </button>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<!--   Fechar Caixa  -->
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalFecharCaixa">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"> Fechamento de Caixa </h4>
+            </div>
+            <div class="box-body">
+                <form name="formFecharCaixa" id="formFecharCaixa" method="post">
+                    <input type="hidden" name="id" id="id" value="{{caixa.id}}">
+                    <input type="hidden" name="status" id="status" value="fechado">
+
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <div class="input-group">
+                                <span>Data de Fechamento: </span>
+                                <input class="form-control" type="datetime-local" name="dataFechamento" id="dataFechamento" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-4 col-sm-6">
+                            <div class="box box-success">
+                                <div class="box-header with-border text-center">
+                                    <h3 class="box-title">Entradas</h3>
+                                </div>
+                                <div class="box-body">
+                                    <div class="input-group">
+                                        <span>Saldo Inicial:</span>
+                                        <input class="money form-control" type="text" id="saldoInicial" name="saldoInicial" value="{{caixa.troco}}" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <span>Dinheiro:</span>
+                                        <input class="money form-control" type="text" id="dinheiro" name="dinheiro" value="" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <span>Cartão:</span>
+                                        <input class="money form-control" type="text" id="cartao" name="cartao" value="" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <span>Reforço:</span>
+                                        <input class="money form-control" type="text" id="reforco" name="reforco" value="" readonly>
+                                    </div>
+                                </div>
+                                <div class="modal-footer bg-success">
+                                    <div class="input-group">
+                                        <span>Total:</span>
+                                        <input class="money form-control" type="text" id="totalEntradas" name="totalEntradas" value="" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 col-sm-6">
+                            <div class="box box-danger">
+                                <div class="box-header with-border text-center">
+                                    <h3 class="box-title">Saídas</h3>
+                                </div>
+                                <div class="box-body">
+                                    <div class="input-group">
+                                        <span>Pagamentos:</span>
+                                        <input class="money form-control" type="text" id="pagamentos" name="pagamentos" value="" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <span>Retiradas:</span>
+                                        <input class="money form-control" type="text" id="retiradas" name="retiradas" value="" readonly>
+                                    </div>
+                                </div>
+                                <div class="modal-footer bg-danger">
+                                    <div class="input-group">
+                                        <span>Total:</span>
+                                        <input class="money form-control" type="text" id="totalSaidas" name="totalSaidas" value="" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="input-group">
+                                <span>Saldo Final:</span>
+                                <input class="money form-control" type="text" name="saldoFinaldoSistema" id="saldoFinaldoSistema" value="0.00" readonly>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="input-group">
+                                <span>Saldo em Caixa:</span><span class="obrigatorio"> *</span>
+                                <input class="money form-control" type="text" name="saldoFinaldoCaixa" id="saldoFinaldoCaixa" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span>Observações:</span>
+                        <textarea class="form-control" id="observacao" name="observacao" rows="4" cols="42"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div style="position: relative;" class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="fecharCaixa()" class="salvar btn btn-primary">Fechar Caixa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--   Add Dinheiro  -->
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalAdicionarDinheiro">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"> Adicionar Dinheiro </h4>
+            </div>
+            <div class="box-body">
+                <form name="formAdicionarDinheiro" id="formAdicionarDinheiro" method="post">
+                    <input type="hidden" name="caixaId" id="caixaId" value="{{caixa.id}}">
+                    <input type="hidden" name="origem" id="origem" value="Reforço">
+                    <input type="hidden" name="tipoDeRecebimento" id="tipoDeRecebimento" value="Dinheiro">
+                    <input type="hidden" name="tipoDeMovimento" id="tipoDeMovimento" value="Entrada">
+                    <input type="hidden" name="usuarioId" id="usuarioId" value="{{user.id}}">
+
+                    <div class="box box-success">
+                        <div class="box-body">
+                            <div class="input-group">
+                                <span>Hora da Movimentação:</span>
+                                <input class="form-control" type="datetime-local" name="horaDaMovimentacao" id="horaDaMovimentacao" readonly>
+                            </div>
+
+                            <div class="input-group">
+                                <span>Valor:</span><span class="obrigatorio"> *</span>
+                                <input class="money form-control" type="text" name="valor" id="valor" value="">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div style="position: relative;" class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="adicionarDinheiro()" class="salvar btn btn-success"> Adicionar </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--   Retirar Dinheiro  -->
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalRetirarDinheiro">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"> Retirar Dinheiro </h4>
+            </div>
+            <div class="box-body">
+                <form name="formRetirarDinheiro" id="formRetirarDinheiro" method="post">
+                    <input type="hidden" name="caixaId" id="caixaId" value="{{caixa.id}}">
+                    <input type="hidden" name="origem" id="origem" value="Retirada">
+                    <input type="hidden" name="tipoDeRecebimento" id="tipoDeRecebimento" value="Dinheiro">
+                    <input type="hidden" name="tipoDeMovimento" id="tipoDeMovimento" value="Saida">
+                    <input type="hidden" name="usuarioId" id="usuarioId" value="{{user.id}}">
+
+                    <div class="box box-danger">
+                        <div class="box-body">
+                            <div class="input-group">
+                                <span>Hora da Movimentação:</span>
+                                <input class="form-control" type="datetime-local" name="horaDaMovimentacao" id="horaDaMovimentacao" readonly>
+                            </div>
+
+                            <div class="input-group">
+                                <span>Valor:</span><span class="obrigatorio"> *</span>
+                                <input class="money form-control" type="text" name="valor" id="valor" value="">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div style="position: relative;" class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="retirarDinheiro()" class="salvar btn btn-danger"> Retirar </button>
+            </div>
+        </div>
+    </div>
+</div>

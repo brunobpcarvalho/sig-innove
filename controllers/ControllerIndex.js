@@ -20,28 +20,28 @@ const Querys = {
 	' GROUP BY EXTRACT(MONTH FROM "dataDeVencimento") ' +
 	'ORDER BY EXTRACT(MONTH FROM "dataDeVencimento") ASC',
 
-	valorPagamentosAnual: 'SELECT EXTRACT(MONTH FROM "dataVencimento") AS "mes", ' +
-	'Sum("valor") as "vlrPagaAnual" ' +
-	'FROM "pagamentos" ' +
-	'WHERE EXTRACT(YEAR FROM "dataVencimento") = ' + year +
-	' GROUP BY EXTRACT(MONTH FROM"dataVencimento") '+
-	'ORDER BY EXTRACT(MONTH FROM"dataVencimento") ASC',
+	valorPagamentosAnual: 'SELECT EXTRACT(MONTH FROM "dataDeVencimento") AS "mes", ' +
+	'Sum("valorDaParcela") as "vlrPagaAnual"' +
+	'FROM "parcela_pagamentos" '+
+	'WHERE EXTRACT(YEAR FROM "dataDeVencimento") = ' + year +
+	' GROUP BY EXTRACT(MONTH FROM "dataDeVencimento") ' +
+	'ORDER BY EXTRACT(MONTH FROM "dataDeVencimento") ASC',
 
 	vlrRecebidoNoMes: 'SELECT SUM("valorPago") ' +
 	'FROM parcela_recebimentos '+
-	'WHERE EXTRACT(MONTH FROM "dataDePagamento") = ' + month + ' AND status = true',
+	'WHERE EXTRACT(MONTH FROM "dataDeVencimento") = ' + month + ' AND status = true',
 
 	vlrAReceberNoMes: 'SELECT SUM("valorDaParcela") ' +
 	'FROM parcela_recebimentos ' +
 	'WHERE EXTRACT(MONTH FROM "dataDeVencimento") = ' + month,
 
 	vlrPagoNoMes: 'SELECT SUM("valorPago") ' +
-	'FROM pagamentos ' +
-	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month + ' AND pago = true',
+	'FROM parcela_pagamentos ' +
+	'WHERE EXTRACT(MONTH FROM "dataDeVencimento") = ' + month + ' AND status = true',
 
-	vlrAPagarNoMes: 'SELECT SUM("valor") ' +
-	'FROM pagamentos ' +
-	'WHERE EXTRACT(MONTH FROM "dataVencimento") = ' + month,
+	vlrAPagarNoMes: 'SELECT SUM("valorDaParcela") ' +
+	'FROM parcela_pagamentos ' +
+	'WHERE EXTRACT(MONTH FROM "dataDeVencimento") = ' + month,
 
 	lucratividade: 'SELECT "descricao", ("valorUnitario" - "valorCusto") AS "lucratividade", ' +
 	'CAST((("valorUnitario" - "valorCusto") / "valorUnitario") * 100 AS DECIMAL(10,2)) AS "margemDeLucro" ' +

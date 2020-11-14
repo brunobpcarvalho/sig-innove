@@ -5,6 +5,8 @@ const ContasReceber = require("../models/ContasReceber")
 const Venda = require("../models/Venda")
 const Pessoa = require("../models/Pessoa")
 const ParcelaContaReceber = require("../models/ParcelaContaReceber")
+const Caixa = require("../models/Caixa")
+const MovimentacaoCaixa = require("../models/MovimentacaoCaixa")
 
 exports.index = (req, res) => {
 	ContasReceber.findAll({include: [{ model: Pessoa, as: 'pessoa' }]}).then((dadosContaReceber) => {
@@ -33,16 +35,16 @@ exports.index = (req, res) => {
 			}
 			res.render("contas-receber/index", {contasReceber: contextContasReceber.contasReceber, clientes: contextClientes.clientes})
 		}).catch(erro => {
-			req.flash("error_msg", "Erro ao buscar ou listar Clientes!: " + erro)
+			req.flash("msg_erro", "Erro ao buscar ou listar Clientes!: " + erro)
 			res.redirect("/index")
 		})
 	}).catch((erro) => {
-		req.flash("error_msg", "Erro ao buscar ou listar Contas a Receber!: " + erro)
+		req.flash("msg_erro", "Erro ao buscar ou listar Contas a Receber!: " + erro)
 		res.redirect("/index")
 	})
 }
 
-exports.store = async (req, res) => {
+exports.create = async (req, res) => {
 	const recebimento = await ContasReceber.create({ dataCompetencia, quantidadeDeParcelas, valorTotal, pessoaId } = req.body)
 
 	const parcela = req.body.parcela
@@ -69,7 +71,43 @@ exports.store = async (req, res) => {
 			status: status[i],
 			recebimentoId: recebimento.id
 		})
-		parcelaContaReceber.save().then(() => {
+
+		const caixaAberto = await Caixa.findOne({where: {status: 'aberto'}})
+
+		if(parcelaContaReceber.status === true && caixaAberto != null){
+			var horaDaMovimentacao = new Date().DataHoraAtual()
+
+			const movCaixa = new MovimentacaoCaixa({
+				horaDaMovimentacao: horaDaMovimentacao,
+				origem: 'Recebimento',
+				tipoDeRecebimento: parcelaContaReceber.formaDePagamento,
+				tipoDeMovimento: 'Entrada',
+				valor: parcelaContaReceber.valorPago,
+				recebimentoId: recebimento.id,
+				caixaId: caixaAberto.id,
+				usuarioId: req.body.usuarioId,
+			})
+
+			var totalEntradas = parseFloat(caixaAberto.totalEntradas) + parseFloat(parcelaContaReceber.valorPago)
+			var saldoAtual = parseFloat(caixaAberto.saldoAtual) + parseFloat(parcelaContaReceber.valorPago)
+
+			caixaAberto.totalEntradas = totalEntradas,
+			caixaAberto.saldoAtual = saldoAtual
+
+			await caixaAberto.save().then(() => {
+			}).catch((erro) => {
+				req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
+				res.redirect("/contas-receber/index")
+			})
+
+			await movCaixa.save().then(() => {
+			}).catch((erro) => {
+				req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
+				res.redirect("/contas-receber/index")
+			})
+		}
+
+		await parcelaContaReceber.save().then(() => {
 		}).catch((erro) => {
 			req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
 			res.redirect("/contas-receber/index")
@@ -144,11 +182,11 @@ exports.edit = (req, res) => {
 			}
 			res.render("contas-receber/edit", {recebimento: recebimento, parcelaContaReceber: contextParcelaContaReceber.parcelas})
 		}).catch((erro) => {
-			req.flash("error_msg", "Erro ao buscar as parcelas do recebimento!")
+			req.flash("msg_erro", "Erro ao buscar as parcelas do recebimento!")
 			res.redirect("/contas-receber/index")
 		})
 	}).catch((erro) => {
-		req.flash("error_msg", "Erro ao buscar o recebimento!")
+		req.flash("msg_erro", "Erro ao buscar o recebimento!")
 		res.redirect("/contas-receber/index")
 	})
 }
@@ -203,3 +241,9 @@ exports.update = (req, res) => {
 		res.redirect("/contas-receber/index")
 	})
 }
+
+Date.prototype.DataHoraAtual = (function() {
+	var local = new Date(this);
+	local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+	return local.toJSON().slice(0,19);
+});

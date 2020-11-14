@@ -37,7 +37,7 @@ exports.edit = (req, res) => {
 		}
 		res.render("usuarios/edit", {usuario: usuario})
 	}).catch((erro) => {
-		req.flash("error_msg", "Erro ao buscar ou listar essa venda!")
+		req.flash("msg_erro", "Erro ao buscar ou listar essa venda!")
 		res.redirect("/usuarios/index")
 	})
 }

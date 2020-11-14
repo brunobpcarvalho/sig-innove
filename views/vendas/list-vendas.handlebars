@@ -7,16 +7,6 @@
             <a href="/vendas/add-venda"><button type="button" class="btn btn-primary"> Nova Venda </button></a>
 
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filtroVenda"> <i class="fa fa-filter"></i> Filtrar </button>
-            <div class="btn-group">
-                <form action="" method="post">
-                    <input type="hidden" name="filterTipo" value="{{values.tipo}}">
-                    <input type="hidden" name="filterFuncao" value="{{values.funcao}}">
-                    <input type="hidden" name="filterCidade" value="{{values.cidade}}">
-                    <input type="hidden" name="filterUf" value="{{values.uf}}">
-                    <input type="hidden" name="filterAtivo" value="{{values.ativo}}">
-                    <button type="submit" name="button" class="btn btn-primary"> Gerar PDF </button>
-                </form>
-            </div>
         </div>
         {{#if filters}}
         <div class="box-tools pull-right">
@@ -66,12 +56,12 @@
                             <div class="btn-group">
                                 {{#ifCond status "VENDA"}}
                                 <a>
-                                    <button title="Estornar Venda" type="button" onclick="EstornarVenda({{../id}})" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
+                                    <button title="Estornar Venda" type="button" onclick="estornar('Venda', '/vendas/list-vendas/estornar-venda/{{../id}}')" class="btn bg-orange"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-reply"></i></button>
                                 </a>
                                 <a>
                                     <button title="Gerar Financeiro"
-                                    data-venda="{{../id}}"
-                                    data-cliente="{{../pessoa}}"
+                                    data-id="{{../id}}"
+                                    data-pessoa="{{../pessoa}}"
                                     data-quantidade_de_parcelas="{{../parcelas}}"
                                     data-valor_total="{{../valorTotal}}"
                                     data-data_de_competencia="{{../dataVenda}}"
@@ -189,11 +179,11 @@
             <div>
                 <div class="box-body">
                     <form name="formGerarFinanceiro" id="formGerarFinanceiro" method="post">
-                        <input type="hidden" name="vendaId" id="venda">
+                        <input type="hidden" name="vendaId" id="id">
                         <div class="row">
                             <div class="col-xs-5">
                                 <span>Cliente: </span>
-                                <input class="form-control" id="cliente" name="pessoaId" readonly/>
+                                <input class="form-control" id="pessoa" name="pessoaId" readonly/>
                             </div>
                             <div class="col-xs-3">
                                 <div class="input-group">
@@ -265,7 +255,7 @@
             </div>
             <div style="position: relative;" class="modal-footer">
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancelar</button>
-                <button type="button" onclick="gerarFinanceiro()" class="salvar btn btn-primary">Salvar</button>
+                <button type="button" onclick="gerarFinanceiro('venda')" class="salvar btn btn-primary">Salvar</button>
             </div>
         </div>
     </div>

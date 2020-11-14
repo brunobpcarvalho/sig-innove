@@ -6,7 +6,7 @@ const {Admin} = require("../helpers/Admin")
 
 router.get('/index', Admin, ControllerContasReceber.index);
 
-router.post('/store', Admin, ControllerContasReceber.store);
+router.post('/create', Admin, ControllerContasReceber.create);
 
 router.post('/destroy', Admin, ControllerContasReceber.destroy);
 

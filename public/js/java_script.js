@@ -6,11 +6,14 @@ $('.edit').click( function() {
 	$('.editar').css("visibility","visible");
 	$('.salvar').css("visibility","hidden");
 })
+
+
 $('.money').mask("###0.00", {reverse: true});
 $('#cnpj').mask('00.000.000/0000-00');
 $('#telefone').mask('(00) 0000-0000');
 $('#celular').mask('(00) 00000-0000');
 $('#cpf_cnpj').mask('000.000.000-00');
+
 
 /* --------------  FORMULARIO DE PESSOAS --------------------------------------*/
 
@@ -220,9 +223,38 @@ function validarFormProduto(valor){
 	);
 }
 
-$('#modalProduto').on('show.bs.modal', function (event) {
+$(document).on('show.bs.modal', '#modalProduto', function (event) {
 	var button = $(event.relatedTarget)
 	var modal = $(this)
+	var acao = button.data('acao')
+	var id = button.data('id')
+	if(acao === 'adicionar'){
+		$('#tabelaDeHistorico tbody tr').remove()
+	} else {
+		$.ajax({
+			dataType: 'json',
+			url: '/compras/historico/' + id,
+			success: function(data){
+				console.log('data', data);
+				if(data.length < 1){
+					console.log('entrou');
+					$('#tabelaDeHistorico tbody tr').remove()
+					return false
+				}
+				$('#tabelaDeHistorico tbody tr').remove()
+				for(var i=0; data.length > i; i++){
+					$('#tabelaDeHistorico tbody').append(
+						'<tr>' +
+						'<td>' + data[i].compra.id  + '</td>' +
+						'<td>' + data[i].compra.pessoa.nome +'</td>' +
+						'<td>' + data[i].compra.dataCompra + '</td>' +
+						'<td> R$' + data[i].valorUnitario + '</td>' +
+						'</tr>'
+					)
+				}
+			}
+		});
+	}
 	var campos = ['id', 'descricao', 'quantidade', 'nome_fabricante', 'descricao_modelo',
 	'genero', 'valor_unitario', 'valor_custo', 'prazo_reposicao', 'ativo']
 	passarDadosParaModal(modal, button, campos)
@@ -230,68 +262,29 @@ $('#modalProduto').on('show.bs.modal', function (event) {
 
 /* ----------------------------------- VENDA ------------------------------------------------------*/
 
+function calcularTotal(){
+	var subTotal = $('#tabelaItens').find("td:nth-child(4) input")
+	var desconto = $('#desconto').val()
+	var total = 0
+
+	for (var i = 0; i < subTotal.length; i++) {
+		total += parseFloat(subTotal[i].value)
+	}
+
+	if(desconto > total){
+		$('#desconto').val('0.00');
+		sweetAlert('warning', 'Atenção...', "O valor do desconto é maior que o Total da Venda!")
+	} else {
+		total -= desconto;
+	}
+	return total.toFixed(2);
+}
+
+function SubTotal(vlrUnit, quant){
+	return (vlrUnit * quant).toFixed(2);
+}
+
 $(document).ready(function(){
-	//Remove o botão de excluir do primeiro item ao editar uma venda.
-	$('.tdAcao button').first().css("visibility", "hidden");
-
-	//Verifica se o Status é  igual a VENDA, e desabilita os inputs e botões.
-	if($("#status").val() == 'VENDA'){
-		var formVenda = $("#formVenda");
-		formVenda.find("input").attr("disabled", true)
-		formVenda.find("select").attr("disabled", true)
-		$(".desativado").attr("disabled", true)
-	}
-
-	//Não deixa o valor dos campos de quantidade ficarem menores que 0.
-	$(document).on( 'focusout', '.quantidade', function(){
-		if($(this).val() < 0){
-			$(this).val('1');
-		}
-	});
-	$('.inputData').val(new Date().DataAtual());
-
-	var input;
-
-	$(document).on('blur', '#desconto', function(){
-		$('#total').val(Total());
-	});
-
-	$(document).on('click', '.linha', function(){
-		input = this.getElementsByTagName("INPUT");
-	});
-
-	$(document).on('blur', '.valorUnitario', function(){
-		input[3].value = SubTotal(this.value, input[1].value)
-		$('#total').val(Total());
-	});
-
-	$(document).on('change', '.quantidade', function(){
-		input[3].value = SubTotal(input[2].value, this.value)
-		$('#total').val(Total());
-	});
-
-	function SubTotal(vlrUnit, quant){
-		return (vlrUnit * quant).toFixed(2);
-	}
-	function Total(){
-		var tabela = document.body.querySelectorAll("#tabelaItens td:nth-child(4) input");
-		var total = 0.0;
-		var desconto = $('#desconto').val();
-
-		for(var x = 0; x < tabela.length; x++){
-			var val = parseFloat(tabela[x].value);
-
-			total += val;
-		}
-		if(desconto > total){
-			$('#desconto').val('0.00');
-			sweetAlert('warning', 'Atenção...', "O valor do desconto é maior que o Total da Venda!")
-		}else {
-			total -= desconto;
-		}
-		return total.toFixed(2);
-	}
-
 	var tdItens = $(".tdItens").html();
 	var tdQuant = $(".tdQuant").html();
 	var tdValor = $(".tdValor").html();
@@ -300,10 +293,10 @@ $(document).ready(function(){
 	$(document).on('click', '#addItem', function(){
 		var newRow = $('<tr class="linha">');
 		var cols = "";
-		cols += '<td>' + tdItens + '</td>';
-		cols += '<td>' + tdQuant + '</td>';
-		cols += '<td>' + tdValor + '</td>';
-		cols += '<td>' + tdTotal + '</td>';
+		cols += '<td class="tdItens">' + tdItens + '</td>';
+		cols += '<td class="tdQuant">' + tdQuant + '</td>';
+		cols += '<td class="tdValor">' + tdValor + '</td>';
+		cols += '<td class="tdTotal">' + tdTotal + '</td>';
 		cols += '<td>' + '<button type="button" onclick="RemoveTableRow(this)" name="button" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>' + '</td>';
 
 		newRow.append(cols);
@@ -317,37 +310,70 @@ $(document).ready(function(){
 	});
 
 	$(document).on('change', '.item', function () {
+		var quantidade = $(this).closest('tr').find(".tdQuant input").val()
+		var inputValorUnitario = $(this).closest('tr').find(".tdValor input")
+		var subTotal = $(this).closest('tr').find(".tdTotal input")
+		var produto = $(this).val()
 
-		var prod = input[0].value;
-		var valor = $('#listaProdutos [value="' + prod + '"]').data('valor')
-		input[2].value = valor;
 
-		input[3].value = SubTotal(input[2].value, input[1].value)
-		$('#total').val(Total());
+		var valorUnitario = $('#listaProdutos [value="' + produto + '"]').data('valor')
+		inputValorUnitario.val(valorUnitario)
+		subTotal.val(SubTotal(valorUnitario, quantidade))
 
+		$('#total').val(calcularTotal());
 		$('.money').mask("###0.00", {reverse: true});
 		return false;
 	});
 
-	$(document).on(SalvarVenda = function (opcao) {
-		var TabelaItens = $("#tabelaItens");
-		var inputProduto =  TabelaItens.find("td:nth-child(1) input");
-		var inputQuantidade = TabelaItens.find("td:nth-child(2) input");
+	$( "#desconto" ).change(function(){
+		$('#total').val(calcularTotal());
+	});
 
-		var quantidade = [];
-		var ids = [];
+	$(document).on('change', '.valorUnitario', function(){
+		var valorUnitario = $(this).val()
+		var quantidade = $(this).closest('tr').find(".tdQuant input").val()
+		var valorTotal = $(this).closest('tr').find(".tdTotal input")
+
+		valorTotal.value = SubTotal(valorUnitario, quantidade)
+		$('#total').val(calcularTotal());
+	});
+
+	$(document).on('change', '.quantidade', function(){
+		var quantidade = $(this).val()
+		var valorUnitario = $(this).closest('tr').find(".tdValor input").val()
+		var subTotal = $(this).closest('tr').find(".tdTotal input")
+
+		if(quantidade < 1){
+			$(this).val(1)
+			quantidade = 1
+		}
+
+		subTotal.val(SubTotal(valorUnitario, quantidade))
+		$('#total').val(calcularTotal());
+	});
+
+	$(document).on(SalvarVenda = function (opcao) {
+		var TabelaItens = $("#tabelaItens")
+		var inputProduto =  TabelaItens.find("td:nth-child(1) input")
+		var inputQuantidade = TabelaItens.find("td:nth-child(2) input")
+
+		var quantidade = []
+		var ids = []
 
 		var produto = inputProduto[0].value;
-		var cliente = $("#cliente").val();
+		var cliente = $("#cliente").val()
+		var parcelas = $("#parcelas").val()
 		var erros = [];
 
-		if(!cliente || typeof cliente == undefined || cliente == null){erros.push("Cliente");}
-		if(!produto || typeof produto == undefined || produto == null){erros.push("Produto");}
+		if(!cliente || typeof cliente == undefined || cliente == null){erros.push("Cliente")}
+		if(!produto || typeof produto == undefined || produto == null){erros.push("Produto")}
+		if(!parcelas || typeof parcelas == undefined || parcelas == null){erros.push("Parcelas")}
 
 		if(erros.length > 0){
 			sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
 			return false;
 		}
+
 		var produtoNaoExistente = [];
 		for (var i = 0; i < inputProduto.length; i++) {
 			var prod = inputProduto[i].value;
@@ -392,11 +418,72 @@ $(document).ready(function(){
 			document.formVenda.action = '/vendas/add-venda/nova';
 			document.formVenda.submit();
 
-		} else if(opcao == "editar"){
+		} else {
 			document.formVenda.action = '/vendas/list-vendas/update';
 			document.formVenda.submit();
 		}
 	});
+});
+
+$(document).on(SalvarCompra = function (opcao) {
+	var TabelaItens = $("#tabelaItens")
+	var inputProduto =  TabelaItens.find("td:nth-child(1) input")
+
+	var quantidade = []
+	var ids = []
+
+	var produto = inputProduto[0].value;
+	var fornecedor = $("#fornecedor").val()
+	var parcelas = $("#parcelas").val()
+	var erros = [];
+
+	if(!fornecedor || typeof fornecedor == undefined || fornecedor == null){erros.push("Fornecedor")}
+	if(!produto || typeof produto == undefined || produto == null){erros.push("Produto")}
+	if(!parcelas || typeof parcelas == undefined || parcelas == null){erros.push("Parcelas")}
+
+	if(erros.length > 0){
+		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
+		return false;
+	}
+
+	var produtoNaoExistente = [];
+	for (var i = 0; i < inputProduto.length; i++) {
+		var prod = inputProduto[i].value;
+		var id = $('#listaProdutos [value="' + prod + '"]').data('id')
+
+		if(id == undefined){
+			produtoNaoExistente.push(" " + prod);
+		}
+
+		ids.push(id);
+	}
+
+	if(produtoNaoExistente.length > 0){
+		sweetAlert('warning', 'Atenção...', "Produto não cadastrado!" + produtoNaoExistente)
+		return false;
+	}
+
+	for(var i = 0; i < inputProduto.length; i++) {
+		inputProduto[i].value = ids[i];
+	}
+
+	if(opcao == 'adicionar'){
+		var value = $('#fornecedor').val();
+		var id = $('#listaFornecedor [value="' + value + '"]').data('value')
+
+		if(id == undefined){
+			sweetAlert('warning', 'Atenção...', "Fornecedor não cadastrado!")
+			return false;
+		}
+		$('#fornecedor').val(id);
+
+		document.formCompra.action = '/compras/create';
+		document.formCompra.submit();
+
+	} else {
+		document.formCompra.action = '/compras/update';
+		document.formCompra.submit();
+	}
 });
 
 $('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
@@ -404,13 +491,13 @@ $('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
 	var quantidadeDeParcelas = button.data('quantidade_de_parcelas')
 	var valorTotal = button.data('valor_total')
 	var modal = $(this)
-	var campos = ['venda', 'cliente', 'data_de_competencia', 'quantidade_de_parcelas', 'valor_total']
+	var campos = ['id', 'pessoa', 'data_de_competencia', 'quantidade_de_parcelas', 'valor_total']
 
 	adicionarParcelas(quantidadeDeParcelas, valorTotal)
 	passarDadosParaModal(modal, button, campos)
 })
 
-$(document).on(gerarFinanceiro = function(){
+$(document).on(gerarFinanceiro = function(tipo){
 	var tabelaDeParcelas = $("#tabelaDeParcelas")
 	var dataDeVencimento = tabelaDeParcelas.find("td:nth-child(4) input")
 	var erros = []
@@ -421,14 +508,17 @@ $(document).on(gerarFinanceiro = function(){
 		sweetAlert('warning', 'Atenção...', "Preencha todos os campos de Data de Vencimento!")
 		return false;
 	}
-
-	document.formGerarFinanceiro.action = '/vendas/list-vendas/gerar-financeiro';
+	if (tipo === 'venda') {
+		document.formGerarFinanceiro.action = '/vendas/list-vendas/gerar-financeiro';
+	} else {
+		document.formGerarFinanceiro.action = '/compras/gerar-financeiro';
+	}
 	document.formGerarFinanceiro.submit();
 });
 
-$(document).on(EstornarVenda = function(id){
+$(document).on(estornar = function(tipo, url){
 	Swal.fire({
-		title: 'Deseja realmente estornar esta venda?',
+		title: 'Deseja realmente estornar esta ' + tipo + ' ?',
 		icon: 'warning',
 		showCancelButton: true,
 		confirmButtonColor: '#3085d6',
@@ -437,18 +527,21 @@ $(document).on(EstornarVenda = function(id){
 		confirmButtonText: 'Sim, estornar!'
 	}).then((result) => {
 		if (result.value) {
-			location.href = '/vendas/list-vendas/estornar-venda/' + id;
+			location.href = url;
 		}
 	})
 });
 
 /* --------------  FORMULARIO DE RECEBIMENTO --------------------------------------*/
 
-$(document).on(validarFormRecebimento = function(opcao){
+$(document).on(validarFormRecebimentoPagamento = function(opcao, tipo){
 	var valorParcelas = $("#tabelaDeParcelas").find("td:nth-child(3) input")
 	var dataDeVencimentos = $("#tabelaDeParcelas").find("td:nth-child(4) input")
+	var valorPago = $("#tabelaDeParcelas").find("td:nth-child(5) input")
+	var status = $("#tabelaDeParcelas").find("td:nth-child(8) select")
 
-	var cliente = $('#cliente').val()
+
+	var pessoa = $('#pessoa').val()
 	var dataCompetencia = $('#dataCompetencia').val()
 	var valorTotal = $('#valorTotal').val()
 	var quantidadeDeParcelas = $('#quantidadeDeParcelas').val()
@@ -457,9 +550,13 @@ $(document).on(validarFormRecebimento = function(opcao){
 	for (var i = 0; i < valorParcelas.length; i++) {
 		if(!valorParcelas[i].value || typeof valorParcelas[i].value == undefined || valorParcelas[i].value == null){erros.push(" Valor da Parcela");}
 		if(!dataDeVencimentos[i].value || typeof dataDeVencimentos[i].value == undefined || dataDeVencimentos[i].value == null){erros.push(" Data de Vencimento");}
+
+		if(status[i].value == 'true'){
+			if(!valorPago[i].value || typeof valorPago[i].value == undefined || valorPago[i].value == null || valorPago[i].value == 0.00){erros.push(" Valor Pago");}
+		}
 	}
 
-	if(!cliente || typeof cliente == undefined || cliente == null){erros.push(" Pagador")}
+	if(!pessoa || typeof pessoa == undefined || pessoa == null){erros.push(" Pagador/Recebedor")}
 	if(!dataCompetencia || typeof dataCompetencia == undefined || dataCompetencia == null){erros.push(" Data de Competencia")}
 	if(!valorTotal || typeof valorTotal == undefined || valorTotal == null || valorTotal == 0){erros.push(" Valor Total")}
 	if(!quantidadeDeParcelas || typeof quantidadeDeParcelas == undefined || quantidadeDeParcelas == null || quantidadeDeParcelas == 0){erros.push(" Quantidade de Parcelas")}
@@ -470,17 +567,25 @@ $(document).on(validarFormRecebimento = function(opcao){
 	}
 
 	if(opcao === 'adicionar'){
-		var id = $('#listaCliente [value="' + cliente + '"]').data('value')
-		$('#cliente').val(id)
-
-		document.formRecebimento.action = '/contas-receber/store'
-		document.formRecebimento.submit()
-	}else if(opcao === 'editar'){
-		document.formRecebimento.action = '/contas-receber/update'
-		document.formRecebimento.submit()
+		var id = $('#listaPessoa [value="' + pessoa + '"]').data('value')
+		$('#pessoa').val(id)
+		if(tipo === 'recebimento'){
+			document.formRecebimento.action = '/contas-receber/create'
+			document.formRecebimento.submit()
+		} else {
+			document.formPagamento.action = '/contas-pagar/create';
+			document.formPagamento.submit();
+		}
+	} else {
+		if(tipo === 'recebimento'){
+			document.formRecebimento.action = '/contas-receber/update'
+			document.formRecebimento.submit()
+		} else {
+			document.formPagamento.action = '/contas-pagar/update';
+			document.formPagamento.submit();
+		}
 	}
 })
-
 
 function adicionarParcelas(qtdeParcelas, valorTotal) {
 	var tdFormaPagamento = $("#tdFormaPagamento").html()
@@ -538,44 +643,135 @@ $('#quantidadeDeParcelas').on('change', function(){
 	adicionarParcelas(parcelas, valorTotal)
 })
 
-/*----------------------------------------------------------------------------*/
-
-$(document).on(validarFormPagamento = function(opcao){
-	var fornecedor = $('#fornecedor').val();
-	var dataVencimento = $('#dataVencimento').val();
-	var dataCompetencia = $('#dataCompetencia').val();
-	var pago = $('#pago').val();
-	var valor = $('#valor').val();
-	var erros = [];
-
-	if(!fornecedor || typeof fornecedor == undefined || fornecedor == null){erros.push(" Pagador")}
-	if(!dataVencimento || typeof dataVencimento == undefined || dataVencimento == null){erros.push(" Data de Vencimento")}
-	if(!dataCompetencia || typeof dataCompetencia == undefined || dataCompetencia == null){erros.push(" Data de Competencia")}
-	if(!valor || typeof valor == undefined || valor == null || valor == 0){erros.push(" Valor")}
-
-	if(pago === "true"){
-		var dataPagamento = $("#dataPagamento").val()
-		if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-			erros.push(" Data de Pagamento")
+$(document).on(abrirModal = function(){
+	$.ajax({
+		method: "GET",
+		url: '/caixa/verifica-caixa-aberto',
+		success: function(data){
+			if(data === true){
+				sweetAlert('warning', 'Atenção...', "É necessário fechar o caixa anterior antes de abrir um novo caixa!")
+			} else {
+				$('#modalAbrirCaixa').modal('show');
+			}
 		}
-	}
+	});
+});
 
-	if(erros.length > 0){
-		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
+$('#modalAbrirCaixa').on('show.bs.modal', function (event) {
+	var modal = $(this)
+
+	modal.find('#dataAbertura').val(new Date().DataHoraAtual())
+})
+
+$(document).on(abrirCaixa = function(){
+	var troco = $("#troco").val()
+
+	if(!troco || typeof troco == undefined || troco == null){
+		sweetAlert('warning', 'Atenção...', "Preencha o campo de Troco!")
 		return false;
 	}
 
-	var id = $('#listaFornecedor [value="' + fornecedor + '"]').data('value')
-	$('#fornecedor').val(id);
+	document.formAbrirCaixa.action = '/caixa/create';
+	document.formAbrirCaixa.submit();
+});
 
-	if(opcao === 'adicionar'){
-		document.formPagamento.action = '/contas-pagar/store';
-		document.formPagamento.submit();
-	}else if(opcao === 'editar'){
-		document.formPagamento.action = '/contas-pagar/update';
-		document.formPagamento.submit();
-	}
+$('#modalFecharCaixa').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget)
+	var modal = $(this)
+
+	var id = $('#id').val()
+	var entradas = button.data('totale')
+	var troco = button.data('troco')
+	var saidas = button.data('totals')
+	var totalEntradas = (parseFloat(entradas) + parseFloat(troco)).toFixed(2)
+	var saldo = button.data('saldo')
+
+	$.ajax({
+		method: "GET",
+		url: '/caixa/movimentos-caixa/' + id,
+		success: function(movCaixa){
+			console.log('movCaixa', movCaixa);
+			modal.find('#dinheiro').val(movCaixa.dinheiro)
+			modal.find('#cartao').val(movCaixa.cartao)
+			modal.find('#reforco').val(movCaixa.reforco)
+			modal.find('#pagamentos').val(movCaixa.pagamentos)
+			modal.find('#retiradas').val(movCaixa.retiradas)
+		}
+	});
+
+	modal.find('#dataFechamento').val(new Date().DataHoraAtual())
+	modal.find('#saldoFinaldoSistema').val(saldo)
+	modal.find('#totalSaidas').val(saidas)
+	modal.find('#totalEntradas').val(totalEntradas)
 })
+
+$(document).on(fecharCaixa = function(){
+	var saldoFinaldoCaixa = $("#saldoFinaldoCaixa").val()
+	var saldo = $('#saldoFinaldoSistema').val()
+	var observacao = $('#observacao').val()
+	console.log('observacao', observacao);
+
+	if(saldoFinaldoCaixa < saldo){
+		if(!observacao || typeof observacao == undefined || observacao == null || observacao == ''){
+			sweetAlert('warning', 'Atenção...', "Preencha o campo de observações informando o motivo da diferença de valores!")
+			return false;
+		}
+	}
+
+	if(!saldoFinaldoCaixa || typeof saldoFinaldoCaixa == undefined || saldoFinaldoCaixa == null){
+		sweetAlert('warning', 'Atenção...', "Preencha o campo de Saldo em Caixa!")
+		return false;
+	}
+	Swal.fire({
+		title: 'Deseja realmente fechar o caixa?',
+		text: 'Esta ação não poderá ser desfeita!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#3085d6',
+		cancelButtonColor: '#d33',
+		cancelButtonText: 'Cancelar',
+		confirmButtonText: 'Sim, fechar!'
+	}).then((result) => {
+		if (result.value) {
+			document.formFecharCaixa.action = '/caixa/fechar-caixa';
+			document.formFecharCaixa.submit();
+		}
+	})
+});
+
+$('#modalAdicionarDinheiro').on('show.bs.modal', function (event) {
+	var modal = $(this)
+
+	modal.find('#horaDaMovimentacao').val(new Date().DataHoraAtual())
+})
+$(document).on(adicionarDinheiro = function(){
+	var valor = $("#formAdicionarDinheiro #valor").val()
+
+	if(!valor || typeof valor == undefined || valor == null){
+		sweetAlert('warning', 'Atenção...', "Preencha o campo de Valor!")
+		return false;
+	}
+	document.formAdicionarDinheiro.action = '/caixa/adicionar-retirar-dinheiro';
+	document.formAdicionarDinheiro.submit();
+});
+
+$('#modalRetirarDinheiro').on('show.bs.modal', function (event) {
+	var modal = $(this)
+
+	modal.find('#horaDaMovimentacao').val(new Date().DataHoraAtual())
+})
+$(document).on(retirarDinheiro = function(){
+	var valor = $("#formRetirarDinheiro #valor").val()
+
+	if(!valor || typeof valor == undefined || valor == null){
+		sweetAlert('warning', 'Atenção...', "Preencha o campo de Valor!")
+		return false;
+	}
+	document.formRetirarDinheiro.action = '/caixa/adicionar-retirar-dinheiro';
+	document.formRetirarDinheiro.submit();
+});
+
+
 
 /* -------------------------  Dados Empresariais -------------------------*/
 
@@ -624,11 +820,7 @@ $(document).on(verificaSeExiste = function(url, campo, msg, formulario, actionEd
 	.done( function (res) {
 		if(valor == 'adicionar'){
 			if(res === true){
-				Swal.fire({
-					icon: 'error',
-					title: 'Erro ...',
-					text: msg,
-				})
+				sweetAlert('warning', 'Atenção', msg)
 			}else{
 				formulario.attr('action','' + actionAdd);
 				formulario.submit();
@@ -651,6 +843,6 @@ function sweetAlert(icon, title, text){
 function RemoveTableRow(handler) {
 	var tr = $(handler).closest('tr');
 	tr.remove();
-	$('#total').val(Total());
+	$('#total').val(calcularTotal());
 	return false;
 };

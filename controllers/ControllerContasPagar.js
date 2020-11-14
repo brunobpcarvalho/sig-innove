@@ -2,8 +2,11 @@ const db = require("../config/conexao")
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const ContasPagar = require("../models/ContasPagar")
-//const Venda = require("../models/Venda")
+const Compra = require("../models/Compra")
 const Pessoa = require("../models/Pessoa")
+const ParcelaContaPagar = require("../models/ParcelaContaPagar")
+const Caixa = require("../models/Caixa")
+const MovimentacaoCaixa = require("../models/MovimentacaoCaixa")
 
 exports.index = (req, res) => {
 	ContasPagar.findAll({include: [{ model: Pessoa, as: 'pessoa' }]}).then((dadosContaPagar) => {
@@ -12,20 +15,15 @@ exports.index = (req, res) => {
 				contasPagar: dadosContaPagar.map(dado => {
 					return {
 						id: dado.id,
-						formaPagamento: dado.formaPagamento,
-						valor: dado.valor,
-						valorPago: dado.valorPago,
-						desconto: dado.desconto,
 						dataCompetencia: dado.dataCompetencia,
-						dataVencimento: dado.dataVencimento,
-						dataPagamento: dado.dataPagamento,
-						pago: dado.pago,
-						compra: dado.compra,
+						quantidadeDeParcelas: dado.quantidadeDeParcelas,
+						valorTotal: dado.valorTotal,
+						desconto: dado.desconto,
+						compraId: dado.compraId,
 						pessoa: dado.pessoa.nome
 					}
 				})
 			}
-
 			const contextFornecedores = {
 				fornecedores: dadosFornecedor.map(dado => {
 					return {
@@ -36,85 +34,209 @@ exports.index = (req, res) => {
 			}
 			res.render("contas-pagar/index", {contasPagar: contextContasPagar.contasPagar, fornecedores: contextFornecedores.fornecedores})
 		}).catch(erro => {
-			req.flash("error_msg", "Erro ao buscar ou listar Clientes!: " + erro)
+			req.flash("msg_erro", "Erro ao buscar ou listar Fornecedores!: " + erro)
 			res.redirect("/index")
 		})
-
 	}).catch((erro) => {
-		req.flash("error_msg", "Erro ao buscar ou listar Contas a Pagar!: " + erro)
+		req.flash("msg_erro", "Erro ao buscar ou listar Contas a Pagar!: " + erro)
 		res.redirect("/index")
 	})
 }
 
-exports.store = (req, res) => {
-	var dataPagamento = req.body.dataPagamento
-	var desconto = req.body.descontoPagamento
+exports.create = async (req, res) => {
+	const pagamento = await ContasPagar.create({ dataCompetencia, quantidadeDeParcelas, valorTotal, pessoaId } = req.body)
 
-	if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-		dataPagamento = null;
+	const parcela = req.body.parcela
+	const formaDePagamento = req.body.formaDePagamento
+	const valorDaParcela = req.body.valorDaParcela
+	const dataDeVencimento = req.body.dataDeVencimento
+	const valorPago = req.body.valorPago
+	const dataDePagamento = req.body.dataDePagamento
+	const desconto = req.body.desconto
+	const status = req.body.status
+
+	for (var i = 0; i < parcela.length; i++) {
+		if(!dataDePagamento[i] || typeof dataDePagamento[i] == undefined){
+			dataDePagamento[i] = null;
+		}
+		const parcelaContaPagar = new ParcelaContaPagar({
+			parcela: parcela[i],
+			formaDePagamento: formaDePagamento[i],
+			valorDaParcela: valorDaParcela[i],
+			dataDeVencimento: dataDeVencimento[i],
+			valorPago: valorPago[i],
+			dataDePagamento: dataDePagamento[i],
+			desconto: desconto[i],
+			status: status[i],
+			pagamentoId: pagamento.id
+		})
+
+		const caixaAberto = await Caixa.findOne({where: {status: 'aberto'}})
+
+		if(parcelaContaPagar.status === true && caixaAberto != null){
+			var horaDaMovimentacao = new Date().DataHoraAtual()
+
+			const movCaixa = new MovimentacaoCaixa({
+				horaDaMovimentacao: horaDaMovimentacao,
+				origem: 'Pagamento',
+				tipoDeRecebimento: parcelaContaPagar.formaDePagamento,
+				tipoDeMovimento: 'Saida',
+				valor: parcelaContaPagar.valorPago,
+				pagamentoId: pagamento.id,
+				caixaId: caixaAberto.id,
+				usuarioId: req.body.usuarioId,
+			})
+
+			var totalSaidas = parseFloat(caixaAberto.totalSaidas) + parseFloat(parcelaContaPagar.valorPago)
+			var saldoAtual = parseFloat(caixaAberto.saldoAtual) - parseFloat(parcelaContaPagar.valorPago)
+
+			caixaAberto.totalSaidas = totalSaidas,
+			caixaAberto.saldoAtual = saldoAtual
+
+			await caixaAberto.save().then(() => {
+			}).catch((erro) => {
+				req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
+				res.redirect("/contas-receber/index")
+			})
+
+			await movCaixa.save().then(() => {
+			}).catch((erro) => {
+				req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
+				res.redirect("/contas-receber/index")
+			})
+		}
+
+		parcelaContaPagar.save().then(() => {
+		}).catch((erro) => {
+			req.flash("msg_erro", "Erro: Não foi possível salvar Pagamento!" + erro)
+			res.redirect("/contas-pagar/index")
+		})
 	}
-	if(!desconto || typeof desconto == undefined || desconto == null || desconto == ''){
-		desconto = 0;
-	}
+	req.flash("msg_sucesso", "Pagamento salvo com sucesso!")
+	res.redirect("/contas-pagar/index")
+}
 
-	const novoPagamento = new ContasPagar({
-		formaPagamento: req.body.formaPagamento,
-		valor: req.body.valor,
-		valorPago: req.body.valorPago,
-		desconto: desconto,
-		dataCompetencia: req.body.dataCompetencia,
-		dataVencimento: req.body.dataVencimento,
-		dataPagamento: dataPagamento,
-		pago: req.body.pago,
-		compra: req.body.compra,
-		pessoaId: req.body.pessoaId
-	})
-
-	novoPagamento.save().then(() => {
-		req.flash("msg_sucesso", "Pagamento cadastrado com sucesso!")
-		res.redirect("/contas-pagar/index")
+exports.destroy = (req, res) => {
+	ParcelaContaPagar.destroy({where: {pagamentoId: req.body.id}}).then(() => {
+		if(!req.body.compra || typeof req.body.compra == undefined || req.body.compra == null || req.body.compra == ''){
+			ContasPagar.destroy({where: {id: req.body.id}}).then(() => {
+				req.flash("msg_sucesso", "Pagamento deletado com sucesso!")
+				res.redirect("/contas-pagar/index")
+			}).catch((erro) => {
+				req.flash("msg_erro", "Não foi possível excluir este Pagamento!6" + erro)
+				res.redirect("/contas-pagar/index")
+			})
+		} else {
+			Compra.findByPk(req.body.compra).then(compra => {
+				compra.financeiro = 'nao';
+				compra.save().then(() => {
+					ContasPagar.destroy({ where: {id: req.body.id}}).then(() => {
+						req.flash("msg_sucesso", "Pagamento deletado com sucesso!")
+						res.redirect("/contas-pagar/index")
+					}).catch((erro) => {
+						req.flash("msg_erro", "Não foi possível excluir este Pagamento!2" + erro)
+						res.redirect("/contas-pagar/index")
+					})
+				}).catch((erro) => {
+					req.flash("msg_erro", "Não foi possível excluir este Pagamento!3" + erro)
+					res.redirect("/contas-pagar/index")
+				})
+			}).catch(erro => {
+				req.flash("msg_erro", "Não foi possível excluir este Pagamento!4" + erro)
+				res.redirect("/contas-pagar/index")
+			})
+		}
 	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível salvar Pagamento!"+ erro)
+		req.flash("msg_erro", "Não foi possível excluir este Pagamento!4" + erro)
 		res.redirect("/contas-pagar/index")
 	})
 }
 
-exports.destroy = (req, res) => {
-	ContasPagar.destroy({ where: {id: req.body.id}}).then(() => {
-		req.flash("msg_sucesso", "Pagamento deletado com sucesso!")
-		res.redirect("/contas-pagar/index")
+exports.edit = (req, res) => {
+	ContasPagar.findByPk(req.params.id, {include: [{ model: Pessoa, as: 'pessoa' }]}).then((dadosContaPagar) =>{
+		ParcelaContaPagar.findAll({where: {pagamentoId: req.params.id}}).then((dadosParcelaContaPagar) =>{
+			const pagamento = {
+				id: dadosContaPagar.id,
+				pessoaId: dadosContaPagar.pessoa.id,
+				pessoaNome: dadosContaPagar.pessoa.nome,
+				dataCompetencia: dadosContaPagar.dataCompetencia,
+				quantidadeDeParcelas: dadosContaPagar.quantidadeDeParcelas,
+				valorTotal: dadosContaPagar.valorTotal,
+				compraId: dadosContaPagar.compraId
+			}
+			const contextParcelaContaPagar = {
+				parcelas: dadosParcelaContaPagar.map(dado => {
+					return {
+						id: dado.id,
+						parcela: dado.parcela,
+						formaDePagamento: dado.formaDePagamento,
+						valorDaParcela: dado.valorDaParcela,
+						dataDeVencimento: dado.dataDeVencimento,
+						valorPago: dado.valorPago,
+						dataDePagamento: dado.dataDePagamento,
+						desconto: dado.desconto,
+						status: dado.status
+					}
+				})
+			}
+			res.render("contas-pagar/edit", {pagamento: pagamento, parcelaContaPagar: contextParcelaContaPagar.parcelas})
+		}).catch((erro) => {
+			req.flash("msg_erro", "Erro ao buscar as parcelas do pagamento!")
+			res.redirect("/contas-pagar/index")
+		})
 	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível excluir este Pagamento!")
+		req.flash("msg_erro", "Erro ao buscar o pagamento!")
 		res.redirect("/contas-pagar/index")
 	})
 }
 
 exports.update = (req, res) => {
-	var dataPagamento = req.body.dataPagamento
-	if(!dataPagamento || typeof dataPagamento == undefined || dataPagamento == null){
-		dataPagamento = null;
-	}
-	ContasPagar.findByPk(req.body.id).then((contasPagar) =>{
-		contasPagar.formaPagamento = req.body.formaPagamento,
-		contasPagar.valor = req.body.valor,
-		contasPagar.valorPago = req.body.valorPago,
-		contasPagar.desconto = req.body.descontoPagamento,
-		contasPagar.dataCompetencia = req.body.dataCompetencia,
-		contasPagar.dataVencimento = req.body.dataVencimento,
-		contasPagar.dataPagamento = dataPagamento,
-		contasPagar.pago = req.body.pago,
-		contasPagar.compra = req.body.compra,
-		contasPagar.pessoaId = req.body.pessoaId
+	const parcela = req.body.parcela
+	const formaDePagamento = req.body.formaDePagamento
+	const valorDaParcela = req.body.valorDaParcela
+	const dataDeVencimento = req.body.dataDeVencimento
+	const valorPago = req.body.valorPago
+	const dataDePagamento = req.body.dataDePagamento
+	const desconto = req.body.desconto
+	const status = req.body.status
 
-		contasPagar.save().then(() => {
-			req.flash("msg_sucesso", "Pagamento editado com sucesso!")
+	ParcelaContaPagar.destroy({where: {pagamentoId: req.body.id}});
+
+	for (var i = 0; i < parcela.length; i++) {
+		if(!dataDePagamento[i] || typeof dataDePagamento[i] == undefined){
+			dataDePagamento[i] = null;
+		}
+		const parcelaContaPagar = new ParcelaContaPagar({
+			parcela: parcela[i],
+			formaDePagamento: formaDePagamento[i],
+			valorDaParcela: valorDaParcela[i],
+			dataDeVencimento: dataDeVencimento[i],
+			valorPago: valorPago[i],
+			dataDePagamento: dataDePagamento[i],
+			desconto: desconto[i],
+			status: status[i],
+			pagamentoId: req.body.id
+		})
+		parcelaContaPagar.save().then(() => {
+		}).catch((erro) => {
+			req.flash("msg_erro", "Erro: Não foi possível salvar Pagamento!" + erro)
+			res.redirect("/contas-pagar/index")
+		})
+	}
+	ContasPagar.findByPk(id = req.body.id).then((pagamento) =>{
+		pagamento.dataCompetencia = req.body.dataCompetencia,
+		pagamento.quantidadeDeParcelas = req.body.quantidadeDeParcelas,
+		pagamento.valorTotal = req.body.valorTotal,
+
+		pagamento.save().then(() => {
+			req.flash("msg_sucesso", "Pagamento alterado com sucesso!")
 			res.redirect("/contas-pagar/index")
 		}).catch((erro) => {
-			req.flash("msg_erro", "Não foi possível editar este Pagamento!" + erro)
+			req.flash("msg_erro", "Não foi possivel salvar a alteração: " + erro)
 			res.redirect("/contas-pagar/index")
 		})
 	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível localizar o Pagamento!")
+		req.flash("msg_erro", "Não foi possivel encontrar o pagamento: " + erro)
 		res.redirect("/contas-pagar/index")
 	})
 }
