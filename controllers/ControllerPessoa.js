@@ -1,6 +1,9 @@
 var db = require("../config/conexao")
 const Pessoa = require("../models/Pessoa")
 const Venda = require("../models/Venda")
+const Compra = require("../models/Compra")
+const ContasPagar = require("../models/ContasPagar")
+const ContasReceber = require("../models/ContasReceber")
 const Empresa = require("../models/Empresa")
 const PDFDocument = require("pdfkit")
 
@@ -75,27 +78,25 @@ exports.add = (req, res) => {
 	})
 }
 
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
+	const vendas = await Venda.findAll({where: {pessoaId: req.body.id}})
+	const compras = await Compra.findAll({where: {pessoaId: req.body.id}})
+	const recebimentos = await ContasReceber.findAll({where: {pessoaId: req.body.id}})
+	const pagamentos = await ContasPagar.findAll({where: {pessoaId: req.body.id}})
 
-	Venda.findAll({where: {pessoaId: req.body.id}}).then((pessoa) =>{
-		if(pessoa.length < 1){
-			Pessoa.destroy({where: {id: req.body.id}}).then(() => {
-				req.flash("msg_sucesso", "Pessoa deletada com sucesso!")
-				res.redirect("/pessoas/list-pessoas")
-			}).catch((erro) => {
-				req.flash("msg_erro", "Erro ao deletar Pessoa: " + erro)
-				res.redirect("/pessoas/list-pessoas")
-			})
+	Pessoa.findByPk(req.body.id).then((pessoa) => {
+		if(vendas.length < 1 || compras.length < 1 || recebimentos.length < 1 || pagamentos.length < 1){
+			pessoa.destroy();
+			req.flash("msg_sucesso", "Pessoa deletada com sucesso!")
+			res.redirect("/pessoas/list-pessoas")
 		}else {
 			req.flash("msg_erro", "Não é possivel excluir essa Pessoa, pois está vinculada a uma Venda!")
 			res.redirect("/pessoas/list-pessoas")
 		}
-	}).catch((erro)=>{
+	}).catch((err) => {
 		req.flash("msg_erro", "Não foi possivel encontrar o pessoa! " + erro)
 		res.redirect("/pessoas/list-pessoas")
 	})
-
-
 }
 
 exports.update = (req, res) => {
