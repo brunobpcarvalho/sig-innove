@@ -1,6 +1,11 @@
 var db = require("../config/conexao")
 const Usuario = require("../models/Usuario")
 const Venda = require("../models/Venda")
+const Compra = require("../models/Compra")
+const ContasReceber = require("../models/ContasReceber")
+const ContasPagar = require("../models/ContasPagar")
+const Caixa = require("../models/Caixa")
+
 const bcrypt = require("bcryptjs")
 const passport = require("passport")
 
@@ -70,22 +75,24 @@ exports.create = (req, res) => {
 	})
 }
 
-exports.destroy = (req, res) => {
-	Venda.findAll({where: {usuarioId: req.body.id}}).then((usuario) =>{
-		if(usuario.length < 1){
-			Usuario.destroy({ where: {id: req.body.id}}).then(() => {
-				req.flash("msg_sucesso", "Usuário deletado com sucesso!")
-				res.redirect("/usuarios/index")
-			}).catch((erro) => {
-				req.flash("msg_erro", "Não foi possível excluir este usuario!")
-				res.redirect("/usuarios/index")
-			})
+exports.destroy = async (req, res) => {
+	const vendas = await Venda.findAll({where: {usuarioId: req.body.id}})
+	const compras = await Compra.findAll({where: {usuarioId: req.body.id}})
+	const recebimentos = await ContasReceber.findAll({where: {usuarioId: req.body.id}})
+	const pagamentos = await ContasPagar.findAll({where: {usuarioId: req.body.id}})
+	const caixas = await Caixa.findAll({where: {usuarioId: req.body.id}})
+
+	Usuario.findByPk(req.body.id).then((usuario) => {
+		if(vendas.length < 1 && compras.length < 1 && recebimentos.length < 1 && pagamentos.length < 1 && caixas.length < 1){
+			usuario.destroy();
+			req.flash("msg_sucesso", "Usuario deletado com sucesso!")
+			res.redirect("/usuarios/index")
 		}else {
-			req.flash("msg_erro", "Não é possivel excluir esse Usuário, pois está sendo utilizado em uma Venda!")
+			req.flash("msg_erro", "Não é possivel excluir esse Usuario, pois está vinculado a um registro!")
 			res.redirect("/usuarios/index")
 		}
-	}).catch((erro)=>{
-		req.flash("msg_erro", "Não foi possivel encontrar o Usuario! " + erro)
+	}).catch((erro) => {
+		req.flash("msg_erro", "Não foi possivel encontrar o usuario! " + erro)
 		res.redirect("/usuarios/index")
 	})
 }

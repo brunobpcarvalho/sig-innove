@@ -116,40 +116,48 @@ exports.create = async (req, res) => {
 	res.redirect("/contas-pagar/index")
 }
 
-exports.destroy = (req, res) => {
-	ParcelaContaPagar.destroy({where: {pagamentoId: req.body.id}}).then(() => {
-		if(!req.body.compra || typeof req.body.compra == undefined || req.body.compra == null || req.body.compra == ''){
-			ContasPagar.destroy({where: {id: req.body.id}}).then(() => {
-				req.flash("msg_sucesso", "Pagamento deletado com sucesso!")
-				res.redirect("/contas-pagar/index")
-			}).catch((erro) => {
-				req.flash("msg_erro", "Não foi possível excluir este Pagamento!6" + erro)
-				res.redirect("/contas-pagar/index")
-			})
-		} else {
-			Compra.findByPk(req.body.compra).then(compra => {
-				compra.financeiro = 'nao';
-				compra.save().then(() => {
-					ContasPagar.destroy({ where: {id: req.body.id}}).then(() => {
-						req.flash("msg_sucesso", "Pagamento deletado com sucesso!")
-						res.redirect("/contas-pagar/index")
-					}).catch((erro) => {
-						req.flash("msg_erro", "Não foi possível excluir este Pagamento!2" + erro)
-						res.redirect("/contas-pagar/index")
-					})
+exports.destroy = async (req, res) => {
+
+	const movCaixa = await MovimentacaoCaixa.findAll({where: {pagamentoId: req.body.id}})
+
+	if(movCaixa.length < 1){
+		ParcelaContaPagar.destroy({where: {pagamentoId: req.body.id}}).then(() => {
+			if(!req.body.compra || typeof req.body.compra == undefined || req.body.compra == null || req.body.compra == ''){
+				ContasPagar.destroy({where: {id: req.body.id}}).then(() => {
+					req.flash("msg_sucesso", "Pagamento deletado com sucesso!")
+					res.redirect("/contas-pagar/index")
 				}).catch((erro) => {
-					req.flash("msg_erro", "Não foi possível excluir este Pagamento!3" + erro)
+					req.flash("msg_erro", "Não foi possível excluir este Pagamento!6" + erro)
 					res.redirect("/contas-pagar/index")
 				})
-			}).catch(erro => {
-				req.flash("msg_erro", "Não foi possível excluir este Pagamento!4" + erro)
-				res.redirect("/contas-pagar/index")
-			})
-		}
-	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível excluir este Pagamento!4" + erro)
-		res.redirect("/contas-pagar/index")
-	})
+			} else {
+				Compra.findByPk(req.body.compra).then(compra => {
+					compra.financeiro = 'nao';
+					compra.save().then(() => {
+						ContasPagar.destroy({ where: {id: req.body.id}}).then(() => {
+							req.flash("msg_sucesso", "Pagamento deletado com sucesso!")
+							res.redirect("/contas-pagar/index")
+						}).catch((erro) => {
+							req.flash("msg_erro", "Não foi possível excluir este Pagamento!2" + erro)
+							res.redirect("/contas-pagar/index")
+						})
+					}).catch((erro) => {
+						req.flash("msg_erro", "Não foi possível excluir este Pagamento!3" + erro)
+						res.redirect("/contas-pagar/index")
+					})
+				}).catch(erro => {
+					req.flash("msg_erro", "Não foi possível excluir este Pagamento!4" + erro)
+					res.redirect("/contas-pagar/index")
+				})
+			}
+		}).catch((erro) => {
+			req.flash("msg_erro", "Não foi possível excluir este Pagamento!4" + erro)
+			res.redirect("/contas-pagar/index")
+		})
+	}else {
+		req.flash("msg_erro", "Não é possivel excluir este pagamento, pois está vinculada a um registro!")
+		res.redirect("/pessoas/list-pessoas")
+	}
 }
 
 exports.edit = (req, res) => {

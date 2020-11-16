@@ -85,15 +85,15 @@ exports.delete = async (req, res) => {
 	const pagamentos = await ContasPagar.findAll({where: {pessoaId: req.body.id}})
 
 	Pessoa.findByPk(req.body.id).then((pessoa) => {
-		if(vendas.length < 1 || compras.length < 1 || recebimentos.length < 1 || pagamentos.length < 1){
+		if(vendas.length < 1 && compras.length < 1 && recebimentos.length < 1 && pagamentos.length < 1){
 			pessoa.destroy();
 			req.flash("msg_sucesso", "Pessoa deletada com sucesso!")
 			res.redirect("/pessoas/list-pessoas")
 		}else {
-			req.flash("msg_erro", "Não é possivel excluir essa Pessoa, pois está vinculada a uma Venda!")
+			req.flash("msg_erro", "Não é possivel excluir essa Pessoa, pois está vinculada a um registro!")
 			res.redirect("/pessoas/list-pessoas")
 		}
-	}).catch((err) => {
+	}).catch((erro) => {
 		req.flash("msg_erro", "Não foi possivel encontrar o pessoa! " + erro)
 		res.redirect("/pessoas/list-pessoas")
 	})

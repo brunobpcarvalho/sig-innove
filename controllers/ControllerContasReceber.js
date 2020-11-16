@@ -117,40 +117,47 @@ exports.create = async (req, res) => {
 	res.redirect("/contas-receber/index")
 }
 
-exports.destroy = (req, res) => {
-	ParcelaContaReceber.destroy({where: {recebimentoId: req.body.id}}).then(() => {
-		if(!req.body.venda || typeof req.body.venda == undefined || req.body.venda == null || req.body.venda == ''){
-			ContasReceber.destroy({where: {id: req.body.id}}).then(() => {
-				req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
-				res.redirect("/contas-receber/index")
-			}).catch((erro) => {
-				req.flash("msg_erro", "Não foi possível excluir este Recebimento!6" + erro)
-				res.redirect("/contas-receber/index")
-			})
-		} else {
-			Venda.findByPk(req.body.venda).then(venda => {
-				venda.financeiro = 'nao';
-				venda.save().then(() => {
-					ContasReceber.destroy({ where: {id: req.body.id}}).then(() => {
-						req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
-						res.redirect("/contas-receber/index")
-					}).catch((erro) => {
-						req.flash("msg_erro", "Não foi possível excluir este Recebimento!2" + erro)
-						res.redirect("/contas-receber/index")
-					})
+exports.destroy = async (req, res) => {
+	const movCaixa = await MovimentacaoCaixa.findAll({where: {recebimentoId: req.body.id}})
+
+	if(movCaixa.length < 1){
+		ParcelaContaReceber.destroy({where: {recebimentoId: req.body.id}}).then(() => {
+			if(!req.body.venda || typeof req.body.venda == undefined || req.body.venda == null || req.body.venda == ''){
+				ContasReceber.destroy({where: {id: req.body.id}}).then(() => {
+					req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
+					res.redirect("/contas-receber/index")
 				}).catch((erro) => {
-					req.flash("msg_erro", "Não foi possível excluir este Recebimento!3" + erro)
+					req.flash("msg_erro", "Não foi possível excluir este Recebimento!6" + erro)
 					res.redirect("/contas-receber/index")
 				})
-			}).catch(erro => {
-				req.flash("msg_erro", "Não foi possível excluir este Recebimento!4" + erro)
-				res.redirect("/contas-receber/index")
-			})
-		}
-	}).catch((erro) => {
-		req.flash("msg_erro", "Não foi possível excluir este Recebimento!4" + erro)
+			} else {
+				Venda.findByPk(req.body.venda).then(venda => {
+					venda.financeiro = 'nao';
+					venda.save().then(() => {
+						ContasReceber.destroy({ where: {id: req.body.id}}).then(() => {
+							req.flash("msg_sucesso", "Recebimento deletado com sucesso!")
+							res.redirect("/contas-receber/index")
+						}).catch((erro) => {
+							req.flash("msg_erro", "Não foi possível excluir este Recebimento!2" + erro)
+							res.redirect("/contas-receber/index")
+						})
+					}).catch((erro) => {
+						req.flash("msg_erro", "Não foi possível excluir este Recebimento!3" + erro)
+						res.redirect("/contas-receber/index")
+					})
+				}).catch(erro => {
+					req.flash("msg_erro", "Não foi possível excluir este Recebimento!4" + erro)
+					res.redirect("/contas-receber/index")
+				})
+			}
+		}).catch((erro) => {
+			req.flash("msg_erro", "Não foi possível excluir este Recebimento!4" + erro)
+			res.redirect("/contas-receber/index")
+		})
+	}else {
+		req.flash("msg_erro", "Não é possivel excluir esse Recebimento, pois está vinculada a um registro!")
 		res.redirect("/contas-receber/index")
-	})
+	}
 }
 
 exports.edit = (req, res) => {
