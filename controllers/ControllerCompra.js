@@ -8,6 +8,8 @@ const Produto = require("../models/Produto")
 const ItensCompra = require("../models/ItensCompra")
 const ContasPagar = require("../models/ContasPagar")
 const ParcelaContaPagar = require("../models/ParcelaContaPagar")
+const Caixa = require("../models/Caixa")
+const MovimentacaoCaixa = require("../models/MovimentacaoCaixa")
 const Empresa = require("../models/Empresa")
 const PDFDocument = require("pdfkit")
 
@@ -18,6 +20,7 @@ exports.index = async (req, res) => {
 				return {
 					id: dado.id,
 					pessoa: dado.pessoa.nome,
+					pessoaId: dado.pessoa.id,
 					status: dado.status,
 					usuario: dado.usuario.usuario,
 					dataCompra: dado.dataCompra,
@@ -284,13 +287,7 @@ exports.historico = async (req, res) => {
 exports.gerarFinanceiro = async (req, res) => {
 	const compra = await Compra.findByPk(req.body.compraId)
 
-	const contaPagar = await ContasPagar.create({
-		dataCompetencia: req.body.dataCompetencia,
-		quantidadeDeParcelas: req.body.quantidadeDeParcelas,
-		valorTotal: req.body.valorTotal,
-		compraId: req.body.compraId,
-		pessoaId: compra.pessoaId
-	})
+	const pagamento = await ContasPagar.create({ dataCompetencia, quantidadeDeParcelas, valorTotal, compraId, pessoaId } = req.body)
 
 	var parcela = req.body.parcela
 	var formaDePagamento = req.body.formaDePagamento
@@ -305,7 +302,7 @@ exports.gerarFinanceiro = async (req, res) => {
 		if(!dataDePagamento[i] || typeof dataDePagamento[i] == undefined){
 			dataDePagamento[i] = null;
 		}
-		const novaParcela = new ParcelaContaPagar({
+		const parcelaContaPagar = new ParcelaContaPagar({
 			parcela: parcela[i],
 			formaDePagamento: formaDePagamento[i],
 			valorDaParcela: valorDaParcela[i],
@@ -314,10 +311,45 @@ exports.gerarFinanceiro = async (req, res) => {
 			dataDePagamento: dataDePagamento[i],
 			desconto: desconto[i],
 			status: status[i],
-			pagamentoId: contaPagar.id
+			pagamentoId: pagamento.id
 		})
 
-		novaParcela.save().then(() => {
+		const caixaAberto = await Caixa.findOne({where: {status: 'aberto'}})
+
+		if(parcelaContaPagar.status === true && caixaAberto != null){
+			var horaDaMovimentacao = new Date().DataHoraAtual()
+
+			const movCaixa = new MovimentacaoCaixa({
+				horaDaMovimentacao: horaDaMovimentacao,
+				origem: 'Pagamento',
+				tipoDeRecebimento: parcelaContaPagar.formaDePagamento,
+				tipoDeMovimento: 'Saida',
+				valor: parcelaContaPagar.valorPago,
+				pagamentoId: pagamento.id,
+				caixaId: caixaAberto.id,
+				usuarioId: req.body.usuarioId,
+			})
+
+			var totalSaidas = parseFloat(caixaAberto.totalSaidas) + parseFloat(parcelaContaPagar.valorPago)
+			var saldoAtual = parseFloat(caixaAberto.saldoAtual) - parseFloat(parcelaContaPagar.valorPago)
+
+			caixaAberto.totalSaidas = totalSaidas,
+			caixaAberto.saldoAtual = saldoAtual
+
+			await caixaAberto.save().then(() => {
+			}).catch((erro) => {
+				req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
+				res.redirect("/contas-receber/index")
+			})
+
+			await movCaixa.save().then(() => {
+			}).catch((erro) => {
+				req.flash("msg_erro", "Erro: Não foi possível salvar Recebimento!" + erro)
+				res.redirect("/contas-receber/index")
+			})
+		}
+
+		parcelaContaPagar.save().then(() => {
 		}).catch((erro) => {
 			req.flash("msg_erro", "Não foi possível gerar Financeiro" + erro)
 			res.redirect("/vendas/list-vendas")

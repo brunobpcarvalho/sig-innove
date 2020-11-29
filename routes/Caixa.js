@@ -1,20 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const ControllerCaixa = require('../controllers/ControllerCaixa')
+const {User} = require("../helpers/User")
 const {Admin} = require("../helpers/Admin")
 /*----------------------------------------------------------------------------*/
 
-router.get('/index', Admin, ControllerCaixa.index);
+router.get('/index', User, ControllerCaixa.index);
 
-router.post('/create', Admin, ControllerCaixa.create);
+router.post('/create', User, ControllerCaixa.create);
 
-router.get("/edit/:id", Admin, ControllerCaixa.edit);
+router.get("/edit/:id", User, ControllerCaixa.edit);
 
 router.post('/destroy', Admin, ControllerCaixa.destroy);
 
-router.get("/verifica-caixa-aberto", Admin, ControllerCaixa.verificaCaixaAberto);
+router.get("/verifica-caixa-aberto", User, ControllerCaixa.verificaCaixaAberto);
 
-router.post('/fechar-caixa', Admin, ControllerCaixa.fecharCaixa);
+router.post('/fechar-caixa', User, ControllerCaixa.fecharCaixa);
 
 router.post('/adicionar-retirar-dinheiro', Admin, ControllerCaixa.adicionarRemoverDinheiro);
 

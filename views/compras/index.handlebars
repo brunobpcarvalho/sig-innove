@@ -60,13 +60,7 @@
                                 </a>
                                 <a>
                                     <button title="Gerar Financeiro"
-                                    data-id="{{../id}}"
-                                    data-pessoa="{{../pessoa}}"
-                                    data-quantidade_de_parcelas="{{../parcelas}}"
-                                    data-valor_total="{{../valorTotal}}"
-                                    data-data_de_competencia="{{../dataCompra}}"
-                                    data-toggle="modal"
-                                    data-target="#modalGerarFinanceiro"
+                                    onclick="verificarCaixa('{{../id}}', '{{../pessoa}}', '{{../pessoaId}}', '{{../dataCompra}}', '{{../parcelas}}', '{{../valorTotal}}')"
                                     type="button" class="btn bg-olive"{{#ifCond ../financeiro "sim"}} disabled {{/ifCond}}><i class="fa fa-usd"></i></button>
                                 </a>
                                 {{/ifCond}}
@@ -172,10 +166,12 @@
                 <div class="box-body">
                     <form name="formGerarFinanceiro" id="formGerarFinanceiro" method="post">
                         <input type="hidden" name="compraId" id="id">
+                        <input type="hidden" name="pessoaId" id="pessoaId">
+                        <input type="hidden" name="usuarioId" id="usuarioId" value="{{user.id}}">
                         <div class="row">
                             <div class="col-xs-5">
                                 <span>Fornecedor: </span>
-                                <input class="form-control" id="pessoa" name="pessoaId" readonly/>
+                                <input class="form-control" id="pessoa" readonly/>
                             </div>
                             <div class="col-xs-3">
                                 <div class="input-group">

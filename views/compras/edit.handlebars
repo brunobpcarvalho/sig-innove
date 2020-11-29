@@ -131,8 +131,7 @@
                                                 <div class="col-xs-3">
                                                     <div class="input-group">
                                                         <span>Qtde. de Parcelas: </span>
-                                                        <select class="form-control" name="parcelas" id="parcelas" {{#ifCond compra.status "COMPRA"}} disabled {{/ifCond}}>>
-                                                            <option value=""> Selecione... </option>
+                                                        <select class="form-control" name="parcelas" id="parcelas" {{#ifCond compra.status "COMPRA"}} disabled {{/ifCond}}>
                                                             <option value="1" {{#ifCond compra.parcelas 1}} selected {{/ifCond}}> 1x </option>
                                                             <option value="2" {{#ifCond compra.parcelas 2}} selected {{/ifCond}}> 2x </option>
                                                             <option value="3" {{#ifCond compra.parcelas 3}} selected {{/ifCond}}> 3x </option>

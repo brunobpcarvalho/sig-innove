@@ -1,18 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const ControllerContasReceber = require('../controllers/ControllerContasReceber')
-const {Admin} = require("../helpers/Admin")
+const {User} = require("../helpers/User")
 /*----------------------------------------------------------------------------*/
 
-router.get('/index', Admin, ControllerContasReceber.index);
+router.get('/index', User, ControllerContasReceber.index);
 
-router.post('/create', Admin, ControllerContasReceber.create);
+router.post('/create', User, ControllerContasReceber.create);
 
-router.post('/destroy', Admin, ControllerContasReceber.destroy);
+router.post('/destroy', User, ControllerContasReceber.destroy);
 
-router.get("/edit/:id", Admin, ControllerContasReceber.edit);
+router.get("/edit/:id", User, ControllerContasReceber.edit);
 
-router.post("/update", Admin, ControllerContasReceber.update);
+router.post("/update", User, ControllerContasReceber.update);
 
 /*----------------------------------------------------------------------------*/
 module.exports = router;

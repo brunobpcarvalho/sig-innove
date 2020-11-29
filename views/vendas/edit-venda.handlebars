@@ -132,7 +132,6 @@
                                                     <div class="input-group">
                                                         <span>Qtde. de Parcelas: </span>
                                                         <select class="form-control" name="parcelas" id="parcelas" {{#ifCond venda.status "VENDA"}} disabled {{/ifCond}}>
-                                                            <option value=""> Selecione... </option>
                                                             <option value="1" {{#ifCond venda.parcelas 1}} selected {{/ifCond}}> 1x </option>
                                                             <option value="2" {{#ifCond venda.parcelas 2}} selected {{/ifCond}}> 2x </option>
                                                             <option value="3" {{#ifCond venda.parcelas 3}} selected {{/ifCond}}> 3x </option>

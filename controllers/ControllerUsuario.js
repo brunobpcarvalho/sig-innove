@@ -78,12 +78,10 @@ exports.create = (req, res) => {
 exports.destroy = async (req, res) => {
 	const vendas = await Venda.findAll({where: {usuarioId: req.body.id}})
 	const compras = await Compra.findAll({where: {usuarioId: req.body.id}})
-	const recebimentos = await ContasReceber.findAll({where: {usuarioId: req.body.id}})
-	const pagamentos = await ContasPagar.findAll({where: {usuarioId: req.body.id}})
 	const caixas = await Caixa.findAll({where: {usuarioId: req.body.id}})
 
 	Usuario.findByPk(req.body.id).then((usuario) => {
-		if(vendas.length < 1 && compras.length < 1 && recebimentos.length < 1 && pagamentos.length < 1 && caixas.length < 1){
+		if(vendas.length < 1 && compras.length < 1 && caixas.length < 1){
 			usuario.destroy();
 			req.flash("msg_sucesso", "Usuario deletado com sucesso!")
 			res.redirect("/usuarios/index")

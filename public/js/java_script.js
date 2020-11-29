@@ -243,11 +243,13 @@ $(document).on('show.bs.modal', '#modalProduto', function (event) {
 				}
 				$('#tabelaDeHistorico tbody tr').remove()
 				for(var i=0; data.length > i; i++){
+					var dataFormatada = new Date(data[i].compra.dataCompra)
+					dataFormatada = dataFormatada.toLocaleDateString('pt-BR');
 					$('#tabelaDeHistorico tbody').append(
 						'<tr>' +
 						'<td>' + data[i].compra.id  + '</td>' +
 						'<td>' + data[i].compra.pessoa.nome +'</td>' +
-						'<td>' + data[i].compra.dataCompra + '</td>' +
+						'<td>' + dataFormatada + '</td>' +
 						'<td> R$' + data[i].valorUnitario + '</td>' +
 						'</tr>'
 					)
@@ -362,12 +364,10 @@ $(document).ready(function(){
 
 		var produto = inputProduto[0].value;
 		var cliente = $("#cliente").val()
-		var parcelas = $("#parcelas").val()
 		var erros = [];
 
 		if(!cliente || typeof cliente == undefined || cliente == null){erros.push("Cliente")}
 		if(!produto || typeof produto == undefined || produto == null){erros.push("Produto")}
-		if(!parcelas || typeof parcelas == undefined || parcelas == null){erros.push("Parcelas")}
 
 		if(erros.length > 0){
 			sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
@@ -434,12 +434,10 @@ $(document).on(SalvarCompra = function (opcao) {
 
 	var produto = inputProduto[0].value;
 	var fornecedor = $("#fornecedor").val()
-	var parcelas = $("#parcelas").val()
 	var erros = [];
 
 	if(!fornecedor || typeof fornecedor == undefined || fornecedor == null){erros.push("Fornecedor")}
 	if(!produto || typeof produto == undefined || produto == null){erros.push("Produto")}
-	if(!parcelas || typeof parcelas == undefined || parcelas == null){erros.push("Parcelas")}
 
 	if(erros.length > 0){
 		sweetAlert('warning', 'Atenção...', "Preencha o(s) campo(s) a seguir: " + erros)
@@ -486,34 +484,70 @@ $(document).on(SalvarCompra = function (opcao) {
 	}
 });
 
-$('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
-	var button = $(event.relatedTarget)
-	var quantidadeDeParcelas = button.data('quantidade_de_parcelas')
-	var valorTotal = button.data('valor_total')
-	var modal = $(this)
-	var campos = ['id', 'pessoa', 'data_de_competencia', 'quantidade_de_parcelas', 'valor_total']
+$(document).ready(function(){
+	let obj = {
+		id: '',
+		pessoa: '',
+		pessoaId: '',
+		data_de_competencia: '',
+		quantidade_de_parcelas: '',
+		valor_total: ''
+	}
 
-	adicionarParcelas(quantidadeDeParcelas, valorTotal)
-	passarDadosParaModal(modal, button, campos)
-})
+	$(document).on(verificarCaixa = function(id, pessoa, pessoaId, data_de_competencia, quantidade_de_parcelas, valor_total){
+		obj.id = id
+		obj.pessoa = pessoa
+		obj.pessoaId = pessoaId
+		obj.data_de_competencia = data_de_competencia
+		obj.quantidade_de_parcelas = quantidade_de_parcelas
+		obj.valor_total = valor_total
 
-$(document).on(gerarFinanceiro = function(tipo){
-	var tabelaDeParcelas = $("#tabelaDeParcelas")
-	var dataDeVencimento = tabelaDeParcelas.find("td:nth-child(4) input")
-	var erros = []
-	for (var i = 0; i < dataDeVencimento.length; i++) {
-		if(!dataDeVencimento[i].value || typeof dataDeVencimento[i].value == undefined || dataDeVencimento[i].value == null){erros.push(i);}
-	}
-	if(erros.length > 0){
-		sweetAlert('warning', 'Atenção...', "Preencha todos os campos de Data de Vencimento!")
-		return false;
-	}
-	if (tipo === 'venda') {
-		document.formGerarFinanceiro.action = '/vendas/list-vendas/gerar-financeiro';
-	} else {
-		document.formGerarFinanceiro.action = '/compras/gerar-financeiro';
-	}
-	document.formGerarFinanceiro.submit();
+		$.ajax({
+			method: "GET",
+			url: '/caixa/verifica-caixa-aberto',
+			success: function(data){
+				if(data === true){
+					$('#modalGerarFinanceiro').modal('show')
+				} else {
+					sweetAlert('warning', 'Atenção...', "É necessário abrir o caixa para gerar o financeiro!")
+				}
+			}
+		});
+	});
+
+	$('#modalGerarFinanceiro').on('show.bs.modal', function (event) {
+
+		var quantidadeDeParcelas = obj.quantidade_de_parcelas
+		var valorTotal = obj.valor_total
+		var modal = $(this)
+		adicionarParcelas(quantidadeDeParcelas, valorTotal)
+
+		modal.find('#id').val(obj.id)
+		modal.find('#pessoa').val(obj.pessoa)
+		modal.find('#pessoaId').val(obj.pessoaId)
+		modal.find('#data_de_competencia').val(obj.data_de_competencia)
+		modal.find('#quantidade_de_parcelas').val(obj.quantidade_de_parcelas)
+		modal.find('#valor_total').val(obj.valor_total)
+	})
+
+	$(document).on(gerarFinanceiro = function(tipo){
+		var tabelaDeParcelas = $("#tabelaDeParcelas")
+		var dataDeVencimento = tabelaDeParcelas.find("td:nth-child(4) input")
+		var erros = []
+		for (var i = 0; i < dataDeVencimento.length; i++) {
+			if(!dataDeVencimento[i].value || typeof dataDeVencimento[i].value == undefined || dataDeVencimento[i].value == null){erros.push(i);}
+		}
+		if(erros.length > 0){
+			sweetAlert('warning', 'Atenção...', "Preencha todos os campos de Data de Vencimento!")
+			return false;
+		}
+		if (tipo === 'venda') {
+			document.formGerarFinanceiro.action = '/vendas/list-vendas/gerar-financeiro';
+		} else {
+			document.formGerarFinanceiro.action = '/compras/gerar-financeiro';
+		}
+		document.formGerarFinanceiro.submit();
+	});
 });
 
 $(document).on(estornar = function(tipo, url){
