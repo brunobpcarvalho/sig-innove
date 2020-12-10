@@ -74,7 +74,7 @@ exports.create = async (req, res) => {
 
 		const caixaAberto = await Caixa.findOne({where: {status: 'aberto'}})
 
-		if(parcelaContaReceber.status === true && caixaAberto != null){
+		if(parcelaContaReceber.status === true){
 			var horaDaMovimentacao = new Date().DataHoraAtual()
 
 			const movCaixa = new MovimentacaoCaixa({

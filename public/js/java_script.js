@@ -880,3 +880,18 @@ function RemoveTableRow(handler) {
 	$('#total').val(calcularTotal());
 	return false;
 };
+
+$(document).on(verificaCaixaAberto = function(){
+	$.ajax({
+		method: "GET",
+		url: '/caixa/verifica-caixa-aberto',
+		success: function(data){
+			if(data === true){
+				$('#modalRecebimento').modal('show');
+				$('#modalPagamentos').modal('show');
+			} else {
+				sweetAlert('warning', 'Atenção...', "É necessário abrir o caixa!")
+			}
+		}
+	});
+});
