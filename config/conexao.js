@@ -3,6 +3,8 @@ const Sequelize = require('sequelize');
 var conexao;
 
 if (process.env.DATABASE_URL) {
+	
+console.log("teste")
 	conexao = new Sequelize(process.env.DATABASE_URL, {
 		dialect:  'postgres',
 		protocol: 'postgres',
@@ -22,6 +24,5 @@ conexao.authenticate().then(() => {
 }).catch((err) => {
 	console.log("Erro ao se conectar: " + err);
 })
-console.log("teste")
 
 module.exports = conexao;
