@@ -6,7 +6,7 @@ if (process.env.DATABASE_URL) {
 	conexao = new Sequelize(process.env.DATABASE_URL, {
 		dialect:  'postgres',
 		protocol: 'postgres',
-		dialectOptions: {"ssl": true},
+		dialectOptions: {"ssl": false},
         	logging: false
   })
 	console.log(conexao)
