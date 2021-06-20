@@ -22,5 +22,6 @@ conexao.authenticate().then(() => {
 }).catch((err) => {
 	console.log("Erro ao se conectar: " + err);
 })
+console.log("teste")
 
 module.exports = conexao;
