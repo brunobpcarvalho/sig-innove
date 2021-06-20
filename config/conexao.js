@@ -4,7 +4,7 @@ var conexao;
 
 if (process.env.DATABASE_URL) {
 	
-console.log("teste")
+console.log(process.env.DATABASE_URL)
 	conexao = new Sequelize(process.env.DATABASE_URL, {
 		dialect:  'postgres',
 		protocol: 'postgres',
