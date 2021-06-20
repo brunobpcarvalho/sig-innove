@@ -3,14 +3,13 @@ const Sequelize = require('sequelize');
 var conexao;
 
 if (process.env.DATABASE_URL) {
-	
-console.log(process.env.DATABASE_URL)
 	conexao = new Sequelize(process.env.DATABASE_URL, {
 		dialect:  'postgres',
 		protocol: 'postgres',
 		dialectOptions: {"ssl": true},
         	logging: false
   })
+	console.log(conexao)
 } else {
 	conexao = new Sequelize('dbinnove', 'postgres', '123456', {
 		host: 'localhost',
