@@ -5,11 +5,10 @@ const router = express.Router();
 const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
-const Index = require("./routes/Index")
-const ItensVenda = require("./models/ItensVenda.js")
-const Empresa = require("./routes/Empresa");
+
 const Pessoa = require("./routes/Pessoa");
 const Usuario = require("./routes/Usuario");
+const Empresa = require("./routes/Empresa");
 
 const Fabricante = require("./routes/Fabricante");
 const Modelo = require("./routes/Modelo");
@@ -23,6 +22,7 @@ const ContasPagar = require("./routes/ContasPagar");
 const Relatorios = require("./routes/Relatorio");
 
 const Caixa = require("./routes/Caixa");
+const Index = require("./routes/Index")
 
 const path = require("path");
 const session = require('cookie-session');

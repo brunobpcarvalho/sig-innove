@@ -11,8 +11,8 @@ if (process.env.DATABASE_URL) {
   })
 	console.log(conexao)
 } else {
-	conexao = new Sequelize('dbinnove', 'postgres', '123456', {
-		host: 'localhost',
+	conexao = new Sequelize('dbinnove', 'postgres', 'postgres', {
+		host: 'database',
 		dialect: 'postgres',
 		logging: false
 	});
